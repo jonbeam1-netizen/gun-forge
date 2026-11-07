@@ -7,7 +7,7 @@ A free, in-browser pixel gun sprite maker for the **ZED ZONE** MOD Editor.
 ## What it does
 
 - **Build a gun from 10 parts:** body, barrel, handguard, muzzle, stock, grip, magazine, sight, moving part and under-barrel. Each part has styles, size sliders, position nudges and colors.
-- **Seven themes, each with its own parts:**
+- **Eight themes, each with its own parts:**
   - Military (realistic)
   - Cyberpunk
   - Steampunk
