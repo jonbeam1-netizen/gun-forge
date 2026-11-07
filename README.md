@@ -14,11 +14,13 @@ A free, in-browser pixel gun sprite maker for the **ZED ZONE** MOD Editor.
   - Fantasy
   - Laser
   - Space blaster
+  - Water gun
   - All + Chaos, which mixes everything
-- **41 presets**, from assault rifles, bullpups and lever-actions to rune crossbows, dragon muskets, tesla cannons and heavy blasters.
+- **46 presets**, from assault rifles, bullpups and lever-actions to rune crossbows, dragon muskets, tesla cannons, heavy blasters and water guns.
 - **Random gun** for the selected theme, or **Chaos gun** to mix every theme.
+- **Shine, edge shading and optional battle wear** on every part.
 - **Glow color, trim metal and glow halo.** Glowing parts light up, and the soft halo is saved into the PNG.
-- **Test fire preview** with muzzle flash, blaster bolt, laser beam, magic bolt, steam blast or crossbow bolt.
+- **Test fire preview** with muzzle flash, blaster bolt, laser beam, magic bolt, steam blast, crossbow bolt or water stream.
 - **Pixel tools:** pencil, eraser and color picker, with undo/redo.
 - **Gun codes:** copy a short text code or a share link that opens your exact gun. Paste a code to load someone else's.
 - **Export** a ZIP with:

@@ -171,6 +171,7 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid currentColor;paddi
             <option value="magic">Magic bolt</option>
             <option value="steam">Steam blast</option>
             <option value="bolt">Crossbow bolt</option>
+            <option value="water">Water stream</option>
           </select>
           <span class="note">Preview only. The game uses its own shot effects.</span>
         </div>
@@ -203,7 +204,9 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid currentColor;paddi
         <label class="check"><input type="checkbox" id="haloChk"> Glow halo (soft light around glowing pixels)</label>
         <label class="check"><input type="checkbox" id="outlineChk"> Dark outline</label>
         <div class="row two"><label for="outlineColor">Outline color</label><input type="color" id="outlineColor" value="#16140f"></div>
-        <label class="check"><input type="checkbox" id="shadeChk"> Auto shading (light top, dark bottom)</label>
+        <label class="check"><input type="checkbox" id="shadeChk"> Auto shading (light top, dark bottom and right)</label>
+        <label class="check"><input type="checkbox" id="shineChk"> Shine (little glints on top edges)</label>
+        <label class="check"><input type="checkbox" id="wearChk"> Battle wear (scratches and dents)</label>
         <div class="row two"><label for="canvasSel">Canvas</label>
           <select id="canvasSel">
             <option value="48x32">48 × 32 (pistols)</option>
@@ -327,6 +330,13 @@ function receiverDetail(o,L,H,c){
   if (H>=6){ set(o,R(L*.27),H-3,'dk'); set(o,R(L*.27)+1,H-3,'hi'); set(o,R(L*.4),H-2,'sh'); set(o,R(L*.4)+1,H-2,'sh'); set(o,R(L*.68),2,'hi'); set(o,R(L*.68),3,'sh'); }
   const mg=c.P.mag; if (mg.on && ['box','curved','stanag','pmag','extended','battery'].includes(mg.style)){ const mx=R(L*.55)+mg.dx-1; for (let x=mx;x<mx+mg.w+2;x++) add(o,x,H,'sh'); }
 }
+function below(o,x){ let m = -Infinity; for (const k of o.m){ const [kx,ky] = PK(k); if (kx === x && !o.cut.has(k) && ky > m) m = ky; } return m === -Infinity ? null : m + 1; }
+function swivel(o,x){ const y = below(o,x); if (y !== null){ add(o,x,y,'dk'); } }
+function rounded(o,x,y,w,h){ rect(o.m,x,y,w,h); [K(x,y),K(x+w-1,y),K(x,y+h-1),K(x+w-1,y+h-1)].forEach(k => o.cut.add(k)); }
+function water(o,level){ const M = new Set([...o.m].filter(k => !o.cut.has(k)));
+  for (const k of M){ const [x,y] = PK(k); if (!N4.every(([dx,dy]) => M.has(K(x+dx,y+dy)))) continue;
+    o.det.set(k, y >= level ? (((x*5 + y*3) % 9) === 0 ? 'glc' : 'gl') : 'glass'); }
+  for (const k of M){ const [x,y] = PK(k); if (y < level && N4.every(([dx,dy]) => M.has(K(x+dx,y+dy))) && !M.has(K(x-2,y))) o.det.set(k,'glint'); } }
 function frontPost(o,c,small){ const gx=c.frontX-2, fx=gx-c.sightX, t=c.topAt(gx)-c.sightY; if (fx<=4) return;
   if (small) add(o,fx,t-1); else { add(o,fx-1,t-1); add(o,fx,t-1); add(o,fx+1,t-1); add(o,fx,t-2); } }
 function rows(o,L,W,r,fn){ for (let y=0;y<L;y++){ const x0=-R(r*y); fn ? fn(y,x0) : rect(o.m,x0,y,W,1); } }
@@ -340,7 +350,9 @@ const SHAPES = {
         if (p.style==='railtop') for (let x=1;x<L-1;x++) add(o,x,-1, x%2 ? 'sh' : 'hi');
         receiverDetail(o,L,H,c); break;
       case 'tapered': poly(o.m,[[0,1],[L,0],[L,H],[R(L*.35),H],[0,H-2]]); receiverDetail(o,L,H,c);
-        for (let x=R(L*.15);x<R(L*.3);x++) set(o,x,1,'sh'); break;
+        for (let x=R(L*.15);x<R(L*.3);x++) set(o,x,1,'sh');
+        if (H>=6) for (let x=R(L*.12);x<R(L*.36);x++) set(o,x,2,x===R(L*.12)?'dk':'sh');
+        for (const fx of [.08,.2,.9]) set(o,R(L*fx),H-2,'hi'); break;
       case 'stamped': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(0,H-1));
         for (let x=1;x<L-1;x++){ set(o,x,1,'hi'); if (H>=6) set(o,x,H-2,'sh'); }
         for (let x=3;x<L-2;x+=5) set(o,x,mid,'hi'); receiverDetail(o,L,H,c); break;
@@ -354,12 +366,14 @@ const SHAPES = {
         set(o,R(L*.4),mid,'dk'); set(o,R(L*.65),mid,'dk'); for (let x=R(L*.55);x<L-4;x++) set(o,x,H-3,'sh'); break;
       case 'frame': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1));
         if (H>=3) for (let x=L-6;x<L-2;x+=2) if (x>0) set(o,x,H-2,'sh');
-        set(o,R(L*.45),1,'dk'); set(o,R(L*.3),H-2,'hi'); break;
+        set(o,R(L*.45),1,'dk'); set(o,R(L*.3),H-2,'hi'); set(o,R(L*.6),H-2,'dk'); set(o,1,1,'dk'); break;
       case 'revolver': { rect(o.m,0,0,L,H); const cx=R(L*.3), cl=Math.max(5,R(L*.45));
         rect(o.m,cx,-1,cl,H+2); for (let x=cx+1;x<cx+cl-1;x++){ set(o,x,1,'sh'); set(o,x,H-2,'sh'); }
-        set(o,cx+R(cl/2),mid,'dk'); add(o,0,-1); add(o,-1,-1); add(o,-1,-2); break; }
+        set(o,cx+R(cl/2),mid,'dk'); for (let y=0;y<H;y+=2) set(o,cx+cl-1,y,'dk'); set(o,cx-1,mid,'hi');
+        set(o,R(L*.85),1,'dk'); add(o,0,-1); add(o,-1,-1); add(o,-1,-2); set(o,-1,-2,'hi'); break; }
       case 'cyberframe': poly(o.m,[[1,0],[L-3,0],[L,2],[L,H],[3,H],[0,H-3]]);
-        glowRow(o,3,L-4,mid,4); if (H>=5) for (let x=L-9;x<L-4;x+=2) if (x>1) set(o,x,1,'dk'); break;
+        glowRow(o,3,L-4,mid,4); if (H>=5) for (let x=L-9;x<L-4;x+=2) if (x>1) set(o,x,1,'dk');
+        set(o,2,1,'lt'); set(o,R(L*.4),H-2,'hi'); set(o,R(L*.7),H-2,'hi'); if (H>=6) for (let x=4;x<R(L*.35);x++) set(o,x,mid+1,'dk'); break;
       case 'cyberblock': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(0,H-1));
         for (let x=6;x<L-2;x+=6) for (let y=1;y<H-1;y++) set(o,x,y,'dk');
         for (let x=2;x<L-2;x+=3) set(o,x,H-2,'gl');
@@ -374,14 +388,20 @@ const SHAPES = {
         for (let x=1;x<L;x++) set(o,x,0,'trh'); set(o,0,1,'trh');
         for (let x=3;x<L-3;x+=4){ set(o,x,2,'tr'); set(o,x+1,H>=6?3:2,'tr'); set(o,x+2,2,'tr'); } break;
       case 'runic': poly(o.m,[[0,1],[2,0],[L-1,0],[L,1],[L,H-1],[L-1,H],[0,H]]);
-        for (let x=0;x<L;x++){ set(o,x,0,'trh'); set(o,x,H-1,'trs'); } runes(o,3,L-3,mid); break;
+        for (let x=0;x<L;x++){ set(o,x,0,'trh'); set(o,x,H-1,'trs'); } runes(o,3,L-3,mid);
+        set(o,1,mid,'glc'); set(o,L-1,mid,'glc'); for (let x=2;x<L-1;x+=3) set(o,x,0,'tr'); break;
       case 'raygun': { const cx=L*.38, cy=(H-1)/2, rr=H/2+.6; circ(o.m,cx,cy,rr); rect(o.m,0,1,L,Math.max(1,H-2));
         line(o.m,R(L*.25),-1,R(L*.1),-3); line(o.m,R(L*.25)+1,-1,R(L*.1)+1,-3); line(o.m,R(L*.25),H,R(L*.1),H+2);
         for (let y=0;y<H;y++) set(o,R(L*.7),y,'tr');
         for (const k of o.m){ const [x,y]=PK(k); const d=Math.hypot(x-cx,y-cy); if (d<1.3) o.det.set(k,'glc'); else if (d<2.3) o.det.set(k,'gl'); } break; }
       case 'pulse': rect(o.m,0,0,L,H);
         [[0,0],[1,0],[0,1],[L-1,0],[L-2,0],[L-1,1],[0,H-1],[1,H-1],[0,H-2],[L-1,H-1],[L-2,H-1],[L-1,H-2]].forEach(([x,y])=>o.cut.add(K(x,y)));
-        glowRow(o,4,L-5,mid,3); for (let y=1;y<H-1;y++) set(o,R(L*.3),y,'sh'); break;
+        glowRow(o,4,L-5,mid,3); for (let y=1;y<H-1;y++) set(o,R(L*.3),y,'sh');
+        for (let x=R(L*.55);x<L-3;x+=2) set(o,x,1,'dk'); set(o,2,H-3,'tr'); set(o,3,H-3,'tr'); break;
+      case 'toybody': rounded(o,0,0,L,H); o.cut.add(K(1,0)); o.cut.add(K(L-2,0));
+        for (let x=2;x<R(L*.6);x++) set(o,x,1,'lt'); for (let x=2;x<L-2;x++) set(o,x,H-2,'tr');
+        set(o,2,mid,'sh'); set(o,L-3,mid,'sh'); set(o,R(L*.5),mid,'dk'); break;
+      case 'clearbody': rounded(o,0,0,L,H); water(o,R(H*.45)); set(o,R(L*.5),0,'tr'); set(o,R(L*.5)+1,0,'tr'); break;
       case 'blaster': rect(o.m,0,0,L,H); o.cut.add(K(0,0)); o.cut.add(K(L-1,H-1));
         rect(o.m,R(L*.2),-1,Math.max(2,R(L*.5)),1); for (let x=R(L*.2);x<R(L*.7);x++) set(o,x,-1,'sh');
         for (let x=R(L*.62);x<L-2;x+=2) for (let y=2;y<H-2;y++) set(o,x,y,'dk');
@@ -393,8 +413,14 @@ const SHAPES = {
     } return o; },
   barrel(p){ const o=mk(), L=p.l, H=p.h, mid=Math.floor((H-1)/2);
     switch (p.style){
-      case 'plain': rect(o.m,0,0,L,H); if (L>6) for (let y=0;y<H;y++) set(o,L-2,y,'sh'); break;
-      case 'fluted': rect(o.m,0,0,L,H); if (H>=3) for (let x=1;x<L-1;x+=2) set(o,x,1,'sh'); else for (let x=2;x<L-1;x+=3) set(o,x,0,'b'); break;
+      case 'plain': rect(o.m,0,0,L,H); if (L>6) for (let y=0;y<H;y++) set(o,L-2,y,'sh');
+        if (L>=14 && H<=3){ const gx=R(L*.6); rect(o.m,gx,-1,2,H+1); for (let y=-1;y<H;y++) set(o,gx+1,y,'sh'); set(o,gx,-1,'hi'); } break;
+      case 'fluted': rect(o.m,0,0,L,H); if (H>=3) for (let x=1;x<L-1;x+=2) set(o,x,1,'sh'); else for (let x=2;x<L-1;x+=3) set(o,x,0,'b');
+        for (let y=0;y<H;y++){ set(o,L-1,y,'dk'); set(o,0,y,'sh'); } break;
+      case 'nozzle': rect(o.m,0,0,L,H); if (H>=3) for (let x=L-3;x<L;x++){ o.cut.add(K(x,0)); o.cut.add(K(x,H-1)); }
+        for (let y=0;y<H;y++){ set(o,R(L*.45),y,'tr'); set(o,1,y,'tr'); } set(o,L-1,Math.floor(H/2),'gl'); break;
+      case 'twinnozzle': rect(o.m,0,0,L,1); rect(o.m,0,H-1,Math.max(2,L-2),1); rect(o.m,0,0,2,H);
+        set(o,L-1,0,'gl'); set(o,Math.max(2,L-2)-1,H-1,'gl'); for (let x=4;x<L-2;x+=5){ add(o,x,1,'tr'); if (H>3) add(o,x,H-2,'tr'); } break;
       case 'double': rect(o.m,0,0,L,H*2+1); for (let x=0;x<L;x++) set(o,x,H,'dk'); for (let y=0;y<H*2+1;y++) set(o,L-1,y,'sh'); break;
       case 'ventrib': rect(o.m,0,0,L,H); for (let x=0;x<L;x++) if (x%3!==2) add(o,x,-1); add(o,L-2,-2,'trh'); break;
       case 'shroud': rect(o.m,0,-1,L,H+2); for (let x=1;x<L-1;x+=3) o.cut.add(K(x,mid)); break;
@@ -421,14 +447,17 @@ const SHAPES = {
   handguard(p){ const o=mk(), L=p.l, H=p.h, mid=Math.floor(H/2);
     switch (p.style){
       case 'rail': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1)); for (let x=0;x<L;x++) set(o,x,0, x%2 ? 'sh' : 'hi');
-        if (H>=4) for (let x=2;x<L-2;x+=4){ set(o,x,mid,'dk'); set(o,x+1,mid,'dk'); } break;
+        if (H>=4) for (let x=2;x<L-2;x+=4){ set(o,x,mid,'dk'); set(o,x+1,mid,'dk'); }
+        for (let y=1;y<H-1;y++) set(o,L-1,y,'dk'); if (H>=5) for (let x=1;x<L-1;x+=2) set(o,x,H-1,'dk'); break;
       case 'mlok': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1)); for (let x=0;x<L;x++) set(o,x,0, x%2 ? 'sh' : 'hi');
         if (H>=4) for (let x=2;x<L-4;x+=5) for (let i=0;i<3;i++) set(o,x+i,mid,'dk');
         for (let y=1;y<H;y++) set(o,L-1,y,'sh'); break;
       case 'quad': rect(o.m,0,0,L,H); for (let x=0;x<L;x++){ set(o,x,0, x%2?'sh':'hi'); set(o,x,H-1, x%2?'dk':'sh'); if (H>=5) set(o,x,mid, x%2?'dk':'b'); } break;
-      case 'smooth': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(L-1,H-1)); if (L>6) for (let y=1;y<H-1;y++) set(o,R(L*.5),y,'sh'); break;
+      case 'smooth': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(L-1,H-1)); if (L>6) for (let y=1;y<H-1;y++) set(o,R(L*.5),y,'sh');
+        if (H>=5) for (let x=2;x<L-2;x++) if (x%2===0 && x!==R(L*.5)) set(o,x,H-2,'sh'); break;
       case 'wood': poly(o.m,[[0,0],[L,.5],[L,H-1.5],[0,H]]); o.cut.add(K(L-1,0));
-        for (let x=2;x<L-2;x+=4){ set(o,x,mid,'sh'); set(o,x+1,mid,'sh'); } set(o,0,mid,'dk'); break;
+        for (let x=2;x<L-2;x+=4){ set(o,x,mid,'sh'); set(o,x+1,mid,'sh'); } for (let x=4;x<L-3;x+=5) set(o,x,mid-1,'sh');
+        set(o,0,mid,'dk'); for (let y=0;y<H;y++) set(o,L-2,y,'dk'); break;
       case 'vented': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1));
         if (H>=4) for (let x=2;x<L-3;x+=3){ o.cut.add(K(x,mid)); o.cut.add(K(x+1,mid)); } break;
       case 'neon': poly(o.m,[[0,0],[L-2,0],[L,2],[L,H],[0,H]]); glowRow(o,1,L-2,H-2,3); break;
@@ -448,7 +477,9 @@ const SHAPES = {
         for (let y=0;y<H;y++) set(o,0,y,'sh'); if (L>6) for (let y=1;y<H-1;y++) set(o,L-3,y,'sh'); break;
       case 'can': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(L-1,H-1)); o.cut.add(K(0,0)); o.cut.add(K(0,H-1));
         for (let x=2;x<L-1;x+=3) for (let y=0;y<H;y++) set(o,x,y,'sh'); break;
-      case 'comp': rect(o.m,0,0,L,H); for (let x=1;x<L-1;x+=2) set(o,x,0,'dk'); break;
+      case 'comp': rect(o.m,0,0,L,H); for (let x=1;x<L-1;x+=2) set(o,x,0,'dk'); set(o,L-1,Math.floor((H-1)/2),'dk'); break;
+      case 'squirt': poly(o.m,[[0,0],[L,H/2-.5],[L,H/2+.5],[0,H]]); add(o,L,Math.floor(H/2),'gl',true); add(o,L+1,Math.floor(H/2)+1,'glc',true); set(o,0,0,'tr'); break;
+      case 'spray': poly(o.m,[[0,H/2-.5],[L,-1],[L,H+1],[0,H/2+.5]]); for (let y=-1;y<=H;y+=2) add(o,L-1,y,'gl'); set(o,0,Math.floor(H/2),'tr'); break;
       case 'spike': poly(o.m,[[0,0],[L,H/2],[0,H]]); for (const k of o.m){ const [x,y]=PK(k); if (!o.m.has(K(x,y-1))) o.det.set(k,'gl'); } break;
       case 'bell': poly(o.m,[[0,1],[L,-1],[L,H+1],[0,H-1]]); for (let y=-1;y<=H;y++){ set(o,0,y,'tr'); set(o,L-1,y,'trs'); } break;
       case 'crystal': { const cy=(H-1)/2; poly(o.m,[[0,cy+.5],[L/2,-1],[L,cy+.5],[L/2,H+1]]);
@@ -471,15 +502,20 @@ const SHAPES = {
   stock(p,c){ const o=mk(), L=p.l, H=p.h, bh=c.bodyH; let pad='dk';
     switch (p.style){
       case 'rifle': case 'skeleton': poly(o.m,[[0,0],[-L,1],[-L,H],[0,bh]]);
-        if (p.style==='skeleton' && L>9 && H>7) poly(o.cut,[[-3,2.5],[-L+3,3.5],[-L+3,H-2.5],[-3,bh-1.5]]); break;
+        if (p.style==='skeleton' && L>9 && H>7) poly(o.cut,[[-3,2.5],[-L+3,3.5],[-L+3,H-2.5],[-3,bh-1.5]]);
+        else { for (let x=-L+2;x<-2;x++) set(o,x,2,'sh'); swivel(o,-R(L*.7)); } for (let y=1;y<H;y++) set(o,-L+1,y,'sh'); break;
       case 'ar': poly(o.m,[[0,0],[-L,1],[-L,H],[0,bh]]); { const tx=-R(L*.4), ty=R(H*.5); for (let x=tx;x<tx+3;x++){ set(o,x,ty,'sh'); set(o,x,ty+2,'sh'); } set(o,tx,ty+1,'sh'); set(o,tx+2,ty+1,'sh'); }
-        for (let y=1;y<=H;y++) set(o,-L+1,y,'dk'); set(o,-R(L*.7),H-1,'hi'); break;
+        for (let y=1;y<=H;y++) set(o,-L+1,y,'dk'); set(o,-R(L*.7),H-1,'hi'); swivel(o,-R(L*.75)); set(o,-2,1,'hi'); break;
       case 'wood': poly(o.m,[[0,0],[-L*.4,1.5],[-L,2],[-L,H],[-L*.45,H*.72],[0,bh]]);
-        { const row=R(H*.5); for (let x=-L+3;x<-3;x+=5){ set(o,x,row,'sh'); set(o,x+1,row,'sh'); set(o,x+2,row+1,'sh'); } } break;
+        { const row=R(H*.5); for (let x=-L+3;x<-3;x+=5){ set(o,x,row,'sh'); set(o,x+1,row,'sh'); set(o,x+2,row+1,'sh'); }
+          for (let x=-L+5;x<-5;x+=6){ set(o,x,row-2,'sh'); set(o,x+1,row-2,'sh'); } }
+        swivel(o,-R(L*.72)); for (let y=2;y<=H;y++) set(o,-L+1,y,'sh'); break;
       case 'thumbhole': poly(o.m,[[0,0],[-L*.4,1.5],[-L,1],[-L,H],[-L*.45,H*.75],[0,bh+1]]);
         if (L>=12) circ(o.cut,-R(L*.28),R(H*.42),1.4); { const row=R(H*.62); for (let x=-L+3;x<-6;x+=4){ set(o,x,row,'sh'); set(o,x+1,row,'sh'); } } break;
       case 'collapsible': { const tl=R(L*.6); rect(o.m,-tl,1,tl,2); const bw=Math.max(3,R(L*.45));
-        poly(o.m,[[-L,0],[-L+bw,0],[-L+bw,H*.55],[-L+2,H],[-L,H]]); for (let y=1;y<3;y++) set(o,-tl+1,y,'sh'); set(o,-L+R(bw/2),2,'dk'); break; }
+        poly(o.m,[[-L,0],[-L+bw,0],[-L+bw,H*.55],[-L+2,H],[-L,H]]); for (let y=1;y<3;y++) set(o,-tl+1,y,'sh'); set(o,-L+R(bw/2),2,'dk');
+        for (let x=-tl+3;x<-1;x+=2) set(o,x,2,'dk'); set(o,-L+R(bw/2),R(H*.45),'dk'); set(o,-L+1,1,'hi'); break; }
+      case 'tankstock': poly(o.m,[[0,0],[-L+2,0],[-L,2],[-L,H-1],[-L+1,H],[0,bh]]); water(o,R(H*.4)); for (let y=0;y<H;y++) set(o,-L,y,'tr'); pad=null; break;
       case 'folding': line(o.m,-1,1,-L,1); line(o.m,-1,bh-1,-L,H-1); line(o.m,-L,1,-L,H-1); break;
       case 'buttpad': rect(o.m,-L,0,L,H); pad='dk'; break;
       case 'cyberstock': poly(o.m,[[0,0],[-L+2,0],[-L,2],[-L,H],[-L+4,H],[0,bh]]); for (let x=-L+2;x<-1;x++) set(o,x,1,'gl');
@@ -500,6 +536,9 @@ const SHAPES = {
       for (let y=0;y<L;y++){ const x0=-R(r*y); let w=W; if ((st==='wood'||st==='brassgrip') && y>L*.3 && y<L*.75) w=W+1; if (st==='blastergrip') w=W+1;
         rect(o.m,x0,y,w,1); if (y===L-1 && w>2 && !pommel){ o.cut.add(K(x0,y)); o.cut.add(K(x0+w-1,y)); } }
       const each = fn => { for (let y=0;y<L;y++) fn(y,-R(r*y)); };
+      if (st==='rifle') each((y,x0)=>{ if (y>=1 && y<L-1 && y%2===1) set(o,x0+1,y,'sh'); });
+      if (st==='wood') each((y,x0)=>{ if (y>=2 && y<L-2) for (let x=x0+1;x<x0+W-1;x++) if ((x+y)%2===0) set(o,x,y,'sh'); });
+      if (st==='toygrip'){ each((y,x0)=>{ if (y>=2 && y<L-1 && y%2===0) o.cut.add(K(x0+W-1,y)); }); each((y,x0)=>{ if (y===L-1) for (let x=x0;x<x0+W;x++) set(o,x,y,'tr'); }); set(o,0,1,'lt'); }
       if (st==='pistol') each((y,x0)=>{ if (y>=2 && y<L-1) for (let x=x0+1;x<x0+W-1;x++) if ((x+y)%2===0) set(o,x,y,'sh'); });
       if (st==='ar'){ const gy=R(L*.4), gx=-R(r*gy)+W-1; o.cut.add(K(gx,gy)); set(o,gx-1,gy,'sh'); each((y,x0)=>{ if (y>0 && y<L-1) set(o,x0,y,'sh'); }); }
       if (st==='cybergrip') each((y,x0)=>{ if (y>=1 && y<L-1) set(o,x0+W-1,y,'gl'); });
@@ -525,10 +564,15 @@ const SHAPES = {
         if (st==='pmag'){ for (let y=1;y<L-1;y+=3){ const x0=R(sx(y)); for (let x=x0;x<x0+W;x++) set(o,x,y,'sh'); }
           if (W>=3) for (let y=R(L*.25);y<R(L*.55);y++) set(o,R(sx(y))+1,y,'brass'); }
         else if (W>=4) for (let y=3;y<L-2;y+=3) set(o,R(sx(y))+1,y,'sh');
-        if (st==='stanag') for (let y=2;y<L-2;y+=2) set(o,R(sx(y))+W-1,y,'sh'); break;
+        if (st==='stanag') for (let y=2;y<L-2;y+=2) set(o,R(sx(y))+W-1,y,'sh');
+        if (st==='curved' || st==='box') for (let y=2;y<L-1;y+=3){ const x0=R(sx(y)); for (let x=x0+1;x<x0+W-1;x++) set(o,x,y,'sh'); }
+        if (W>=3) add(o,R(sx(0))+1,-1,'brass',true); break;
       case 'drum': { rect(o.m,0,0,W,2); const rr=Math.max(2,Math.floor(L/2)), cx=(W-1)/2, cy=1+rr; circ(o.m,cx,cy,rr);
         for (const k of o.m){ const [x,y]=PK(k); if (y>1 && Math.abs(Math.hypot(x-cx,y-cy)-(rr-2.2))<.55) o.det.set(k,'sh'); }
-        set(o,R(cx),R(cy),'dk'); set(o,R(cx)+1,R(cy)-1,'hi'); break; }
+        set(o,R(cx),R(cy),'dk'); set(o,R(cx)+1,R(cy)-1,'hi'); add(o,R(cx),R(cy)-1,'trh'); add(o,R(cx)-1,R(cy)-1,'tr');
+        for (let a=0;a<6;a++){ const t=a*Math.PI/3; set(o,R(cx+Math.cos(t)*(rr-1)),R(cy+Math.sin(t)*(rr-1)),'hi'); } break; }
+      case 'bottle': { const nx=Math.floor((W-2)/2); rect(o.m,nx,0,2,2); set(o,nx,0,'tr'); set(o,nx+1,0,'tr'); rounded(o,0,2,W,Math.max(3,L-2));
+        water(o,2+R((L-2)*.35)); const by=2+R((L-2)*.6); for (let x=0;x<W;x++) set(o,x,by,'tr'); break; }
       case 'beltbox': rect(o.m,0,0,W,L); o.cut.add(K(0,L-1)); o.cut.add(K(W-1,L-1));
         for (let x=0;x<W;x++) set(o,x,1,'sh'); set(o,1,2,'dk'); set(o,W-2,2,'hi');
         for (let i=0;i<3;i++) add(o,W-1+i,-1-i,'brass',true); break;
@@ -559,15 +603,19 @@ const SHAPES = {
       case 'carry': rect(o.m,0,-H,L,1); rect(o.m,0,-H+1,1,H-1); rect(o.m,L-1,-H+1,1,H-1); rect(o.m,1,-H-2,2,2);
         set(o,1,-H-2,'dk'); for (let x=2;x<L-1;x+=2) set(o,x,-H,'sh'); frontPost(o,c,false); break;
       case 'reddot': rect(o.m,1,-1,Math.max(1,L-2),1); rect(o.m,0,-H,L,H-1); o.cut.add(K(0,-H)); o.cut.add(K(L-1,-H));
-        for (let y=-H+1;y<-1;y++) set(o,L-1,y,'glass'); set(o,L-1,-H+Math.floor((H-1)/2),'red'); set(o,1,-H+1,'dk'); break;
+        for (let y=-H+1;y<-1;y++) set(o,L-1,y,'glass'); set(o,L-1,-H+Math.floor((H-1)/2),'red'); set(o,1,-H+1,'dk');
+        set(o,R(L/2),-1,'dk'); if (L>=6) add(o,R(L/2),-H-1,'sh'); break;
       case 'holo': rect(o.m,0,-1,L,1); rect(o.m,0,-H,L,H-1);
-        for (let y=-H+1;y<-2;y++) for (let x=1;x<L-1;x++) set(o,x,y,'glass'); set(o,R(L/2),-H+1,'red'); break;
+        for (let y=-H+1;y<-2;y++) for (let x=1;x<L-1;x++) set(o,x,y,'glass'); set(o,R(L/2),-H+1,'red'); set(o,0,-2,'dk'); set(o,L-1,-1,'dk'); break;
+      case 'toptank': { rounded(o,0,-H,L,H-1); water(o,-H+R((H-1)*.4)); rect(o.m,1,-H-1,3,1); for (let x=1;x<4;x++) set(o,x,-H-1,'tr');
+        rect(o.m,1,-1,1,1); rect(o.m,L-2,-1,1,1); break; }
       case 'acog': rect(o.m,1,-1,Math.max(1,L-2),1); rect(o.m,0,-H,L,H-1); o.cut.add(K(L-1,-H)); o.cut.add(K(0,-2));
         rect(o.m,R(L/2)-1,-H-1,3,1); for (let x=R(L/2)-1;x<R(L/2)+2;x++) set(o,x,-H-1,'fiber');
         for (let y=-H+1;y<-1;y++) set(o,L-1,y,'glass'); set(o,1,-H+1,'dk'); break;
       case 'scope': case 'longscope': { const y0=-H, tube = p.style==='longscope' ? 2 : 3;
         rect(o.m,0,y0,L,tube); rect(o.m,L-4,y0-1,4,tube+2); rect(o.m,0,y0-1,3,tube+2);
         o.cut.add(K(L-4,y0-1)); o.cut.add(K(L-4,y0+tube)); rect(o.m,R(L/2)-1,y0-2,3,2); set(o,R(L/2),y0-2,'hi');
+        for (let y=y0-1;y<y0+tube+1;y++){ set(o,2,y,'sh'); set(o,L-4,y,'sh'); } for (let y=y0;y<y0+tube;y++) set(o,4,y,'dk'); set(o,0,y0,'glass');
         const rh=H-tube; if (rh>0){ rect(o.m,R(L*.28),y0+tube,2,rh); rect(o.m,R(L*.66),y0+tube,2,rh); }
         if (p.style==='longscope'){ add(o,R(L*.4),y0+tube,'tr'); add(o,R(L*.4),y0+tube+1,'tr'); for (let x=4;x<L-4;x+=4) set(o,x,y0,'sh'); }
         for (let y=y0;y<y0+tube;y++) set(o,L-1,y,'glass'); set(o,L-1,y0,'glint'); break; }
@@ -597,9 +645,11 @@ const SHAPES = {
         for (const k of g){ o.m.add(k); o.no.add(k); o.det.set(k,'b'); } set(o,2,0,'hi'); break; }
       case 'slide': { rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); const y0=H>=3?1:0, y1=H>=3?H-1:H;
         for (let x=1;x<Math.min(9,L*.4);x+=2) for (let y=y0;y<y1;y++) set(o,x,y,'dk');
-        for (let x=R(L*.45);x<R(L*.62);x++) set(o,x,0,'dk'); set(o,R(L*.45),0,'brass'); break; }
+        for (let x=R(L*.45);x<R(L*.62);x++) set(o,x,0,'dk'); set(o,R(L*.45),0,'brass');
+        if (L>12) for (let x=L-6;x<L-1;x+=2) for (let y=y0;y<y1;y++) set(o,x,y,'dk'); break; }
       case 'pump': rect(o.m,0,0,L,H); o.cut.add(K(0,H-1)); o.cut.add(K(L-1,H-1));
         for (let x=1;x<L-1;x+=2) for (let y=1;y<H;y++) set(o,x,y,'sh'); break;
+      case 'waterpump': rounded(o,0,0,L,H); for (let x=2;x<L-2;x+=2) for (let y=1;y<H-1;y++) set(o,x,y,'sh'); for (let x=1;x<L-1;x++) set(o,x,0,'tr'); set(o,1,1,'lt'); break;
       case 'coolant': rect(o.m,0,0,L,H); for (let x=1;x<L-1;x+=2) for (let y=0;y<H;y++) set(o,x,y,'gl'); break;
       case 'gear': { const rr=Math.max(2,Math.floor(L/2)); gearSet(o.m,0,0,rr);
         for (const k of o.m){ const [x,y]=PK(k); const d=Math.hypot(x,y); if (d>rr-.4 && d<=rr+.2) o.det.set(k,'sh'); if (d>rr+.3) o.det.set(k,'trh'); } set(o,0,0,'dk'); break; }
@@ -626,51 +676,53 @@ const SHAPES = {
       case 'tank': rect(o.m,0,0,L,H); o.cut.add(K(0,0)); o.cut.add(K(L-1,0)); o.cut.add(K(0,H-1)); o.cut.add(K(L-1,H-1));
         for (let y=0;y<H;y++){ set(o,2,y,'tr'); set(o,L-3,y,'tr'); } for (let x=4;x<L-4;x+=3) set(o,x,1,'trh'); add(o,R(L/2),-1,'tr'); break;
       case 'gascan': rect(o.m,0,0,L,H); for (let y=0;y<H;y++){ set(o,0,y,'tr'); set(o,L-1,y,'tr'); } set(o,R(L/2),0,'hi'); if (H>=3) set(o,2,Math.floor(H/2),'gl'); break;
+      case 'pressuretank': rounded(o,0,0,L,Math.max(3,H)); water(o,1); for (let y=0;y<Math.max(3,H);y++) set(o,R(L*.3),y,'tr'); add(o,L-2,-1,'tr'); break;
     } return o; },
 };
 
 /* ---------- part metadata ---------- */
 const ORDER = ['body','barrel','handguard','muzzle','stock','grip','mag','sight','moving','under'];
 const Z = ['stock','barrel','muzzle','mag','grip','handguard','under','body','moving','sight'];
-const THEMES = { mil:'Military', cyber:'Cyberpunk', steam:'Steampunk', fantasy:'Fantasy', laser:'Laser', space:'Space blaster', any:'Other' };
-const THEME_DOT = { mil:'#7d8a5a', cyber:'#ff2bd6', steam:'#c9a23a', fantasy:'#a86bff', laser:'#39d353', space:'#ff5a3c', all:'var(--accent)' };
+const THEMES = { mil:'Military', cyber:'Cyberpunk', steam:'Steampunk', fantasy:'Fantasy', laser:'Laser', space:'Space blaster', water:'Water gun', any:'Other' };
+const THEME_DOT = { mil:'#7d8a5a', cyber:'#ff2bd6', steam:'#c9a23a', fantasy:'#a86bff', laser:'#39d353', space:'#ff5a3c', water:'#4fc3ff', all:'var(--accent)' };
 const S = (label, theme='mil') => [label, theme];
 const NONE = { none: S('None (draw your own)','any') };
 const PARTS = {
   body:{ label:'Body', slot:'main_body', sl:{ l:['Length',6,48,1], h:['Height',3,14,1] }, styles:{
     receiver:S('Receiver'), railtop:S('Receiver + top rail'), tapered:S('Tapered receiver'), stamped:S('Stamped steel'), bullpup:S('Bullpup (mag in stock)'), lever:S('Lever-action receiver'), frame:S('Pistol frame'), revolver:S('Revolver frame'),
     cyberframe:S('Neon frame','cyber'), cyberblock:S('Chrome block','cyber'), boiler:S('Boiler tank + gauge','steam'), brassframe:S('Brass filigree frame','steam'),
-    runic:S('Rune-carved body','fantasy'), raygun:S('Ray gun bulb','laser'), pulse:S('Plasma capsule','laser'), blaster:S('Blaster body','space'), heavyblaster:S('Heavy blaster core','space') } },
+    runic:S('Rune-carved body','fantasy'), raygun:S('Ray gun bulb','laser'), pulse:S('Plasma capsule','laser'), blaster:S('Blaster body','space'), heavyblaster:S('Heavy blaster core','space'),
+    toybody:S('Toy blaster body','water'), clearbody:S('See-through water body','water') } },
   barrel:{ label:'Barrel', slot:'barrel', sl:{ l:['Length',1,64,1], h:['Thickness',1,6,1] }, styles:{
     plain:S('Plain'), fluted:S('Fluted'), double:S('Double'), ventrib:S('Vent rib + bead'), shroud:S('Perforated shroud'),
     rail:S('Rail (glowing gap)','cyber'), flared:S('Blunderbuss flare','steam'), pipes:S('Copper pipes','steam'),
     crossbow:S('Crossbow limbs + bolt','fantasy'), ornate:S('Gold-banded','fantasy'), emitter:S('Coil emitter','laser'), ringed:S('Ray rings','laser'),
-    finned:S('Cooling fins','space'), perforated:S('Perforated tube','space'), ...NONE } },
+    finned:S('Cooling fins','space'), perforated:S('Perforated tube','space'), nozzle:S('Squirt nozzle','water'), twinnozzle:S('Twin nozzles','water'), ...NONE } },
   handguard:{ label:'Handguard', slot:'main_body', sl:{ l:['Length',2,44,1], h:['Height',2,12,1] }, styles:{
     rail:S('Picatinny rail'), mlok:S('M-LOK slots'), quad:S('Quad rail'), smooth:S('Smooth'), wood:S('Wood'), vented:S('Vented'),
     neon:S('Neon strip','cyber'), cage:S('Brass cage','steam'), carved:S('Carved with gem','fantasy'), capacitor:S('Capacitor cells','laser'), ...NONE } },
   muzzle:{ label:'Muzzle', slot:'barrel', sl:{ l:['Length',1,22,1], h:['Height',2,8,1] }, styles:{
     flash:S('Flash hider'), birdcage:S('Birdcage'), brake:S('Muzzle brake'), comp:S('Compensator'), suppressor:S('Suppressor'), can:S('Ribbed can'),
     spike:S('Mono-blade','cyber'), bell:S('Brass bell','steam'), crystal:S('Magic crystal','fantasy'), dragon:S('Dragon head','fantasy'),
-    focus:S('Focusing lens','laser'), tesla:S('Tesla prongs','laser'), cone:S('Cone emitter','space'), blastertip:S('Blaster tip','space'), ...NONE } },
+    focus:S('Focusing lens','laser'), tesla:S('Tesla prongs','laser'), cone:S('Cone emitter','space'), blastertip:S('Blaster tip','space'), squirt:S('Squirt tip + drip','water'), spray:S('Spray fan','water'), ...NONE } },
   stock:{ label:'Stock', slot:'gunstock', sl:{ l:['Length',1,36,1], h:['Butt height',3,18,1] }, styles:{
     rifle:S('Rifle'), ar:S('Fixed (trapdoor)'), wood:S('Wood'), thumbhole:S('Thumbhole'), skeleton:S('Skeleton'), collapsible:S('Collapsible'), folding:S('Wire folding'), buttpad:S('Butt pad (bullpup)'),
-    cyberstock:S('Angular neon','cyber'), brasswood:S('Wood + brass gear','steam'), ornate:S('Gold filigree','fantasy'), fin:S('Swept fin','laser'), blasterfold:S('Folding blaster','space'), ...NONE } },
+    cyberstock:S('Angular neon','cyber'), brasswood:S('Wood + brass gear','steam'), ornate:S('Gold filigree','fantasy'), fin:S('Swept fin','laser'), blasterfold:S('Folding blaster','space'), tankstock:S('Water tank stock','water'), ...NONE } },
   grip:{ label:'Grip', slot:'main_body', guard:true, sl:{ l:['Length',3,16,1], w:['Width',2,9,1], r:['Angle',0,1,.05] }, styles:{
     rifle:S('Rifle grip'), ar:S('Finger-groove grip'), pistol:S('Textured grip'), wood:S('Wood grip'),
-    cybergrip:S('Neon grip','cyber'), brassgrip:S('Brass pommel','steam'), hilt:S('Wrapped hilt','fantasy'), ergogrip:S('Ergo grip','laser'), blastergrip:S('Ribbed blaster grip','space'), ...NONE } },
+    cybergrip:S('Neon grip','cyber'), brassgrip:S('Brass pommel','steam'), hilt:S('Wrapped hilt','fantasy'), ergogrip:S('Ergo grip','laser'), blastergrip:S('Ribbed blaster grip','space'), toygrip:S('Chunky toy grip','water'), ...NONE } },
   mag:{ label:'Magazine', slot:'magazine', sl:{ l:['Length',1,28,1], w:['Width',1,16,1], r:['Angle',-.5,1,.05], c:['Curve',0,8,.5] }, styles:{
     box:S('Box'), stanag:S('Rifle mag (slight curve)'), pmag:S('Polymer mag + window'), curved:S('Curved'), extended:S('Extended stick'), drum:S('Drum'), beltbox:S('Ammo box + belt'), flush:S('Pistol (flush)'), tube:S('Tube (under barrel)'),
-    battery:S('Battery pack','cyber'), canister:S('Pressure canister','steam'), vial:S('Mana potion','fantasy'), cell:S('Energy cell','laser'), powerpack:S('Power pack','space'), gascan:S('Gas cartridge','space'), ...NONE } },
+    battery:S('Battery pack','cyber'), canister:S('Pressure canister','steam'), vial:S('Mana potion','fantasy'), cell:S('Energy cell','laser'), powerpack:S('Power pack','space'), gascan:S('Gas cartridge','space'), bottle:S('Water bottle','water'), ...NONE } },
   sight:{ label:'Sight', slot:'aimer', sl:{ l:['Length',2,32,1], h:['Height',2,9,1] }, styles:{
     iron:S('Iron sights'), peep:S('Peep sight'), carry:S('Carry handle'), reddot:S('Red dot'), holo:S('Holographic'), acog:S('Prism scope'), scope:S('Scope'),
-    hud:S('Holo HUD','cyber'), brassscope:S('Brass telescope','steam'), eye:S('All-seeing eye','fantasy'), antenna:S('Antenna','laser'), longscope:S('Long blaster scope','space'), blastersight:S('Blaster sight','space'), ...NONE } },
+    hud:S('Holo HUD','cyber'), brassscope:S('Brass telescope','steam'), eye:S('All-seeing eye','fantasy'), antenna:S('Antenna','laser'), longscope:S('Long blaster scope','space'), blastersight:S('Blaster sight','space'), toptank:S('Top water tank','water'), ...NONE } },
   moving:{ label:'Moving part', slot:'moving_part', sl:{ l:['Length',1,40,1], h:['Height',1,7,1] }, styles:{
     charging:S('Charging handle'), cocking:S('Cocking tube'), bolt:S('Bolt handle'), lever:S('Lever loop'), slide:S('Pistol slide'), pump:S('Pump'),
-    coolant:S('Coolant vents','cyber'), gear:S('Spinning gear','steam'), crank:S('Crank handle','steam'), runecharm:S('Rune charm','fantasy'), coil:S('Charge coil','laser'), coolinglever:S('Cooling lever','space'), ...NONE } },
+    coolant:S('Coolant vents','cyber'), gear:S('Spinning gear','steam'), crank:S('Crank handle','steam'), runecharm:S('Rune charm','fantasy'), coil:S('Charge coil','laser'), coolinglever:S('Cooling lever','space'), waterpump:S('Big pump handle','water'), ...NONE } },
   under:{ label:'Under-barrel', slot:'main_body', sl:{ l:['Length',1,24,1], h:['Size',1,8,1] }, styles:{
     foregrip:S('Vertical foregrip'), angled:S('Angled foregrip'), bipod:S('Bipod (folded)'), launcher:S('Grenade launcher'), light:S('Flashlight'), laser:S('Laser module'), bayonet:S('Bayonet'),
-    monoblade:S('Glowing blade','cyber'), tank:S('Steam tank','steam'), runeblade:S('Rune blade','fantasy'), gascan:S('Gas canister','space'), ...NONE } },
+    monoblade:S('Glowing blade','cyber'), tank:S('Steam tank','steam'), runeblade:S('Rune blade','fantasy'), gascan:S('Gas canister','space'), pressuretank:S('Pressure tank','water'), ...NONE } },
 };
 const SLOTS = [
   { id:'main_body', label:'Main Body', parts:['grip','handguard','under','body'] },
@@ -681,7 +733,7 @@ const SLOTS = [
   { id:'magazine', label:'Magazine', parts:['mag'] },
 ];
 const SLOT_LABEL = Object.fromEntries(SLOTS.map(s => [s.id, s.label]));
-const NO_RAKE = new Set(['drum','flush','tube','canister','vial','cell','beltbox','powerpack','gascan']);
+const NO_RAKE = new Set(['drum','flush','tube','canister','vial','cell','beltbox','powerpack','gascan','bottle']);
 const SD = {
   'body:frame':{l:13,h:4}, 'body:revolver':{l:12,h:5}, 'body:raygun':{l:12,h:6}, 'body:bullpup':{l:30,h:7}, 'body:lever':{l:16,h:6}, 'body:blaster':{l:16,h:6}, 'body:heavyblaster':{l:22,h:7},
   'barrel:rail':{h:1}, 'barrel:crossbow':{h:2}, 'barrel:double':{h:2}, 'barrel:ringed':{h:2}, 'barrel:flared':{h:3}, 'barrel:shroud':{h:2}, 'barrel:finned':{h:2}, 'barrel:perforated':{h:2},
@@ -696,6 +748,8 @@ const SD = {
   'moving:pump':{l:10,h:4}, 'moving:cocking':{l:6,h:1}, 'moving:lever':{l:6,h:1}, 'moving:coolinglever':{l:3,h:1}, 'moving:slide':{h:3},
   'grip:hilt':{l:7,w:3}, 'grip:ergogrip':{l:7,w:4}, 'grip:blastergrip':{l:7,w:4},
   'under:foregrip':{l:5,h:3}, 'under:angled':{l:6,h:3}, 'under:bipod':{l:10,h:2}, 'under:launcher':{l:12,h:4}, 'under:light':{l:5,h:2}, 'under:laser':{l:4,h:2},
+  'body:toybody':{l:20,h:7}, 'body:clearbody':{l:14,h:6}, 'barrel:nozzle':{h:3}, 'barrel:twinnozzle':{h:3}, 'muzzle:squirt':{l:3,h:3}, 'muzzle:spray':{l:3,h:4},
+  'mag:bottle':{l:11,w:6}, 'sight:toptank':{l:12,h:6}, 'moving:waterpump':{l:10,h:4}, 'stock:tankstock':{l:14,h:9}, 'grip:toygrip':{l:7,w:4}, 'under:pressuretank':{l:10,h:3},
   'under:bayonet':{l:7,h:2}, 'under:monoblade':{l:8,h:2}, 'under:runeblade':{l:8,h:2}, 'under:tank':{l:10,h:3}, 'under:gascan':{l:7,h:3},
 };
 
@@ -793,6 +847,17 @@ const PRESETS = {
     stock:part('blasterfold',13,8,C.black), grip:gp('blastergrip',7,C.black,{w:4,r:.35}), mag:part('gascan',8,0,C.steel,{w:3}), sight:part('longscope',12,4,'#3a3c3e'), moving:part('coolinglever',3,1,C.steel), under:off() }),
   heavyblaster: G('space','Heavy blaster rifle',{glow:'#ff3b30',trim:'#c9a23a',fx:'blaster'},{ body:part('heavyblaster',26,8,'#3a3d3f'), barrel:part('finned',26,3,C.black), handguard:off(), muzzle:part('cone',4,4,C.black),
     stock:part('blasterfold',16,10,C.black), grip:gp('blastergrip',8,C.black,{w:5,r:.3}), mag:part('powerpack',7,0,'#c9a23a',{w:5}), sight:part('longscope',16,5,'#3a3c3e'), moving:part('coolinglever',3,1,C.steel), under:part('bipod',12,2,C.black) }),
+  /* water guns */
+  pumpsoaker: G('water','Pump soaker',{glow:'#4fc3ff',trim:'#ffd400',fx:'water'},{ body:part('toybody',22,7,'#ff7a1a'), barrel:part('nozzle',16,3,'#ffd400'), handguard:off(), muzzle:part('squirt',3,3,'#ffd400'),
+    stock:part('tankstock',14,9,'#3a86ff'), grip:gp('toygrip',7,'#ff7a1a',{w:4,r:.3}), mag:off(), sight:part('toptank',14,6,'#3a86ff'), moving:part('waterpump',12,4,'#ffd400'), under:off() }),
+  squirtpistol: G('water','Squirt pistol',{glow:'#7ce8ff',trim:'#ffffff',fx:'water'},{ body:part('clearbody',12,6,'#2ec4b6'), barrel:part('nozzle',6,3,'#2ec4b6'), handguard:off(), muzzle:part('squirt',2,3,'#2ec4b6'),
+    stock:off(), grip:gp('toygrip',7,'#2ec4b6',{w:4,r:.4,dx:-2}), mag:off(), sight:off(), moving:off(), under:off() }, false),
+  bottleblaster: G('water','Bottle blaster',{glow:'#4fc3ff',trim:'#ffd400',fx:'water'},{ body:part('toybody',18,6,'#8ac926'), barrel:part('twinnozzle',14,3,'#ffd400'), handguard:off(), muzzle:part('spray',3,4,'#ffd400'),
+    stock:off(), grip:gp('toygrip',7,'#7b2cbf',{w:4,r:.35}), mag:part('bottle',12,0,'#ff3d7f',{w:6}), sight:off(), moving:part('waterpump',9,4,'#7b2cbf'), under:off() }),
+  slimecannon: G('water','Slime cannon',{glow:'#9be15d',trim:'#ff3d7f',fx:'water'},{ body:part('clearbody',22,8,'#7b2cbf'), barrel:part('nozzle',14,4,'#7b2cbf'), handguard:off(), muzzle:part('spray',4,4,'#ff3d7f'),
+    stock:part('tankstock',14,10,'#7b2cbf'), grip:gp('toygrip',8,'#ff3d7f',{w:5,r:.3}), mag:off(), sight:part('toptank',12,6,'#7b2cbf'), moving:part('waterpump',10,5,'#ff3d7f'), under:off() }),
+  twinstream: G('water','Twin stream rifle',{glow:'#4fc3ff',trim:'#f2f2f2',fx:'water'},{ body:part('toybody',24,7,'#ff3d7f'), barrel:part('twinnozzle',22,3,'#f2f2f2'), handguard:off(), muzzle:part('squirt',3,3,'#f2f2f2'),
+    stock:part('tankstock',15,9,'#3a86ff'), grip:gp('toygrip',7,'#ff3d7f',{w:4,r:.3}), mag:part('bottle',10,0,'#3a86ff',{w:5}), sight:part('toptank',10,5,'#3a86ff'), moving:part('waterpump',10,4,'#ffd400'), under:part('pressuretank',10,3,'#3a86ff') }),
   bountyrifle: G('space','Bounty hunter rifle',{glow:'#4da3ff',trim:'#9aa0a6',fx:'blaster'},{ body:part('blaster',24,6,'#4a3a2e'), barrel:part('perforated',30,2,C.steel), handguard:off(), muzzle:part('blastertip',3,3,C.black),
     stock:part('blasterfold',15,9,'#4a3a2e'), grip:gp('blastergrip',7,'#2a2c2e',{w:4,r:.35}), mag:off(), sight:part('longscope',18,5,'#3a3c3e'), moving:part('coolinglever',3,1,C.steel), under:part('gascan',8,3,C.steel) }),
 };
@@ -802,13 +867,14 @@ const PAL = {
   steam:{ main:['#b8892e','#7a4a22','#3b2a1e','#2e2a26','#b87333'], furn:['#8b5a2b','#5a381d','#6b2d1f'], acc:['#b87333','#c9a23a','#3b2a1e'], glow:['#ffb347','#7cf7ff','#ff6a00'], trim:['#d4a84a','#b87333','#e0b85a'], fx:['steam'] },
   fantasy:{ main:['#5a381d','#3d2b4f','#2f3b2a','#7d7f86','#e6dcc3'], furn:['#8b5a2b','#4b2a5a','#2f5a3a','#5a381d'], acc:['#7d7f86','#d4af37','#3b2a1e'], glow:['#7cf7ff','#b26bff','#5dff8f','#ff5df0','#ffd23f'], trim:['#d4af37','#c0c0c8'], fx:['magic'] },
   laser:{ main:['#e9edf2','#c63d2f','#2c3e66','#f2c94c','#1e2230','#5ec2b7'], furn:['#1e2230','#e9edf2','#c63d2f','#2c3e66'], acc:['#c0c6d4','#1e2230','#f2c94c'], glow:['#39ff14','#ff3b30','#00d9ff','#ff2bd6'], trim:['#c0c6d4','#f2c94c'], fx:['laser'] },
+  water:{ main:['#ff7a1a','#ffd400','#2ec4b6','#7b2cbf','#ff3d7f','#3a86ff','#8ac926'], furn:['#3a86ff','#ff3d7f','#7b2cbf','#ffd400'], acc:['#ffd400','#f2f2f2','#3a86ff','#ff7a1a'], glow:['#4fc3ff','#7ce8ff','#9be15d','#ff8ad8'], trim:['#ffd400','#f2f2f2','#ff3d7f'], fx:['water'] },
   space:{ main:['#2a2c2e','#3a3d3f','#1c1d1f','#4a3a2e','#6e757b'], furn:['#5a381d','#2a2c2e','#4a3a2e'], acc:['#7b838a','#2a2c2e','#9aa0a6'], glow:['#ff3b30','#4da3ff','#39ff14'], trim:['#9aa0a6','#c9a23a'], fx:['blaster'] },
 };
 
 /* ---------- state ---------- */
 const STORE_KEY = 'gunforge.v1';
 const CANVASES = [[48,32],[64,32],[96,40],[112,44],[128,56],[160,64],[192,80]];
-const DEFAULT_LOOK = { outline:true, oc:'#16140f', shade:true, halo:true, glow:'#ff3b30', trim:'#c9a23a', fx:'flash' };
+const DEFAULT_LOOK = { outline:true, oc:'#16140f', shade:true, shine:true, wear:false, halo:true, glow:'#ff3b30', trim:'#c9a23a', fx:'flash' };
 function fitCanvas(st){ const B = build(st)._bbox; if (!B) return {w:96,h:40}; const w = B.x1-B.x0+1+8, h = B.y1-B.y0+1+8;
   const c = CANVASES.find(([W,H]) => W>=w && H>=h) || CANVASES[CANVASES.length-1]; return {w:c[0], h:c[1]}; }
 function fromPreset(key){
@@ -848,10 +914,14 @@ function shade(o,s,p,look){
   const tone = t => T[t] || (t==='tr' ? TR.b : t==='trh' ? TR.hi : t==='trs' ? TR.sh : t==='gl' ? GL.b : t==='glc' ? GL.lt : t==='gsh' ? GL.sh : LIT[t] || T.b);
   const M = new Set(), glowKeys = [];
   for (const k of s.m) if (!s.cut.has(k)) M.add(k);
+  const seed = o.name.length * 977;
   for (const k of M){ const [x,y] = PK(k); let t = 'b';
-    if (look.shade){ const up = M.has(K(x,y-1)), dn = M.has(K(x,y+1)); t = !up ? 'hi' : (!dn ? 'sh' : 'b'); }
+    if (look.shade){ const up = M.has(K(x,y-1)), dn = M.has(K(x,y+1)); t = !up ? 'hi' : (!dn ? 'sh' : 'b'); if (t === 'b' && !M.has(K(x+1,y))) t = 'sh'; }
     const d = s.det.get(k); if (d) t = d;
-    const gk = K(x+o.ox, y+o.oy); o.pix.set(gk, tone(t)); o.mask.add(gk);
+    const gx = x+o.ox, gy = y+o.oy;
+    if (look.shine && t === 'hi' && ((gx*7 + gy*3) % 11 + 11) % 11 === 0) t = 'lt';
+    if (look.wear && (t === 'b' || t === 'sh')){ const hh = (Math.imul(gx, 73856093) ^ Math.imul(gy, 19349663) ^ seed) >>> 0; if (hh % 29 === 0) t = 'hi'; else if (hh % 41 === 0) t = 'dk'; }
+    const gk = K(gx, gy); o.pix.set(gk, tone(t)); o.mask.add(gk);
     if (t==='gl' || t==='glc' || t==='gsh') glowKeys.push(gk); }
   if (look.outline){ for (const k of M){ if (s.no.has(k)) continue; const [x,y] = PK(k);
     for (const [dx,dy] of N4){ if (M.has(K(x+dx,y+dy))) continue; const gk = K(x+dx+o.ox, y+dy+o.oy); if (!o.pix.has(gk)) o.pix.set(gk, look.oc); } } }
@@ -890,7 +960,7 @@ function build(st){
   place('under', ua[0], ua[1]);
   const mv = P.moving, L = b.l, H = b.h;
   const MA = { slide:[0,-mv.h], bolt:[R(L*.4),1], coolant:[R(L*.4),1], gear:[R(L*.7),R(H/2)], crank:[R(L*.75),R(H/2)], runecharm:[L-2,H],
-    coil:[R(L*.5),topOff-2], pump:[L+2,c.barrelY+c.barrelH], cocking:[R(L*.6),topOff-1], lever:[R(L*.25),H] };
+    coil:[R(L*.5),topOff-2], pump:[L+2,c.barrelY+c.barrelH], waterpump:[L+2,c.barrelY+c.barrelH], cocking:[R(L*.6),topOff-1], lever:[R(L*.25),H] };
   const mva = MA[mv.style] || [1, topOff-1];
   const moving = place('moving', mva[0], mva[1]);
   const tops = ['body','barrel','handguard','moving'].map(n => out[n]);
@@ -981,6 +1051,12 @@ function drawFx(x2, fx, ox, oy, t, W, s, glow){
     case 'steam': { const a = 1-t; for (let i=0;i<5;i++){ const rr = 1+t*4+i*.6, cx = ox+(i*2+t*10)*s, cy = oy-(i*.8+t*4)*s;
         for (let dy=-Math.ceil(rr);dy<=rr;dy++) for (let dx=-Math.ceil(rr);dx<=rr;dx++) if (dx*dx+dy*dy<=rr*rr) px(cx+dx*s,cy+dy*s,'#d9d6cc',a*.5); }
       if (t<.2){ px(ox,oy,'#ffd27a'); px(ox+s,oy,'#ff9a1f'); } break; }
+    case 'water': { const reach = Math.min(1, t*2.2)*span, a = t < .75 ? 1 : 1-(t-.75)/.25;
+      for (let d=0; d<=reach; d+=s){ const cells = d/s, y = oy + cells*cells*.012*s; const lead = d > reach - 3*s;
+        if ((Math.floor(cells)+Math.floor(t*20))%3 !== 0 || lead) px(ox+d, y, lead ? core : glow, a); if (cells%5 < 1) px(ox+d, y-s, core, a*.6); }
+      if (t > .45){ const ex = ox+reach, ey = oy + (reach/s)*(reach/s)*.012*s, sp = (t-.45)*10;
+        for (const [dx,dy] of [[-1,-1],[1,-1],[0,-2],[-2,0],[2,0]]) px(ex+dx*s*sp*.5, ey+dy*s*sp*.5, glow, a*.8); }
+      if (t < .2) px(ox, oy, core); break; }
     case 'bolt': { const x = ox + t*span; for (let i=0;i<6;i++) px(x-i*s,oy,'#a07a4a'); px(x+s,oy,'#c9ced3'); px(x,oy-s,'#c9ced3',.9); px(x,oy+s,'#c9ced3',.9);
       px(x-6*s,oy-s,'#b03030'); px(x-6*s,oy+s,'#b03030'); break; }
     default: { if (t<.35){ const a = 1-t/.35; px(ox,oy,'#fff6c2',a); px(ox+s,oy,'#ffd23f',a); px(ox+2*s,oy,'#ff9a1f',a); px(ox+s,oy-s,'#ffb02e',a); px(ox+s,oy+s,'#ffb02e',a);
@@ -1043,7 +1119,7 @@ function setTool(t){ tool = t; document.querySelectorAll('[data-tool]').forEach(
 document.querySelectorAll('[data-tool]').forEach(b => b.addEventListener('click', () => setTool(b.dataset.tool)));
 
 function renderThemes(){ const el = $('#themes'); el.innerHTML = '';
-  for (const t of ['mil','cyber','steam','fantasy','laser','space','all']){ const b = document.createElement('button'); b.className = 'btn'; b.id = 'theme-'+t;
+  for (const t of ['mil','cyber','steam','fantasy','laser','space','water','all']){ const b = document.createElement('button'); b.className = 'btn'; b.id = 'theme-'+t;
     b.style.setProperty('--dot', THEME_DOT[t]); b.textContent = t === 'all' ? 'All + Chaos' : THEMES[t]; b.setAttribute('aria-pressed', String(state.theme === t));
     b.addEventListener('click', () => { state.theme = t; persist(); renderThemes(); renderPresets(); }); el.appendChild(b); }
   $('#randomBtn').textContent = state.theme === 'all' ? 'Chaos gun (mix every theme)' : `Random ${THEMES[state.theme].toLowerCase()} gun`; }
@@ -1100,7 +1176,7 @@ function syncEditor(){
 function syncUI(){
   renderThemes(); renderPresets(); renderChips(); syncEditor();
   $('#outlineChk').checked = state.look.outline; $('#outlineColor').value = state.look.oc; $('#shadeChk').checked = state.look.shade;
-  $('#haloChk').checked = state.look.halo; $('#glowColor').value = state.look.glow; $('#trimColor').value = state.look.trim; $('#fxSel').value = state.look.fx;
+  $('#haloChk').checked = state.look.halo; $('#shineChk').checked = state.look.shine; $('#wearChk').checked = state.look.wear; $('#glowColor').value = state.look.glow; $('#trimColor').value = state.look.trim; $('#fxSel').value = state.look.fx;
   const cs = state.canvas.w+'x'+state.canvas.h, sel = $('#canvasSel');
   if (![...sel.options].some(o => o.value === cs)){ const o = document.createElement('option'); o.value = cs; o.textContent = cs.replace('x',' × '); sel.appendChild(o); }
   sel.value = cs; $('#gunName').value = state.name; updateUndo(); layoutCanvas(); drawPreviews(); status();
@@ -1110,6 +1186,8 @@ lookColor('#outlineColor','oc'); lookColor('#glowColor','glow'); lookColor('#tri
 $('#outlineChk').addEventListener('change', e => edit(() => { state.look.outline = e.target.checked; }));
 $('#shadeChk').addEventListener('change', e => edit(() => { state.look.shade = e.target.checked; }));
 $('#haloChk').addEventListener('change', e => edit(() => { state.look.halo = e.target.checked; }));
+$('#shineChk').addEventListener('change', e => edit(() => { state.look.shine = e.target.checked; }));
+$('#wearChk').addEventListener('change', e => edit(() => { state.look.wear = e.target.checked; }));
 $('#fxSel').addEventListener('change', e => { edit(() => { state.look.fx = e.target.value; }); testFire(); });
 $('#fireBtn').addEventListener('click', testFire);
 $('#canvasSel').addEventListener('change', e => { const [w,h] = e.target.value.split('x').map(Number); edit(() => { state.canvas = {w,h}; }); layoutCanvas(); status(); });
