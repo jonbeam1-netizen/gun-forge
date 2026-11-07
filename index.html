@@ -36,15 +36,15 @@
   color-scheme:dark;
 }
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.45}
-.wrap{max-width:1320px;margin:0 auto;padding-block:18px 48px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:grid;gap:16px}
+.wrap{max-width:1340px;margin:0 auto;padding-block:18px 48px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:grid;gap:16px}
 header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px;border-bottom:3px solid var(--fg);padding-bottom:10px}
 .mark{font-family:var(--f-display);font-weight:400;font-size:clamp(36px,6vw,58px);line-height:.88;letter-spacing:.01em;margin:0;text-wrap:balance}
 .mark span{color:var(--accent)}
 .tag{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.09em;font-size:14px;color:var(--muted);margin:4px 0 0}
 .specs{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);padding:2px 8px;border-radius:2px;background:var(--panel);font-variant-numeric:tabular-nums}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:18px;align-items:start}
-@media (max-width:940px){.layout{grid-template-columns:minmax(0,1fr)}}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;align-items:start}
+@media (max-width:960px){.layout{grid-template-columns:minmax(0,1fr)}}
 .bench{min-width:0;display:grid;gap:10px}
 .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .group{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center}
@@ -65,17 +65,23 @@ button{font:inherit;color:inherit}
 #cv.move{cursor:grab}
 .status{font-family:var(--f-mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 18px;font-variant-numeric:tabular-nums}
 .status .warn{color:var(--danger)}
-.preview{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;background:var(--panel);border:1px solid var(--line);padding:10px 12px}
-.preview figure{margin:0;display:grid;gap:4px}
+.preview{display:grid;gap:10px;background:var(--panel);border:1px solid var(--line);padding:10px 12px;min-width:0}
+.pvrow{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;min-width:0}
+.preview figure{margin:0;display:grid;gap:4px;min-width:0}
 .preview figcaption{font-family:var(--f-label);font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 canvas.pv{image-rendering:pixelated;background:#1c1f17;max-width:100%;display:block}
+.firebar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.firebar select{width:auto}
 .panel{display:grid;gap:14px;min-width:0}
 .sec{background:var(--panel);border:1px solid var(--line);padding:12px 14px;display:grid;gap:10px;min-width:0}
 .sec h2{font-family:var(--f-label);font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .sec h2 small{font-family:var(--f-mono);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted)}
-.presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-.presets .btn{text-align:left}
-.parts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.themes{display:flex;flex-wrap:wrap;gap:4px}
+.themes .btn{font-size:13px;padding:4px 9px;display:inline-flex;align-items:center;gap:6px}
+.themes .btn::before{content:"";width:8px;height:8px;background:var(--dot);display:inline-block}
+.presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:300px;overflow-y:auto;padding-right:2px}
+.presets .btn{text-align:left;font-size:13px}
+.parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .pchip{text-align:left;padding:5px 8px;border:1px solid var(--line);background:var(--raised);cursor:pointer;display:grid;border-radius:2px;min-width:0}
 .pchip b{font-family:var(--f-label);font-weight:600;font-size:15px;line-height:1.2}
 .pchip small{font-size:11px;color:var(--muted);font-family:var(--f-mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -87,7 +93,8 @@ canvas.pv{image-rendering:pixelated;background:#1c1f17;max-width:100%;display:bl
 .row > label,.row > .lbl{font-family:var(--f-label);font-size:14px;color:var(--muted)}
 .row output{font-family:var(--f-mono);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
 input[type=range]{width:100%;accent-color:var(--accent)}
-select,input[type=text]{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);background:var(--raised);color:var(--fg);border-radius:2px;width:100%;min-width:0}
+select,input[type=text],textarea{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);background:var(--raised);color:var(--fg);border-radius:2px;width:100%;min-width:0}
+textarea{font-family:var(--f-mono);font-size:12px;resize:vertical;overflow-wrap:anywhere}
 .check{display:flex;align-items:center;gap:8px;font-size:14px}
 .check input{accent-color:var(--accent);width:16px;height:16px}
 .swatches{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
@@ -96,10 +103,11 @@ select,input[type=text]{font:inherit;font-size:14px;padding:5px 8px;border:1px s
 .nudge{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .nudge .btn{padding:4px 9px;min-width:34px}
 .nudge output{font-family:var(--f-mono);font-size:12px;margin-left:6px;color:var(--muted)}
-.slot{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.slot{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin:0}
 .slot b{color:var(--fg);font-weight:500}
 .btnrow{display:flex;flex-wrap:wrap;gap:6px}
 .note{font-size:13px;color:var(--muted);margin:0}
+.sub{font-family:var(--f-label);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:4px 0 0;border-top:1px dashed var(--line);padding-top:10px}
 ol.steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
 ol.steps code,.note code{font-family:var(--f-mono);font-size:12px;background:var(--raised);padding:0 4px;border:1px solid var(--line);border-radius:2px;overflow-wrap:anywhere}
 kbd{font-family:var(--f-mono);font-size:11px;border:1px solid currentColor;padding:0 3px;border-radius:2px}
@@ -153,15 +161,31 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid currentColor;paddi
       <div class="status" id="status"></div>
 
       <div class="preview" aria-label="Actual size previews">
-        <figure><canvas class="pv" id="pv1"></canvas><figcaption>Actual pixels (1×)</figcaption></figure>
-        <figure><canvas class="pv" id="pv2"></canvas><figcaption>2×</figcaption></figure>
-        <figure><canvas class="pv" id="pv4"></canvas><figcaption>4×</figcaption></figure>
+        <div class="firebar">
+          <button class="btn primary" id="fireBtn">Test fire</button>
+          <label class="sr" for="fxSel">Shot effect</label>
+          <select id="fxSel">
+            <option value="flash">Bullet + muzzle flash</option>
+            <option value="blaster">Blaster bolt</option>
+            <option value="laser">Laser beam</option>
+            <option value="magic">Magic bolt</option>
+            <option value="steam">Steam blast</option>
+            <option value="bolt">Crossbow bolt</option>
+          </select>
+          <span class="note">Preview only. The game uses its own shot effects.</span>
+        </div>
+        <div class="pvrow">
+          <figure><canvas class="pv" id="pv4"></canvas><figcaption>4×</figcaption></figure>
+          <figure><canvas class="pv" id="pv2"></canvas><figcaption>2×</figcaption></figure>
+          <figure><canvas class="pv" id="pv1"></canvas><figcaption>Actual pixels (1×)</figcaption></figure>
+        </div>
       </div>
     </section>
 
     <aside class="panel" aria-label="Gun settings">
       <section class="sec">
         <h2>Start from <small>replaces current gun</small></h2>
+        <div class="themes" id="themes" role="group" aria-label="Theme"></div>
         <div class="presets" id="presets"></div>
         <button class="btn primary" id="randomBtn">Random gun</button>
       </section>
@@ -174,6 +198,9 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid currentColor;paddi
 
       <section class="sec">
         <h2>Look</h2>
+        <div class="row two"><label for="glowColor">Glow color</label><input type="color" id="glowColor" value="#00f0ff"></div>
+        <div class="row two"><label for="trimColor">Trim metal</label><input type="color" id="trimColor" value="#c9a23a"></div>
+        <label class="check"><input type="checkbox" id="haloChk"> Glow halo (soft light around glowing pixels)</label>
         <label class="check"><input type="checkbox" id="outlineChk"> Dark outline</label>
         <div class="row two"><label for="outlineColor">Outline color</label><input type="color" id="outlineColor" value="#16140f"></div>
         <label class="check"><input type="checkbox" id="shadeChk"> Auto shading (light top, dark bottom)</label>
@@ -185,6 +212,7 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid currentColor;paddi
             <option value="112x44">112 × 44</option>
             <option value="128x56">128 × 56</option>
             <option value="160x64">160 × 64</option>
+            <option value="192x80">192 × 80</option>
           </select>
         </div>
       </section>
@@ -211,9 +239,19 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid currentColor;paddi
           <button class="btn" id="slotBtn">Selected slot PNG</button>
         </div>
         <p class="note">The ZIP has the full image, one PNG for each MOD Editor slot, a <code>layout.txt</code> with sizes and mount offsets, and your design file.</p>
+
+        <h3 class="sub">Gun code</h3>
+        <p class="note">Share a gun as text. Paste someone's code or share link below to load their gun.</p>
+        <label class="sr" for="codeIn">Gun code</label>
+        <textarea id="codeIn" rows="3" spellcheck="false" placeholder="Paste a gun code, share link or JSON here"></textarea>
         <div class="btnrow">
-          <button class="btn" id="saveDesign">Save design</button>
-          <button class="btn" id="openDesign">Open design</button>
+          <button class="btn primary" id="copyCode">Copy gun code</button>
+          <button class="btn" id="copyLink">Copy share link</button>
+          <button class="btn" id="loadCode">Load code</button>
+        </div>
+        <div class="btnrow">
+          <button class="btn" id="saveDesign">Save JSON file</button>
+          <button class="btn" id="openDesign">Open JSON file</button>
           <input type="file" id="fileIn" accept=".json,application/json" hidden>
         </div>
       </section>
@@ -242,6 +280,8 @@ const K = (x, y) => x + ',' + y;
 const PK = k => { const i = k.indexOf(','); return [+k.slice(0, i), +k.slice(i + 1)]; };
 const N4 = [[1,0],[-1,0],[0,1],[0,-1]];
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const R = Math.round;
+const SITE = 'https://jonbeam1-netizen.github.io/gun-forge/';
 
 /* ---------- color ---------- */
 function hexToRgb(h){ h = h.replace('#',''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h, 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
@@ -255,8 +295,9 @@ function hslToRgb(h,s,l){ if (s === 0) return [l*255,l*255,l*255]; const q = l <
   return [f(h+1/3)*255, f(h)*255, f(h-1/3)*255]; }
 function shiftL(hex, dl, ds = 0){ const [h,s,l] = rgbToHsl(...hexToRgb(hex)); return rgbToHex(...hslToRgb(h, clamp(s+ds,0,1), clamp(l+dl,0,1))); }
 const toneCache = new Map();
-function tones(hex){ let t = toneCache.get(hex); if (!t){ t = { hi: shiftL(hex,.13,-.02), b: hex, sh: shiftL(hex,-.1), dk: shiftL(hex,-.2,.02) }; toneCache.set(hex,t); } return t; }
-const LIT = { glass:'#86cfee', glint:'#e8f8ff', red:'#ff3b30' };
+function tones(hex){ let t = toneCache.get(hex); if (!t){ t = { hi: shiftL(hex,.13,-.02), b: hex, sh: shiftL(hex,-.1), dk: shiftL(hex,-.2,.02), lt: shiftL(hex,.24,-.05) }; toneCache.set(hex,t); } return t; }
+const LIT = { glass:'#86cfee', glint:'#e8f8ff', red:'#ff3b30', face:'#efe3c2', string:'#e8e0c8', shaft:'#a07a4a', head:'#c9ced3', fletch:'#b03030', bone:'#e8e2cf', cork:'#8a6a40', brass:'#d9a441', blade:'#d6dadd', fiber:'#ff7a2a' };
+const isHex = c => typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c);
 
 /* ---------- raster helpers ---------- */
 function rect(S,x,y,w,h){ for (let j=0;j<h;j++) for (let i=0;i<w;i++) S.add(K(x+i,y+j)); }
@@ -266,131 +307,373 @@ function poly(S,pts){ let minY=Infinity, maxY=-Infinity; for (const p of pts){ m
       if ((y1<=cy && y2>cy) || (y2<=cy && y1>cy)) xs.push(x1 + (cy-y1)/(y2-y1)*(x2-x1)); }
     xs.sort((a,b)=>a-b);
     for (let i=0;i+1<xs.length;i+=2) for (let x=Math.ceil(xs[i]-.5); x+.5<=xs[i+1]; x++) S.add(K(x,y)); } }
-function line(S,x0,y0,x1,y1){ x0=Math.round(x0); y0=Math.round(y0); x1=Math.round(x1); y1=Math.round(y1);
+function line(S,x0,y0,x1,y1){ x0=R(x0); y0=R(y0); x1=R(x1); y1=R(y1);
   const dx=Math.abs(x1-x0), sx=x0<x1?1:-1, dy=-Math.abs(y1-y0), sy=y0<y1?1:-1; let e=dx+dy;
   for(;;){ S.add(K(x0,y0)); if (x0===x1 && y0===y1) break; const e2=2*e; if (e2>=dy){ e+=dy; x0+=sx; } if (e2<=dx){ e+=dx; y0+=sy; } } }
 function circ(S,cx,cy,r){ for (let y=Math.floor(cy-r); y<=Math.ceil(cy+r); y++) for (let x=Math.floor(cx-r); x<=Math.ceil(cx+r); x++) if (Math.hypot(x-cx,y-cy) <= r+.15) S.add(K(x,y)); }
+function gearSet(S,cx,cy,r){ circ(S,cx,cy,r); for (let a=0;a<8;a++){ const t=a*Math.PI/4; S.add(K(cx+R(Math.cos(t)*(r+1)), cy+R(Math.sin(t)*(r+1)))); } }
 const mk = () => ({ m:new Set(), cut:new Set(), det:new Map(), no:new Set() });
-function port(o,L,H){ if (H<5) return; const x0=Math.round(L*.42), n=Math.max(3,Math.round(L*.18)); for (let x=x0; x<x0+n && x<L-1; x++) o.det.set(K(x,2),'dk'); }
+const set = (o,x,y,t) => o.det.set(K(x,y),t);
+const add = (o,x,y,t,noOutline) => { const k=K(x,y); o.m.add(k); if (t) o.det.set(k,t); if (noOutline) o.no.add(k); };
+function glowRow(o,x0,x1,y,every){ for (let x=x0;x<=x1;x++) set(o,x,y,(every && (x-x0)%every===0) ? 'glc' : 'gl'); }
+const GLYPHS=[[[0,0],[0,1],[0,2],[1,0]],[[1,0],[0,1],[1,2]],[[0,0],[1,1],[0,2],[1,2]],[[0,0],[1,0],[1,1],[0,2]],[[0,0],[1,1],[1,2],[0,1]]];
+function runes(o,x0,x1,mid){ let i=0; for (let x=x0;x+1<=x1;x+=4,i++) for (const [dx,dy] of GLYPHS[i%GLYPHS.length]) set(o,x+dx,mid-1+dy,'gl'); }
+function port(o,L,H){ if (H<5) return; const x0=R(L*.42), n=Math.max(3,R(L*.18));
+  for (let x=x0; x<x0+n && x<L-1; x++){ set(o,x,2,'dk'); if (H>=7) set(o,x,3,'dk'); set(o,x,1,'hi'); }
+  set(o,x0+1,2,'brass'); }
+function receiverDetail(o,L,H,c){
+  port(o,L,H);
+  if (H>=5){ set(o,R(L*.12),H-2,'hi'); set(o,R(L*.84),H-2,'hi'); }
+  if (H>=6){ set(o,R(L*.27),H-3,'dk'); set(o,R(L*.27)+1,H-3,'hi'); set(o,R(L*.4),H-2,'sh'); set(o,R(L*.4)+1,H-2,'sh'); set(o,R(L*.68),2,'hi'); set(o,R(L*.68),3,'sh'); }
+  const mg=c.P.mag; if (mg.on && ['box','curved','stanag','pmag','extended','battery'].includes(mg.style)){ const mx=R(L*.55)+mg.dx-1; for (let x=mx;x<mx+mg.w+2;x++) add(o,x,H,'sh'); }
+}
+function frontPost(o,c,small){ const gx=c.frontX-2, fx=gx-c.sightX, t=c.topAt(gx)-c.sightY; if (fx<=4) return;
+  if (small) add(o,fx,t-1); else { add(o,fx-1,t-1); add(o,fx,t-1); add(o,fx+1,t-1); add(o,fx,t-2); } }
+function rows(o,L,W,r,fn){ for (let y=0;y<L;y++){ const x0=-R(r*y); fn ? fn(y,x0) : rect(o.m,x0,y,W,1); } }
 
 /* ---------- part shapes (local coords, origin = attach point) ---------- */
 const SHAPES = {
-  body(p){ const o=mk(), L=p.l, H=p.h;
+  body(p,c){ const o=mk(), L=p.l, H=p.h, mid=Math.floor(H/2);
     switch (p.style){
       case 'receiver': case 'railtop':
         rect(o.m,0,0,L,H); o.cut.add(K(0,H-1));
-        if (p.style==='railtop') for (let x=1;x<L-1;x++){ o.m.add(K(x,-1)); o.det.set(K(x,-1), x%2 ? 'sh' : 'hi'); }
-        port(o,L,H); break;
-      case 'tapered': poly(o.m,[[0,1],[L,0],[L,H],[Math.round(L*.35),H],[0,H-2]]); port(o,L,H); break;
+        if (p.style==='railtop') for (let x=1;x<L-1;x++) add(o,x,-1, x%2 ? 'sh' : 'hi');
+        receiverDetail(o,L,H,c); break;
+      case 'tapered': poly(o.m,[[0,1],[L,0],[L,H],[R(L*.35),H],[0,H-2]]); receiverDetail(o,L,H,c);
+        for (let x=R(L*.15);x<R(L*.3);x++) set(o,x,1,'sh'); break;
+      case 'stamped': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(0,H-1));
+        for (let x=1;x<L-1;x++){ set(o,x,1,'hi'); if (H>=6) set(o,x,H-2,'sh'); }
+        for (let x=3;x<L-2;x+=5) set(o,x,mid,'hi'); receiverDetail(o,L,H,c); break;
+      case 'bullpup': { rect(o.m,0,0,L,H); const bl=R(L*.45), eh=Math.max(2,R(H*.4)); rect(o.m,0,H,bl,eh);
+        o.cut.add(K(L-1,0)); o.cut.add(K(bl-1,H+eh-1));
+        for (let y=0;y<H+eh;y++) set(o,0,y,'dk'); for (let y=1;y<H+eh-1;y++) set(o,bl,y,'sh');
+        for (let x=2;x<bl-1;x+=3) set(o,x,H+1,'dk');
+        for (let x=R(L*.6);x<R(L*.75);x++){ set(o,x,2,'dk'); set(o,x,1,'hi'); } set(o,R(L*.6)+1,2,'brass'); break; }
+      case 'lever': poly(o.m,[[0,1],[1,0],[L,0],[L,H],[2,H],[0,H-2]]);
+        for (let x=2;x<L-2;x++){ set(o,x,1,'trh'); set(o,x,H-2,'tr'); } for (let y=1;y<H-1;y++){ set(o,2,y,'tr'); set(o,L-3,y,'tr'); }
+        set(o,R(L*.4),mid,'dk'); set(o,R(L*.65),mid,'dk'); for (let x=R(L*.55);x<L-4;x++) set(o,x,H-3,'sh'); break;
       case 'frame': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1));
-        if (H>=3) for (let x=L-6;x<L-2;x+=2) if (x>0) o.det.set(K(x,H-2),'sh');
-        o.det.set(K(Math.round(L*.45),1),'dk'); break;
-      case 'revolver': { rect(o.m,0,0,L,H); const cx=Math.round(L*.3), cl=Math.max(5,Math.round(L*.45));
-        rect(o.m,cx,-1,cl,H+2); for (let x=cx+1;x<cx+cl-1;x++){ o.det.set(K(x,1),'sh'); o.det.set(K(x,H-2),'sh'); }
-        o.m.add(K(0,-1)); o.m.add(K(-1,-1)); o.m.add(K(-1,-2)); break; }
+        if (H>=3) for (let x=L-6;x<L-2;x+=2) if (x>0) set(o,x,H-2,'sh');
+        set(o,R(L*.45),1,'dk'); set(o,R(L*.3),H-2,'hi'); break;
+      case 'revolver': { rect(o.m,0,0,L,H); const cx=R(L*.3), cl=Math.max(5,R(L*.45));
+        rect(o.m,cx,-1,cl,H+2); for (let x=cx+1;x<cx+cl-1;x++){ set(o,x,1,'sh'); set(o,x,H-2,'sh'); }
+        set(o,cx+R(cl/2),mid,'dk'); add(o,0,-1); add(o,-1,-1); add(o,-1,-2); break; }
+      case 'cyberframe': poly(o.m,[[1,0],[L-3,0],[L,2],[L,H],[3,H],[0,H-3]]);
+        glowRow(o,3,L-4,mid,4); if (H>=5) for (let x=L-9;x<L-4;x+=2) if (x>1) set(o,x,1,'dk'); break;
+      case 'cyberblock': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(0,H-1));
+        for (let x=6;x<L-2;x+=6) for (let y=1;y<H-1;y++) set(o,x,y,'dk');
+        for (let x=2;x<L-2;x+=3) set(o,x,H-2,'gl');
+        if (H>=5){ set(o,2,1,'glc'); set(o,3,1,'gl'); set(o,4,1,'glc'); } break;
+      case 'boiler': { rect(o.m,0,0,L,H); [K(0,0),K(L-1,0),K(0,H-1),K(L-1,H-1)].forEach(k=>o.cut.add(k));
+        for (let y=0;y<H;y++){ set(o,2,y,'tr'); set(o,L-3,y,'tr'); }
+        for (let x=4;x<L-4;x+=3){ set(o,x,1,'trh'); if (H>=5) set(o,x,H-2,'trh'); }
+        const gx=R(L*.42), gy=-1, G=new Set(); circ(G,gx,gy,2);
+        for (const k of G){ o.m.add(k); const [x,y]=PK(k); o.det.set(k, Math.hypot(x-gx,y-gy)>1.3 ? 'tr' : 'face'); }
+        set(o,gx,gy,'dk'); set(o,gx+1,gy-1,'dk'); break; }
+      case 'brassframe': poly(o.m,[[0,1],[L,0],[L,H],[R(L*.35),H],[0,H-2]]);
+        for (let x=1;x<L;x++) set(o,x,0,'trh'); set(o,0,1,'trh');
+        for (let x=3;x<L-3;x+=4){ set(o,x,2,'tr'); set(o,x+1,H>=6?3:2,'tr'); set(o,x+2,2,'tr'); } break;
+      case 'runic': poly(o.m,[[0,1],[2,0],[L-1,0],[L,1],[L,H-1],[L-1,H],[0,H]]);
+        for (let x=0;x<L;x++){ set(o,x,0,'trh'); set(o,x,H-1,'trs'); } runes(o,3,L-3,mid); break;
+      case 'raygun': { const cx=L*.38, cy=(H-1)/2, rr=H/2+.6; circ(o.m,cx,cy,rr); rect(o.m,0,1,L,Math.max(1,H-2));
+        line(o.m,R(L*.25),-1,R(L*.1),-3); line(o.m,R(L*.25)+1,-1,R(L*.1)+1,-3); line(o.m,R(L*.25),H,R(L*.1),H+2);
+        for (let y=0;y<H;y++) set(o,R(L*.7),y,'tr');
+        for (const k of o.m){ const [x,y]=PK(k); const d=Math.hypot(x-cx,y-cy); if (d<1.3) o.det.set(k,'glc'); else if (d<2.3) o.det.set(k,'gl'); } break; }
+      case 'pulse': rect(o.m,0,0,L,H);
+        [[0,0],[1,0],[0,1],[L-1,0],[L-2,0],[L-1,1],[0,H-1],[1,H-1],[0,H-2],[L-1,H-1],[L-2,H-1],[L-1,H-2]].forEach(([x,y])=>o.cut.add(K(x,y)));
+        glowRow(o,4,L-5,mid,3); for (let y=1;y<H-1;y++) set(o,R(L*.3),y,'sh'); break;
+      case 'blaster': rect(o.m,0,0,L,H); o.cut.add(K(0,0)); o.cut.add(K(L-1,H-1));
+        rect(o.m,R(L*.2),-1,Math.max(2,R(L*.5)),1); for (let x=R(L*.2);x<R(L*.7);x++) set(o,x,-1,'sh');
+        for (let x=R(L*.62);x<L-2;x+=2) for (let y=2;y<H-2;y++) set(o,x,y,'dk');
+        set(o,2,1,'gl'); set(o,2,2,'dk'); set(o,R(L*.35),H-2,'hi'); break;
+      case 'heavyblaster': { rect(o.m,0,0,L,H); o.cut.add(K(0,0)); o.cut.add(K(0,H-1));
+        const bx=R(L*.25), bw=Math.max(4,R(L*.5)); rect(o.m,bx,-1,bw,H+2);
+        for (let x=bx+1;x<bx+bw-1;x+=2) for (let y=-1;y<=H;y++) set(o,x,y,'sh');
+        for (let x=2;x<bx-1;x++) set(o,x,mid,'gl'); set(o,1,mid,'glc'); break; }
     } return o; },
-  barrel(p){ const o=mk(), L=p.l, H=p.h;
+  barrel(p){ const o=mk(), L=p.l, H=p.h, mid=Math.floor((H-1)/2);
     switch (p.style){
-      case 'plain': rect(o.m,0,0,L,H); break;
-      case 'fluted': rect(o.m,0,0,L,H); if (H>=3) for (let x=1;x<L-1;x+=2) o.det.set(K(x,1),'sh'); else for (let x=2;x<L-1;x+=3) o.det.set(K(x,0),'b'); break;
-      case 'double': rect(o.m,0,0,L,H*2+1); for (let x=0;x<L;x++) o.det.set(K(x,H),'dk'); break;
-      case 'ventrib': rect(o.m,0,0,L,H); for (let x=0;x<L;x++) if (x%3!==2) o.m.add(K(x,-1)); break;
+      case 'plain': rect(o.m,0,0,L,H); if (L>6) for (let y=0;y<H;y++) set(o,L-2,y,'sh'); break;
+      case 'fluted': rect(o.m,0,0,L,H); if (H>=3) for (let x=1;x<L-1;x+=2) set(o,x,1,'sh'); else for (let x=2;x<L-1;x+=3) set(o,x,0,'b'); break;
+      case 'double': rect(o.m,0,0,L,H*2+1); for (let x=0;x<L;x++) set(o,x,H,'dk'); for (let y=0;y<H*2+1;y++) set(o,L-1,y,'sh'); break;
+      case 'ventrib': rect(o.m,0,0,L,H); for (let x=0;x<L;x++) if (x%3!==2) add(o,x,-1); add(o,L-2,-2,'trh'); break;
+      case 'shroud': rect(o.m,0,-1,L,H+2); for (let x=1;x<L-1;x+=3) o.cut.add(K(x,mid)); break;
+      case 'rail': rect(o.m,0,0,L,H+2); for (let x=0;x<L;x++) for (let y=1;y<=H;y++) set(o,x,y, x%4===1 ? 'glc' : 'gl'); for (let y=0;y<H+2;y++) set(o,0,y,'dk'); break;
+      case 'flared': poly(o.m,[[0,0],[L*.65,0],[L,-2],[L,H+2],[L*.65,H],[0,H]]); for (const fx of [R(L*.2),R(L*.6)]) for (let y=-2;y<H+2;y++) set(o,fx,y,'tr'); break;
+      case 'pipes': rect(o.m,0,0,L,H); rect(o.m,0,H+1,R(L*.8),1); for (let x=3;x<L;x+=7) for (let y=0;y<H;y++) set(o,x,y,'tr');
+        for (let x=2;x<R(L*.8);x+=5){ add(o,x,H,'trs'); set(o,x,H+1,'tr'); } break;
+      case 'crossbow': { rect(o.m,0,0,L,H); const S=Math.max(4,H*3), lim=new Set();
+        for (let i=0;i<=S;i++){ const x=2+R(Math.pow(i/S,2)*3); lim.add(K(x,-i)); lim.add(K(x,H-1+i)); if (i<S*.6){ lim.add(K(x+1,-i)); lim.add(K(x+1,H-1+i)); } }
+        for (const k of lim) o.m.add(k);
+        const str=new Set(); line(str,5,-S,-4,0); line(str,5,H-1+S,-4,H-1);
+        for (const k of str) if (!o.m.has(k)){ o.m.add(k); o.no.add(k); o.det.set(k,'string'); }
+        for (let x=-3;x<=L-2;x++) add(o,x,-1,'shaft',true);
+        [[L-2,-1],[L-1,-1],[L-2,-2],[L,-1]].forEach(([x,y])=>add(o,x,y,'head',true));
+        [[-3,-2],[-2,-2],[-4,-2]].forEach(([x,y])=>add(o,x,y,'fletch',true)); break; }
+      case 'ornate': rect(o.m,0,0,L,H); for (let x=0;x<L;x++) for (let y=0;y<H;y++) if ((x+y)%4===0) set(o,x,y,'sh');
+        for (let x=2;x<L-1;x+=6){ rect(o.m,x,-1,1,H+2); for (let y=-1;y<=H;y++) set(o,x,y,'tr'); } break;
+      case 'emitter': rect(o.m,0,0,L,H); for (let x=0;x<L;x++) set(o,x,mid,'gl');
+        for (let x=2;x<L-1;x+=3){ rect(o.m,x,-1,1,H+2); for (let y=-1;y<=H;y++) set(o,x,y,'tr'); } break;
+      case 'ringed': rect(o.m,0,0,L,H); [[.3,1],[.55,2],[.8,3]].forEach(([f,r])=>{ const x=R(L*f); rect(o.m,x,-r,2,H+2*r); for (let y=-r;y<H+r;y++){ set(o,x,y,'tr'); set(o,x+1,y,'trs'); } }); break;
+      case 'finned': rect(o.m,0,0,L,H); for (let x=1;x<L-1;x+=2){ rect(o.m,x,-1,1,H+2); for (let y=-1;y<=H;y++) set(o,x,y,'sh'); } break;
+      case 'perforated': rect(o.m,0,-1,L,H+2); for (let x=1;x<L-2;x+=2) o.cut.add(K(x,mid)); for (let y=-1;y<=H;y++) set(o,L-1,y,'sh'); break;
     } return o; },
   handguard(p){ const o=mk(), L=p.l, H=p.h, mid=Math.floor(H/2);
     switch (p.style){
-      case 'rail': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1)); for (let x=0;x<L;x++) o.det.set(K(x,0), x%2 ? 'sh' : 'hi');
-        if (H>=4) for (let x=2;x<L-2;x+=4){ o.det.set(K(x,mid),'dk'); o.det.set(K(x+1,mid),'dk'); } break;
-      case 'smooth': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(L-1,H-1)); break;
+      case 'rail': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1)); for (let x=0;x<L;x++) set(o,x,0, x%2 ? 'sh' : 'hi');
+        if (H>=4) for (let x=2;x<L-2;x+=4){ set(o,x,mid,'dk'); set(o,x+1,mid,'dk'); } break;
+      case 'mlok': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1)); for (let x=0;x<L;x++) set(o,x,0, x%2 ? 'sh' : 'hi');
+        if (H>=4) for (let x=2;x<L-4;x+=5) for (let i=0;i<3;i++) set(o,x+i,mid,'dk');
+        for (let y=1;y<H;y++) set(o,L-1,y,'sh'); break;
+      case 'quad': rect(o.m,0,0,L,H); for (let x=0;x<L;x++){ set(o,x,0, x%2?'sh':'hi'); set(o,x,H-1, x%2?'dk':'sh'); if (H>=5) set(o,x,mid, x%2?'dk':'b'); } break;
+      case 'smooth': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(L-1,H-1)); if (L>6) for (let y=1;y<H-1;y++) set(o,R(L*.5),y,'sh'); break;
       case 'wood': poly(o.m,[[0,0],[L,.5],[L,H-1.5],[0,H]]); o.cut.add(K(L-1,0));
-        for (let x=2;x<L-2;x+=4){ o.det.set(K(x,mid),'sh'); o.det.set(K(x+1,mid),'sh'); } break;
+        for (let x=2;x<L-2;x+=4){ set(o,x,mid,'sh'); set(o,x+1,mid,'sh'); } set(o,0,mid,'dk'); break;
       case 'vented': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1));
         if (H>=4) for (let x=2;x<L-3;x+=3){ o.cut.add(K(x,mid)); o.cut.add(K(x+1,mid)); } break;
+      case 'neon': poly(o.m,[[0,0],[L-2,0],[L,2],[L,H],[0,H]]); glowRow(o,1,L-2,H-2,3); break;
+      case 'cage': rect(o.m,0,0,L,H); for (let x=2;x<L-2;x+=3) for (let y=1;y<H-1;y++) o.cut.add(K(x,y));
+        for (let x=0;x<L;x++){ set(o,x,0, x%3===1 ? 'trh' : 'tr'); set(o,x,H-1, x%3===1 ? 'trh' : 'tr'); } break;
+      case 'carved': poly(o.m,[[0,0],[L,.5],[L,H-1.5],[0,H]]); for (let y=0;y<H;y++){ set(o,0,y,'tr'); set(o,1,y,'trs'); set(o,L-1,y,'tr'); }
+        { const gx=R(L/2); [[0,-1],[-1,0],[1,0],[0,1]].forEach(([dx,dy])=>set(o,gx+dx,mid+dy,'gl')); set(o,gx,mid,'glc'); } break;
+      case 'capacitor': { rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(L-1,H-1)); const cw=Math.max(3,Math.floor((L-3)/3));
+        for (let i=0;i<3;i++){ const x0=2+i*cw; for (let x=x0;x<x0+cw-1 && x<L-2;x++) for (let y=1;y<H-1;y++) set(o,x,y, x===x0+Math.floor((cw-1)/2) ? 'glc' : 'gl'); } break; }
     } return o; },
   muzzle(p){ const o=mk(), L=p.l, H=p.h, mid=Math.floor(H/2);
     switch (p.style){
-      case 'brake': rect(o.m,0,0,L,H); for (let x=1;x<L;x+=2){ o.det.set(K(x,0),'dk'); o.det.set(K(x,H-1),'dk'); } break;
-      case 'flash': rect(o.m,0,0,L,H); if (H>=3){ o.cut.add(K(L-1,mid)); o.det.set(K(L-2,mid),'dk'); } break;
+      case 'brake': rect(o.m,0,0,L,H); for (let x=1;x<L;x+=2){ set(o,x,0,'dk'); set(o,x,H-1,'dk'); } break;
+      case 'birdcage': rect(o.m,0,0,L,H); for (let x=1;x<L-1;x++){ if (x%2) set(o,x,0,'dk'); else set(o,x,H-1,'dk'); } if (H>=3) o.cut.add(K(L-1,mid)); break;
+      case 'flash': rect(o.m,0,0,L,H); if (H>=3){ o.cut.add(K(L-1,mid)); set(o,L-2,mid,'dk'); } break;
       case 'suppressor': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(L-1,H-1));
-        for (let y=0;y<H;y++) o.det.set(K(0,y),'sh'); if (L>6) for (let y=1;y<H-1;y++) o.det.set(K(L-3,y),'sh'); break;
-      case 'comp': rect(o.m,0,0,L,H); for (let x=1;x<L-1;x+=2) o.det.set(K(x,0),'dk'); break;
+        for (let y=0;y<H;y++) set(o,0,y,'sh'); if (L>6) for (let y=1;y<H-1;y++) set(o,L-3,y,'sh'); break;
+      case 'can': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(L-1,H-1)); o.cut.add(K(0,0)); o.cut.add(K(0,H-1));
+        for (let x=2;x<L-1;x+=3) for (let y=0;y<H;y++) set(o,x,y,'sh'); break;
+      case 'comp': rect(o.m,0,0,L,H); for (let x=1;x<L-1;x+=2) set(o,x,0,'dk'); break;
+      case 'spike': poly(o.m,[[0,0],[L,H/2],[0,H]]); for (const k of o.m){ const [x,y]=PK(k); if (!o.m.has(K(x,y-1))) o.det.set(k,'gl'); } break;
+      case 'bell': poly(o.m,[[0,1],[L,-1],[L,H+1],[0,H-1]]); for (let y=-1;y<=H;y++){ set(o,0,y,'tr'); set(o,L-1,y,'trs'); } break;
+      case 'crystal': { const cy=(H-1)/2; poly(o.m,[[0,cy+.5],[L/2,-1],[L,cy+.5],[L/2,H+1]]);
+        for (const k of o.m){ const [x,y]=PK(k); o.no.add(k); o.det.set(k, y<cy && x<L/2 ? 'glc' : (y>cy+1 ? 'gsh' : 'gl')); }
+        add(o,0,-1,'tr'); add(o,0,H,'tr'); break; }
+      case 'dragon': { const m2=Math.floor(H/2);
+        poly(o.m,[[0,-1],[L*.5,-2],[L*.85,-1],[L,.5],[L,m2],[0,m2]]); poly(o.m,[[0,m2+1],[L*.85,m2+1],[L*.7,H],[0,H+1]]);
+        line(o.m,1,-1,-1,-4); line(o.m,2,-1,0,-4);
+        for (let x=0;x<L;x+=2) set(o,x,0,'sh');
+        set(o,R(L*.5),-1,'gl'); set(o,R(L*.5)+1,-1,'glc');
+        add(o,R(L*.75),m2,'bone'); add(o,R(L*.45),m2,'bone'); break; }
+      case 'focus': rect(o.m,0,0,L,H); rect(o.m,1,-1,Math.max(1,L-2),1); rect(o.m,1,H,Math.max(1,L-2),1);
+        for (let y=0;y<H;y++){ set(o,L-1,y,'glc'); if (L>2) set(o,L-2,y,'gl'); o.no.add(K(L-1,y)); } break;
+      case 'tesla': { rect(o.m,0,0,2,H); const pr=new Set(); line(pr,1,0,L-1,-2); line(pr,1,H-1,L-1,H+1); for (const k of pr) o.m.add(k);
+        set(o,L-1,-2,'glc'); set(o,L-1,H+1,'glc');
+        for (let y=-1;y<=H;y++){ const x=L-2+((y%2+2)%2); if (!o.m.has(K(x,y))) add(o,x,y,'gl',true); } break; }
+      case 'cone': poly(o.m,[[0,0],[L,-1.5],[L,H+1.5],[0,H]]); for (let y=-2;y<=H+1;y++){ set(o,0,y,'tr'); set(o,L-1,y,'dk'); } break;
+      case 'blastertip': rect(o.m,0,0,L,H); rect(o.m,L-1,-1,1,H+2); for (let y=-1;y<=H;y++) set(o,L-1,y,'sh'); set(o,L-1,Math.floor((H-1)/2),'gsh'); break;
     } return o; },
-  stock(p,c){ const o=mk(), L=p.l, H=p.h, bh=c.bodyH;
+  stock(p,c){ const o=mk(), L=p.l, H=p.h, bh=c.bodyH; let pad='dk';
     switch (p.style){
       case 'rifle': case 'skeleton': poly(o.m,[[0,0],[-L,1],[-L,H],[0,bh]]);
         if (p.style==='skeleton' && L>9 && H>7) poly(o.cut,[[-3,2.5],[-L+3,3.5],[-L+3,H-2.5],[-3,bh-1.5]]); break;
+      case 'ar': poly(o.m,[[0,0],[-L,1],[-L,H],[0,bh]]); { const tx=-R(L*.4), ty=R(H*.5); for (let x=tx;x<tx+3;x++){ set(o,x,ty,'sh'); set(o,x,ty+2,'sh'); } set(o,tx,ty+1,'sh'); set(o,tx+2,ty+1,'sh'); }
+        for (let y=1;y<=H;y++) set(o,-L+1,y,'dk'); set(o,-R(L*.7),H-1,'hi'); break;
       case 'wood': poly(o.m,[[0,0],[-L*.4,1.5],[-L,2],[-L,H],[-L*.45,H*.72],[0,bh]]);
-        { const row=Math.round(H*.5); for (let x=-L+3;x<-3;x+=5){ o.det.set(K(x,row),'sh'); o.det.set(K(x+1,row),'sh'); o.det.set(K(x+2,row+1),'sh'); } } break;
-      case 'collapsible': { const tl=Math.round(L*.6); rect(o.m,-tl,1,tl,2); const bw=Math.max(3,Math.round(L*.45));
-        poly(o.m,[[-L,0],[-L+bw,0],[-L+bw,H*.55],[-L+2,H],[-L,H]]); break; }
+        { const row=R(H*.5); for (let x=-L+3;x<-3;x+=5){ set(o,x,row,'sh'); set(o,x+1,row,'sh'); set(o,x+2,row+1,'sh'); } } break;
+      case 'thumbhole': poly(o.m,[[0,0],[-L*.4,1.5],[-L,1],[-L,H],[-L*.45,H*.75],[0,bh+1]]);
+        if (L>=12) circ(o.cut,-R(L*.28),R(H*.42),1.4); { const row=R(H*.62); for (let x=-L+3;x<-6;x+=4){ set(o,x,row,'sh'); set(o,x+1,row,'sh'); } } break;
+      case 'collapsible': { const tl=R(L*.6); rect(o.m,-tl,1,tl,2); const bw=Math.max(3,R(L*.45));
+        poly(o.m,[[-L,0],[-L+bw,0],[-L+bw,H*.55],[-L+2,H],[-L,H]]); for (let y=1;y<3;y++) set(o,-tl+1,y,'sh'); set(o,-L+R(bw/2),2,'dk'); break; }
       case 'folding': line(o.m,-1,1,-L,1); line(o.m,-1,bh-1,-L,H-1); line(o.m,-L,1,-L,H-1); break;
+      case 'buttpad': rect(o.m,-L,0,L,H); pad='dk'; break;
+      case 'cyberstock': poly(o.m,[[0,0],[-L+2,0],[-L,2],[-L,H],[-L+4,H],[0,bh]]); for (let x=-L+2;x<-1;x++) set(o,x,1,'gl');
+        if (H>=8) for (let x=-L+3;x<-3;x+=3) set(o,x,H-3,'dk'); break;
+      case 'brasswood': { poly(o.m,[[0,0],[-L,1],[-L,H],[0,bh]]); for (let x=-L+2;x<-1;x+=3) set(o,x,2,'trh');
+        const gx=-R(L*.5), gy=R(H*.5), G=new Set(); gearSet(G,gx,gy,2); for (const k of G) if (o.m.has(k)) o.det.set(k,'tr'); set(o,gx,gy,'dk'); pad='tr'; break; }
+      case 'ornate': poly(o.m,[[0,0],[-L*.4,1.5],[-L,2],[-L,H],[-L*.45,H*.72],[0,bh]]);
+        for (let x=-L+2;x<-1;x++) set(o,x,R(H*.45+Math.sin(x*.8)*1.4),'tr');
+        { const gx=-R(L*.3), gy=R(H*.45); set(o,gx,gy,'glc'); [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>set(o,gx+dx,gy+dy,'gl')); } pad='trs'; break;
+      case 'fin': poly(o.m,[[0,0],[-L,-2],[-L+3,0],[-L+2,H],[0,bh]]); for (let x=-L+3;x<-1;x++) set(o,x,1,'gl'); pad=null; break;
+      case 'blasterfold': line(o.m,-1,0,-L,0); line(o.m,-1,1,-L,1); rect(o.m,-L,0,2,H); line(o.m,-1,bh-1,-L+2,H-1);
+        for (let x=-L+3;x<-1;x+=3) set(o,x,0,'hi'); break;
     }
-    for (const k of o.m) if (PK(k)[0] === -L) o.det.set(k,'dk');
+    if (pad) for (const k of o.m) if (PK(k)[0] === -L) o.det.set(k,pad);
     return o; },
-  grip(p){ const o=mk(), L=p.l, W=p.w, r=p.r;
-    if (p.style!=='none'){
-      for (let y=0;y<L;y++){ const x0=-Math.round(r*y); let w=W; if (p.style==='wood' && y>L*.3 && y<L*.75) w=W+1;
-        rect(o.m,x0,y,w,1); if (y===L-1 && w>2){ o.cut.add(K(x0,y)); o.cut.add(K(x0+w-1,y)); } }
-      if (p.style==='pistol') for (let y=2;y<L-1;y++){ const x0=-Math.round(r*y); for (let x=x0+1;x<x0+W-1;x++) if ((x+y)%2===0) o.det.set(K(x,y),'sh'); }
+  grip(p){ const o=mk(), L=p.l, W=p.w, r=p.r, st=p.style, pommel=st==='brassgrip'||st==='hilt';
+    if (st!=='none'){
+      for (let y=0;y<L;y++){ const x0=-R(r*y); let w=W; if ((st==='wood'||st==='brassgrip') && y>L*.3 && y<L*.75) w=W+1; if (st==='blastergrip') w=W+1;
+        rect(o.m,x0,y,w,1); if (y===L-1 && w>2 && !pommel){ o.cut.add(K(x0,y)); o.cut.add(K(x0+w-1,y)); } }
+      const each = fn => { for (let y=0;y<L;y++) fn(y,-R(r*y)); };
+      if (st==='pistol') each((y,x0)=>{ if (y>=2 && y<L-1) for (let x=x0+1;x<x0+W-1;x++) if ((x+y)%2===0) set(o,x,y,'sh'); });
+      if (st==='ar'){ const gy=R(L*.4), gx=-R(r*gy)+W-1; o.cut.add(K(gx,gy)); set(o,gx-1,gy,'sh'); each((y,x0)=>{ if (y>0 && y<L-1) set(o,x0,y,'sh'); }); }
+      if (st==='cybergrip') each((y,x0)=>{ if (y>=1 && y<L-1) set(o,x0+W-1,y,'gl'); });
+      if (st==='brassgrip') for (const yy of [L-1,L-2]){ const x0=-R(r*yy); for (let x=x0-1;x<=x0+W;x++) add(o,x,yy,'tr'); }
+      if (st==='hilt'){ each((y,x0)=>{ if (y<L-1) for (let x=x0;x<x0+W;x++) set(o,x,y,(x+y)%3===0?'sh':((x+y)%3===1?'hi':'b')); });
+        const y=L-1, x0=-R(r*y); for (let x=x0-1;x<=x0+W;x++) add(o,x,y,'tr'); set(o,x0+Math.floor(W/2),y,'gl'); }
+      if (st==='ergogrip'){ each((y,x0)=>{ if (y>=2 && y<L-1 && y%2===0) o.cut.add(K(x0+W-1,y)); }); set(o,1,1,'glc'); }
+      if (st==='blastergrip') each((y,x0)=>{ if (y%2===1 && y<L-1) for (let x=x0+1;x<x0+W;x++) set(o,x,y,'sh'); });
     }
-    if (p.guard){ const gl=Math.max(5,Math.round(W*1.3)), gd=3; const back = p.style==='none' ? W-1 : W-1-Math.round(r*gd);
+    if (p.guard){ const gl=Math.max(5,R(W*1.3)), gd=3; const back = st==='none' ? W-1 : W-1-R(r*gd);
       const g=new Set(); line(g,back,gd,W+gl-1,gd); line(g,W+gl-1,0,W+gl-1,gd); g.add(K(W+1,0)); g.add(K(W+1,1));
-      for (const k of g){ o.m.add(k); o.no.add(k); o.det.set(k,'sh'); } o.det.set(K(W+1,1),'dk'); }
+      for (const k of g){ o.m.add(k); o.no.add(k); o.det.set(k,'sh'); } set(o,W+1,1,'dk'); }
     return o; },
-  mag(p){ const o=mk(), L=p.l, W=p.w, r=p.r;
-    const sx = y => r*y + (p.style==='curved' ? p.c*Math.pow(y/Math.max(1,L-1),2)*2 : 0);
-    switch (p.style){
-      case 'box': case 'curved':
-        for (let y=0;y<L;y++){ const x0=Math.round(sx(y)); rect(o.m,x0,y,W,1); if (y===L-1) for (let x=x0;x<x0+W;x++) o.det.set(K(x,y),'dk'); }
-        if (W>=4) for (let y=3;y<L-2;y+=3) o.det.set(K(Math.round(sx(y))+1,y),'sh'); break;
-      case 'drum': { rect(o.m,0,0,W,2); const R=Math.max(2,Math.floor(L/2)), cx=(W-1)/2, cy=1+R; circ(o.m,cx,cy,R);
-        for (const k of o.m){ const [x,y]=PK(k); if (y>1 && Math.abs(Math.hypot(x-cx,y-cy)-(R-2.2))<.55) o.det.set(k,'sh'); }
-        o.det.set(K(Math.round(cx),Math.round(cy)),'dk'); break; }
-      case 'flush': { const h=Math.max(1,L); rect(o.m,0,0,W,h); for (let x=0;x<W;x++) o.det.set(K(x,h-1),'dk'); break; }
-      case 'tube': rect(o.m,0,0,L,W); for (let y=0;y<W;y++) o.det.set(K(L-1,y),'sh'); break;
+  mag(p){ const o=mk(), L=p.l, W=p.w, r=p.r, st=p.style;
+    const curve = st==='curved'||st==='stanag'||st==='pmag';
+    const sx = y => r*y + (curve ? p.c*Math.pow(y/Math.max(1,L-1),2)*2 : 0);
+    const stack = () => { for (let y=0;y<L;y++) rect(o.m,R(sx(y)),y,W,1); };
+    switch (st){
+      case 'box': case 'curved': case 'stanag': case 'pmag': case 'extended':
+        stack();
+        for (let x=R(sx(L-1));x<R(sx(L-1))+W;x++) set(o,x,L-1,'dk');
+        if (st==='extended' || st==='stanag'){ const x0=R(sx(L-1)); add(o,x0+W,L-1,'dk'); add(o,x0-1,L-1,'dk'); }
+        if (st==='pmag'){ for (let y=1;y<L-1;y+=3){ const x0=R(sx(y)); for (let x=x0;x<x0+W;x++) set(o,x,y,'sh'); }
+          if (W>=3) for (let y=R(L*.25);y<R(L*.55);y++) set(o,R(sx(y))+1,y,'brass'); }
+        else if (W>=4) for (let y=3;y<L-2;y+=3) set(o,R(sx(y))+1,y,'sh');
+        if (st==='stanag') for (let y=2;y<L-2;y+=2) set(o,R(sx(y))+W-1,y,'sh'); break;
+      case 'drum': { rect(o.m,0,0,W,2); const rr=Math.max(2,Math.floor(L/2)), cx=(W-1)/2, cy=1+rr; circ(o.m,cx,cy,rr);
+        for (const k of o.m){ const [x,y]=PK(k); if (y>1 && Math.abs(Math.hypot(x-cx,y-cy)-(rr-2.2))<.55) o.det.set(k,'sh'); }
+        set(o,R(cx),R(cy),'dk'); set(o,R(cx)+1,R(cy)-1,'hi'); break; }
+      case 'beltbox': rect(o.m,0,0,W,L); o.cut.add(K(0,L-1)); o.cut.add(K(W-1,L-1));
+        for (let x=0;x<W;x++) set(o,x,1,'sh'); set(o,1,2,'dk'); set(o,W-2,2,'hi');
+        for (let i=0;i<3;i++) add(o,W-1+i,-1-i,'brass',true); break;
+      case 'flush': { const h=Math.max(1,L); rect(o.m,0,0,W,h); for (let x=0;x<W;x++) set(o,x,h-1,'dk'); break; }
+      case 'tube': rect(o.m,0,0,L,W); for (let y=0;y<W;y++) set(o,L-1,y,'sh'); break;
+      case 'battery': for (let y=0;y<L;y++) rect(o.m,R(r*y),y,W,1);
+        for (let y=1;y<L-1;y+=2){ const x0=R(r*y); for (let x=x0+1;x<x0+W-1;x++) set(o,x,y, y===1?'glc':'gl'); }
+        for (let x=R(r*(L-1));x<R(r*(L-1))+W;x++) set(o,x,L-1,'dk'); break;
+      case 'canister': rect(o.m,0,0,W,L); [K(0,0),K(W-1,0),K(0,L-1),K(W-1,L-1)].forEach(k=>o.cut.add(k));
+        for (let x=0;x<W;x++){ set(o,x,1,'tr'); set(o,x,L-2,'tr'); }
+        if (L>=7 && W>=3){ const gy=Math.floor(L/2), gx=Math.floor((W-1)/2); set(o,gx,gy,'face'); if (W>=4) set(o,gx+1,gy,'face'); set(o,gx,gy-1,'tr'); } break;
+      case 'vial': { const nx=Math.floor((W-1)/2); rect(o.m,nx,0,Math.min(2,W),2); for (let x=nx;x<nx+2;x++){ set(o,x,0,'cork'); set(o,x,1,'glass'); }
+        const rr=Math.max(2,Math.floor(Math.min(W+1,L-2)/2)), cx=(W-1)/2, cy=2+rr, B=new Set(); circ(B,cx,cy,rr);
+        for (const k of B){ o.m.add(k); const [x,y]=PK(k); o.det.set(k, y>cy-rr*.35 ? ((x<cx && y<cy+1)?'glc':'gl') : 'glass'); }
+        set(o,R(cx-rr+1),R(cy-1),'glint'); break; }
+      case 'cell': rect(o.m,0,0,W,L); [K(0,0),K(W-1,0),K(0,L-1),K(W-1,L-1)].forEach(k=>o.cut.add(k));
+        for (let x=0;x<W;x++){ set(o,x,0,'tr'); set(o,x,L-1,'tr'); }
+        { const cx=Math.floor((W-1)/2); for (let y=1;y<L-1;y++){ set(o,cx,y, y<L/2?'glc':'gl'); if (W>=4) set(o,cx+1,y,'gl'); } } break;
+      case 'powerpack': rect(o.m,0,0,W,L); for (let x=0;x<W;x++){ set(o,x,0,'tr'); set(o,x,L-1,'tr'); }
+        if (W>=3) set(o,1,Math.floor(L/2),'gl'); for (let y=1;y<L-1;y+=2) set(o,W-1,y,'sh'); break;
+      case 'gascan': rect(o.m,0,0,L,W); for (let y=0;y<W;y++){ set(o,0,y,'tr'); set(o,L-1,y,'tr'); set(o,R(L/2),y,'sh'); } break;
     } return o; },
   sight(p,c){ const o=mk(), L=p.l, H=p.h;
     switch (p.style){
       case 'iron': { const small = H <= 2;
-        (small ? [[0,-1],[2,-1]] : [[0,-1],[0,-2],[1,-1],[2,-1],[2,-2]]).forEach(([x,y]) => o.m.add(K(x,y)));
-        const gx=c.frontX-2, fx=gx-c.sightX, t=c.topAt(gx)-c.sightY;
-        if (fx>4){ if (small) o.m.add(K(fx,t-1)); else { o.m.add(K(fx-1,t-1)); o.m.add(K(fx,t-1)); o.m.add(K(fx+1,t-1)); o.m.add(K(fx,t-2)); } } break; }
+        (small ? [[0,-1],[2,-1]] : [[0,-1],[0,-2],[1,-1],[2,-1],[2,-2]]).forEach(([x,y]) => add(o,x,y)); frontPost(o,c,small); break; }
+      case 'peep': add(o,0,-1); add(o,1,-1); add(o,0,-2); add(o,0,-3); add(o,-1,-3); add(o,1,-3); add(o,0,-4); set(o,0,-3,'dk'); frontPost(o,c,true); break;
+      case 'carry': rect(o.m,0,-H,L,1); rect(o.m,0,-H+1,1,H-1); rect(o.m,L-1,-H+1,1,H-1); rect(o.m,1,-H-2,2,2);
+        set(o,1,-H-2,'dk'); for (let x=2;x<L-1;x+=2) set(o,x,-H,'sh'); frontPost(o,c,false); break;
       case 'reddot': rect(o.m,1,-1,Math.max(1,L-2),1); rect(o.m,0,-H,L,H-1); o.cut.add(K(0,-H)); o.cut.add(K(L-1,-H));
-        for (let y=-H+1;y<-1;y++) o.det.set(K(L-1,y),'glass'); o.det.set(K(L-1,-H+Math.floor((H-1)/2)),'red'); break;
+        for (let y=-H+1;y<-1;y++) set(o,L-1,y,'glass'); set(o,L-1,-H+Math.floor((H-1)/2),'red'); set(o,1,-H+1,'dk'); break;
       case 'holo': rect(o.m,0,-1,L,1); rect(o.m,0,-H,L,H-1);
-        for (let y=-H+1;y<-2;y++) for (let x=1;x<L-1;x++) o.det.set(K(x,y),'glass'); break;
-      case 'scope': { const y0=-H; rect(o.m,0,y0,L,3); rect(o.m,L-4,y0-1,4,5); rect(o.m,0,y0-1,3,5);
-        o.cut.add(K(L-4,y0-1)); o.cut.add(K(L-4,y0+3)); rect(o.m,Math.round(L/2)-1,y0-2,3,2);
-        const rh=H-3; if (rh>0){ rect(o.m,Math.round(L*.28),y0+3,2,rh); rect(o.m,Math.round(L*.66),y0+3,2,rh); }
-        for (let y=y0;y<y0+3;y++) o.det.set(K(L-1,y),'glass'); o.det.set(K(L-1,y0),'glint'); break; }
+        for (let y=-H+1;y<-2;y++) for (let x=1;x<L-1;x++) set(o,x,y,'glass'); set(o,R(L/2),-H+1,'red'); break;
+      case 'acog': rect(o.m,1,-1,Math.max(1,L-2),1); rect(o.m,0,-H,L,H-1); o.cut.add(K(L-1,-H)); o.cut.add(K(0,-2));
+        rect(o.m,R(L/2)-1,-H-1,3,1); for (let x=R(L/2)-1;x<R(L/2)+2;x++) set(o,x,-H-1,'fiber');
+        for (let y=-H+1;y<-1;y++) set(o,L-1,y,'glass'); set(o,1,-H+1,'dk'); break;
+      case 'scope': case 'longscope': { const y0=-H, tube = p.style==='longscope' ? 2 : 3;
+        rect(o.m,0,y0,L,tube); rect(o.m,L-4,y0-1,4,tube+2); rect(o.m,0,y0-1,3,tube+2);
+        o.cut.add(K(L-4,y0-1)); o.cut.add(K(L-4,y0+tube)); rect(o.m,R(L/2)-1,y0-2,3,2); set(o,R(L/2),y0-2,'hi');
+        const rh=H-tube; if (rh>0){ rect(o.m,R(L*.28),y0+tube,2,rh); rect(o.m,R(L*.66),y0+tube,2,rh); }
+        if (p.style==='longscope'){ add(o,R(L*.4),y0+tube,'tr'); add(o,R(L*.4),y0+tube+1,'tr'); for (let x=4;x<L-4;x+=4) set(o,x,y0,'sh'); }
+        for (let y=y0;y<y0+tube;y++) set(o,L-1,y,'glass'); set(o,L-1,y0,'glint'); break; }
+      case 'blastersight': rect(o.m,0,-H,L,H-1); rect(o.m,1,-1,L-2,1); for (let y=-H+1;y<-1;y++){ set(o,L-1,y,'glass'); set(o,0,y,'dk'); } set(o,L-1,-H+1,'red'); break;
+      case 'hud': rect(o.m,0,-1,L,1); add(o,0,-2,'dk'); add(o,1,-2,'glc');
+        for (let y=-H;y<-1;y++) add(o,L-2,y,'gl',true); set(o,L-2,-H+1,'glc');
+        { const pl=new Set(); line(pl,2,-2,L-3,-H+1); for (const k of pl) if (!o.m.has(k)){ o.m.add(k); o.no.add(k); o.det.set(k,'gsh'); } } break;
+      case 'brassscope': { const y0=-H, a=Math.max(3,R(L*.35)), b2=Math.max(2,R(L*.3));
+        rect(o.m,0,y0-1,a,5); rect(o.m,a,y0,b2,3); rect(o.m,a+b2,y0,Math.max(1,L-a-b2),3); rect(o.m,L-2,y0-1,2,5);
+        for (let y=y0-1;y<y0+4;y++){ set(o,a-1,y,'trh'); set(o,L-2,y,'trh'); }
+        for (let y=y0;y<y0+3;y++){ set(o,a+b2,y,'trs'); set(o,L-1,y,'glass'); }
+        if (H-4>0) rect(o.m,R(L*.2),y0+4,1,H-4); if (H-3>0) rect(o.m,R(L*.7),y0+3,1,H-3); break; }
+      case 'eye': { const ey=-R(H/2)-1, cx=L/2; poly(o.m,[[0,ey+.5],[cx,ey-1.5],[L,ey+.5],[cx,ey+2.5]]);
+        for (const k of o.m) o.det.set(k,'bone');
+        const ic=R(cx-.5); [[0,0],[1,0],[0,-1],[1,-1],[0,1],[1,1]].forEach(([dx,dy])=>{ const k=K(ic+dx,ey+dy); if (o.m.has(k)) o.det.set(k,'gl'); });
+        set(o,ic,ey,'dk'); set(o,ic+1,ey-1,'glc');
+        const st=ey+2; if (st<=-1) rect(o.m,ic,st,1,-st); break; }
+      case 'antenna': { rect(o.m,0,-1,3,1); const top=-H-2; line(o.m,1,-2,1,top); for (let y=-3;y>top;y-=2) set(o,1,y,'tr');
+        const B=new Set(); circ(B,1,top-1,1); for (const k of B){ o.m.add(k); o.no.add(k); o.det.set(k,'gl'); } set(o,1,top-1,'glc'); break; }
     } return o; },
   moving(p){ const o=mk(), L=p.l, H=p.h;
     switch (p.style){
-      case 'charging': rect(o.m,0,0,L,H); break;
-      case 'bolt': line(o.m,0,0,-(L-1),L-1); rect(o.m,-L,L-1,2,2); break;
+      case 'charging': rect(o.m,0,0,L,H); set(o,0,0,'hi'); break;
+      case 'cocking': rect(o.m,0,0,L,1); rect(o.m,L-1,-1,1,2); set(o,L-1,-1,'hi'); break;
+      case 'bolt': line(o.m,0,0,-(L-1),L-1); rect(o.m,-L,L-1,2,2); set(o,-L,L-1,'hi'); break;
+      case 'lever': { const g=new Set(); line(g,0,0,2,0); line(g,2,0,2,4); line(g,2,4,-L,4); line(g,-L,4,-L,2); line(g,-L,2,-L+2,0);
+        for (const k of g){ o.m.add(k); o.no.add(k); o.det.set(k,'b'); } set(o,2,0,'hi'); break; }
       case 'slide': { rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); const y0=H>=3?1:0, y1=H>=3?H-1:H;
-        for (let x=1;x<Math.min(9,L*.4);x+=2) for (let y=y0;y<y1;y++) o.det.set(K(x,y),'dk');
-        for (let x=Math.round(L*.45);x<Math.round(L*.62);x++) o.det.set(K(x,0),'dk'); break; }
+        for (let x=1;x<Math.min(9,L*.4);x+=2) for (let y=y0;y<y1;y++) set(o,x,y,'dk');
+        for (let x=R(L*.45);x<R(L*.62);x++) set(o,x,0,'dk'); set(o,R(L*.45),0,'brass'); break; }
       case 'pump': rect(o.m,0,0,L,H); o.cut.add(K(0,H-1)); o.cut.add(K(L-1,H-1));
-        for (let x=1;x<L-1;x+=2) for (let y=1;y<H;y++) o.det.set(K(x,y),'sh'); break;
+        for (let x=1;x<L-1;x+=2) for (let y=1;y<H;y++) set(o,x,y,'sh'); break;
+      case 'coolant': rect(o.m,0,0,L,H); for (let x=1;x<L-1;x+=2) for (let y=0;y<H;y++) set(o,x,y,'gl'); break;
+      case 'gear': { const rr=Math.max(2,Math.floor(L/2)); gearSet(o.m,0,0,rr);
+        for (const k of o.m){ const [x,y]=PK(k); const d=Math.hypot(x,y); if (d>rr-.4 && d<=rr+.2) o.det.set(k,'sh'); if (d>rr+.3) o.det.set(k,'trh'); } set(o,0,0,'dk'); break; }
+      case 'crank': { const B=new Set(); circ(B,0,0,1); for (const k of B) o.m.add(k); line(o.m,0,0,R(L*.6),L-1); rect(o.m,R(L*.6),L-1,2,2);
+        set(o,R(L*.6),L-1,'trh'); set(o,R(L*.6)+1,L-1,'tr'); set(o,0,0,'dk'); break; }
+      case 'runecharm': { for (let y=0;y<L;y+=2) add(o,0,y,'tr',true); const B=new Set(); circ(B,0,L+1,2); for (const k of B){ o.m.add(k); o.det.set(k,'tr'); }
+        set(o,0,L+1,'glc'); [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>set(o,dx,L+1+dy,'gl')); break; }
+      case 'coil': rect(o.m,0,0,L,2); for (let x=0;x<L;x++){ set(o,x,0, x%2?'gl':'tr'); set(o,x,1, x%2?'tr':'gl'); } break;
+      case 'coolinglever': line(o.m,0,0,-2,-2); add(o,-3,-3,'tr'); add(o,-2,-3,'tr'); break;
+    } return o; },
+  under(p){ const o=mk(), L=p.l, H=p.h;
+    switch (p.style){
+      case 'foregrip': rect(o.m,0,0,H,L); o.cut.add(K(0,L-1)); o.cut.add(K(H-1,L-1)); for (let y=2;y<L-1;y+=2) for (let x=0;x<H;x++) set(o,x,y,'sh'); for (let x=0;x<H;x++) set(o,x,0,'dk'); break;
+      case 'angled': poly(o.m,[[0,0],[L,0],[1,H]]); for (let x=0;x<L;x++) set(o,x,0,'dk'); break;
+      case 'bipod': rect(o.m,0,0,3,2); set(o,0,0,'dk'); set(o,1,0,'dk'); set(o,2,0,'dk'); rect(o.m,3,1,L,1); rect(o.m,3,H>=2?2:1,Math.max(1,L-1),1); add(o,L+3,1,'dk'); break;
+      case 'launcher': rect(o.m,0,0,L,H); for (let y=0;y<H;y++){ set(o,L-1,y,'sh'); set(o,0,y,'sh'); } if (H>=3) set(o,L-1,Math.floor(H/2),'dk');
+        add(o,1,H,'sh'); add(o,1,H+1,'sh'); add(o,3,H,'sh'); add(o,2,H+1,'sh'); for (let x=3;x<L-2;x+=4) set(o,x,H-1,'dk'); break;
+      case 'light': rect(o.m,0,0,L,H); rect(o.m,L-2,0,2,H+1); for (let y=0;y<=H;y++) set(o,L-1,y,'glint'); set(o,1,H-1,'dk'); break;
+      case 'laser': rect(o.m,0,0,L,H); set(o,L-1,Math.floor((H-1)/2),'red'); set(o,1,0,'dk'); break;
+      case 'bayonet': case 'monoblade': case 'runeblade': { rect(o.m,0,0,3,2); for (let y=-1;y<3;y++) add(o,3,y,'dk');
+        const bl=new Set(); poly(bl,[[4,0],[4+L,1],[4,2]]); const glow = p.style==='monoblade';
+        for (const k of bl){ o.m.add(k); const [x,y]=PK(k); o.det.set(k, glow ? (y===0?'glc':'gl') : (y===0?'glint':'blade')); }
+        if (p.style==='runeblade') for (let x=6;x<4+L-2;x+=3) set(o,x,1,'gl'); if (glow) for (const k of bl) o.no.add(k); break; }
+      case 'tank': rect(o.m,0,0,L,H); o.cut.add(K(0,0)); o.cut.add(K(L-1,0)); o.cut.add(K(0,H-1)); o.cut.add(K(L-1,H-1));
+        for (let y=0;y<H;y++){ set(o,2,y,'tr'); set(o,L-3,y,'tr'); } for (let x=4;x<L-4;x+=3) set(o,x,1,'trh'); add(o,R(L/2),-1,'tr'); break;
+      case 'gascan': rect(o.m,0,0,L,H); for (let y=0;y<H;y++){ set(o,0,y,'tr'); set(o,L-1,y,'tr'); } set(o,R(L/2),0,'hi'); if (H>=3) set(o,2,Math.floor(H/2),'gl'); break;
     } return o; },
 };
 
 /* ---------- part metadata ---------- */
-const ORDER = ['body','barrel','handguard','muzzle','stock','grip','mag','sight','moving'];
-const Z = ['stock','barrel','muzzle','mag','grip','handguard','body','moving','sight'];
+const ORDER = ['body','barrel','handguard','muzzle','stock','grip','mag','sight','moving','under'];
+const Z = ['stock','barrel','muzzle','mag','grip','handguard','under','body','moving','sight'];
+const THEMES = { mil:'Military', cyber:'Cyberpunk', steam:'Steampunk', fantasy:'Fantasy', laser:'Laser', space:'Space blaster', any:'Other' };
+const THEME_DOT = { mil:'#7d8a5a', cyber:'#ff2bd6', steam:'#c9a23a', fantasy:'#a86bff', laser:'#39d353', space:'#ff5a3c', all:'var(--accent)' };
+const S = (label, theme='mil') => [label, theme];
+const NONE = { none: S('None (draw your own)','any') };
 const PARTS = {
-  body:{ label:'Body', slot:'main_body', styles:{receiver:'Receiver', railtop:'Receiver + top rail', tapered:'Tapered receiver', frame:'Pistol frame', revolver:'Revolver frame'}, sl:{ l:['Length',6,48,1], h:['Height',3,14,1] } },
-  barrel:{ label:'Barrel', slot:'barrel', styles:{plain:'Plain', fluted:'Fluted', double:'Double', ventrib:'Vent rib', none:'None (draw your own)'}, sl:{ l:['Length',1,64,1], h:['Thickness',1,5,1] } },
-  handguard:{ label:'Handguard', slot:'main_body', styles:{rail:'Rail', smooth:'Smooth', wood:'Wood', vented:'Vented', none:'None (draw your own)'}, sl:{ l:['Length',2,44,1], h:['Height',2,12,1] } },
-  muzzle:{ label:'Muzzle', slot:'barrel', styles:{flash:'Flash hider', brake:'Muzzle brake', comp:'Compensator', suppressor:'Suppressor', none:'None (draw your own)'}, sl:{ l:['Length',1,22,1], h:['Height',2,8,1] } },
-  stock:{ label:'Stock', slot:'gunstock', styles:{rifle:'Rifle', wood:'Wood', skeleton:'Skeleton', collapsible:'Collapsible', folding:'Wire folding', none:'None (draw your own)'}, sl:{ l:['Length',4,36,1], h:['Butt height',4,18,1] } },
-  grip:{ label:'Grip', slot:'main_body', styles:{rifle:'Rifle grip', pistol:'Textured grip', wood:'Wood grip', none:'None (draw your own)'}, sl:{ l:['Length',3,16,1], w:['Width',2,9,1], r:['Angle',0,1,.05] }, guard:true },
-  mag:{ label:'Magazine', slot:'magazine', styles:{box:'Box', curved:'Curved', drum:'Drum', flush:'Pistol (flush)', tube:'Tube (under barrel)', none:'None (draw your own)'}, sl:{ l:['Length',1,28,1], w:['Width',1,16,1], r:['Angle',-.5,1,.05], c:['Curve',0,8,.5] } },
-  sight:{ label:'Sight', slot:'aimer', styles:{iron:'Iron sights', reddot:'Red dot', holo:'Holographic', scope:'Scope', none:'None (draw your own)'}, sl:{ l:['Length',3,32,1], h:['Height',2,9,1] } },
-  moving:{ label:'Moving part', slot:'moving_part', styles:{charging:'Charging handle', bolt:'Bolt handle', slide:'Pistol slide', pump:'Pump', none:'None (draw your own)'}, sl:{ l:['Length',1,40,1], h:['Height',1,7,1] } },
+  body:{ label:'Body', slot:'main_body', sl:{ l:['Length',6,48,1], h:['Height',3,14,1] }, styles:{
+    receiver:S('Receiver'), railtop:S('Receiver + top rail'), tapered:S('Tapered receiver'), stamped:S('Stamped steel'), bullpup:S('Bullpup (mag in stock)'), lever:S('Lever-action receiver'), frame:S('Pistol frame'), revolver:S('Revolver frame'),
+    cyberframe:S('Neon frame','cyber'), cyberblock:S('Chrome block','cyber'), boiler:S('Boiler tank + gauge','steam'), brassframe:S('Brass filigree frame','steam'),
+    runic:S('Rune-carved body','fantasy'), raygun:S('Ray gun bulb','laser'), pulse:S('Plasma capsule','laser'), blaster:S('Blaster body','space'), heavyblaster:S('Heavy blaster core','space') } },
+  barrel:{ label:'Barrel', slot:'barrel', sl:{ l:['Length',1,64,1], h:['Thickness',1,6,1] }, styles:{
+    plain:S('Plain'), fluted:S('Fluted'), double:S('Double'), ventrib:S('Vent rib + bead'), shroud:S('Perforated shroud'),
+    rail:S('Rail (glowing gap)','cyber'), flared:S('Blunderbuss flare','steam'), pipes:S('Copper pipes','steam'),
+    crossbow:S('Crossbow limbs + bolt','fantasy'), ornate:S('Gold-banded','fantasy'), emitter:S('Coil emitter','laser'), ringed:S('Ray rings','laser'),
+    finned:S('Cooling fins','space'), perforated:S('Perforated tube','space'), ...NONE } },
+  handguard:{ label:'Handguard', slot:'main_body', sl:{ l:['Length',2,44,1], h:['Height',2,12,1] }, styles:{
+    rail:S('Picatinny rail'), mlok:S('M-LOK slots'), quad:S('Quad rail'), smooth:S('Smooth'), wood:S('Wood'), vented:S('Vented'),
+    neon:S('Neon strip','cyber'), cage:S('Brass cage','steam'), carved:S('Carved with gem','fantasy'), capacitor:S('Capacitor cells','laser'), ...NONE } },
+  muzzle:{ label:'Muzzle', slot:'barrel', sl:{ l:['Length',1,22,1], h:['Height',2,8,1] }, styles:{
+    flash:S('Flash hider'), birdcage:S('Birdcage'), brake:S('Muzzle brake'), comp:S('Compensator'), suppressor:S('Suppressor'), can:S('Ribbed can'),
+    spike:S('Mono-blade','cyber'), bell:S('Brass bell','steam'), crystal:S('Magic crystal','fantasy'), dragon:S('Dragon head','fantasy'),
+    focus:S('Focusing lens','laser'), tesla:S('Tesla prongs','laser'), cone:S('Cone emitter','space'), blastertip:S('Blaster tip','space'), ...NONE } },
+  stock:{ label:'Stock', slot:'gunstock', sl:{ l:['Length',1,36,1], h:['Butt height',3,18,1] }, styles:{
+    rifle:S('Rifle'), ar:S('Fixed (trapdoor)'), wood:S('Wood'), thumbhole:S('Thumbhole'), skeleton:S('Skeleton'), collapsible:S('Collapsible'), folding:S('Wire folding'), buttpad:S('Butt pad (bullpup)'),
+    cyberstock:S('Angular neon','cyber'), brasswood:S('Wood + brass gear','steam'), ornate:S('Gold filigree','fantasy'), fin:S('Swept fin','laser'), blasterfold:S('Folding blaster','space'), ...NONE } },
+  grip:{ label:'Grip', slot:'main_body', guard:true, sl:{ l:['Length',3,16,1], w:['Width',2,9,1], r:['Angle',0,1,.05] }, styles:{
+    rifle:S('Rifle grip'), ar:S('Finger-groove grip'), pistol:S('Textured grip'), wood:S('Wood grip'),
+    cybergrip:S('Neon grip','cyber'), brassgrip:S('Brass pommel','steam'), hilt:S('Wrapped hilt','fantasy'), ergogrip:S('Ergo grip','laser'), blastergrip:S('Ribbed blaster grip','space'), ...NONE } },
+  mag:{ label:'Magazine', slot:'magazine', sl:{ l:['Length',1,28,1], w:['Width',1,16,1], r:['Angle',-.5,1,.05], c:['Curve',0,8,.5] }, styles:{
+    box:S('Box'), stanag:S('Rifle mag (slight curve)'), pmag:S('Polymer mag + window'), curved:S('Curved'), extended:S('Extended stick'), drum:S('Drum'), beltbox:S('Ammo box + belt'), flush:S('Pistol (flush)'), tube:S('Tube (under barrel)'),
+    battery:S('Battery pack','cyber'), canister:S('Pressure canister','steam'), vial:S('Mana potion','fantasy'), cell:S('Energy cell','laser'), powerpack:S('Power pack','space'), gascan:S('Gas cartridge','space'), ...NONE } },
+  sight:{ label:'Sight', slot:'aimer', sl:{ l:['Length',2,32,1], h:['Height',2,9,1] }, styles:{
+    iron:S('Iron sights'), peep:S('Peep sight'), carry:S('Carry handle'), reddot:S('Red dot'), holo:S('Holographic'), acog:S('Prism scope'), scope:S('Scope'),
+    hud:S('Holo HUD','cyber'), brassscope:S('Brass telescope','steam'), eye:S('All-seeing eye','fantasy'), antenna:S('Antenna','laser'), longscope:S('Long blaster scope','space'), blastersight:S('Blaster sight','space'), ...NONE } },
+  moving:{ label:'Moving part', slot:'moving_part', sl:{ l:['Length',1,40,1], h:['Height',1,7,1] }, styles:{
+    charging:S('Charging handle'), cocking:S('Cocking tube'), bolt:S('Bolt handle'), lever:S('Lever loop'), slide:S('Pistol slide'), pump:S('Pump'),
+    coolant:S('Coolant vents','cyber'), gear:S('Spinning gear','steam'), crank:S('Crank handle','steam'), runecharm:S('Rune charm','fantasy'), coil:S('Charge coil','laser'), coolinglever:S('Cooling lever','space'), ...NONE } },
+  under:{ label:'Under-barrel', slot:'main_body', sl:{ l:['Length',1,24,1], h:['Size',1,8,1] }, styles:{
+    foregrip:S('Vertical foregrip'), angled:S('Angled foregrip'), bipod:S('Bipod (folded)'), launcher:S('Grenade launcher'), light:S('Flashlight'), laser:S('Laser module'), bayonet:S('Bayonet'),
+    monoblade:S('Glowing blade','cyber'), tank:S('Steam tank','steam'), runeblade:S('Rune blade','fantasy'), gascan:S('Gas canister','space'), ...NONE } },
 };
 const SLOTS = [
-  { id:'main_body', label:'Main Body', parts:['grip','handguard','body'] },
+  { id:'main_body', label:'Main Body', parts:['grip','handguard','under','body'] },
   { id:'moving_part', label:'Moving Part', parts:['moving'] },
   { id:'barrel', label:'Barrel', parts:['barrel','muzzle'] },
   { id:'aimer', label:'Aimer', parts:['sight'] },
@@ -398,63 +681,160 @@ const SLOTS = [
   { id:'magazine', label:'Magazine', parts:['mag'] },
 ];
 const SLOT_LABEL = Object.fromEntries(SLOTS.map(s => [s.id, s.label]));
+const NO_RAKE = new Set(['drum','flush','tube','canister','vial','cell','beltbox','powerpack','gascan']);
+const SD = {
+  'body:frame':{l:13,h:4}, 'body:revolver':{l:12,h:5}, 'body:raygun':{l:12,h:6}, 'body:bullpup':{l:30,h:7}, 'body:lever':{l:16,h:6}, 'body:blaster':{l:16,h:6}, 'body:heavyblaster':{l:22,h:7},
+  'barrel:rail':{h:1}, 'barrel:crossbow':{h:2}, 'barrel:double':{h:2}, 'barrel:ringed':{h:2}, 'barrel:flared':{h:3}, 'barrel:shroud':{h:2}, 'barrel:finned':{h:2}, 'barrel:perforated':{h:2},
+  'muzzle:suppressor':{l:10,h:4}, 'muzzle:can':{l:9,h:4}, 'muzzle:dragon':{l:7,h:5}, 'muzzle:crystal':{l:5,h:4}, 'muzzle:tesla':{l:6,h:3}, 'muzzle:spike':{l:5,h:3}, 'muzzle:bell':{l:4,h:3},
+  'muzzle:focus':{l:3,h:4}, 'muzzle:flash':{l:3,h:3}, 'muzzle:birdcage':{l:3,h:3}, 'muzzle:brake':{l:3,h:3}, 'muzzle:comp':{l:3,h:3}, 'muzzle:cone':{l:4,h:3}, 'muzzle:blastertip':{l:2,h:3},
+  'stock:buttpad':{l:2,h:10},
+  'mag:drum':{l:11,w:6}, 'mag:vial':{l:7,w:5}, 'mag:canister':{l:9,w:4}, 'mag:battery':{l:9,w:3}, 'mag:cell':{l:8,w:4}, 'mag:flush':{l:2,w:5}, 'mag:tube':{l:20,w:2}, 'mag:box':{l:10,w:4},
+  'mag:curved':{l:10,w:4,c:2}, 'mag:stanag':{l:10,w:4,c:1}, 'mag:pmag':{l:10,w:4,c:1}, 'mag:extended':{l:15,w:3}, 'mag:beltbox':{l:8,w:8}, 'mag:powerpack':{l:6,w:4}, 'mag:gascan':{l:8,w:3},
+  'sight:scope':{l:16,h:5}, 'sight:longscope':{l:14,h:5}, 'sight:brassscope':{l:14,h:5}, 'sight:eye':{l:6,h:4}, 'sight:antenna':{l:3,h:4}, 'sight:hud':{l:6,h:5}, 'sight:reddot':{l:6,h:4},
+  'sight:holo':{l:6,h:4}, 'sight:iron':{l:4,h:3}, 'sight:peep':{l:3,h:3}, 'sight:carry':{l:9,h:3}, 'sight:acog':{l:7,h:4}, 'sight:blastersight':{l:6,h:4},
+  'moving:gear':{l:5}, 'moving:crank':{l:4}, 'moving:runecharm':{l:4}, 'moving:coil':{l:6}, 'moving:coolant':{l:5,h:2}, 'moving:bolt':{l:4}, 'moving:charging':{l:3,h:1},
+  'moving:pump':{l:10,h:4}, 'moving:cocking':{l:6,h:1}, 'moving:lever':{l:6,h:1}, 'moving:coolinglever':{l:3,h:1}, 'moving:slide':{h:3},
+  'grip:hilt':{l:7,w:3}, 'grip:ergogrip':{l:7,w:4}, 'grip:blastergrip':{l:7,w:4},
+  'under:foregrip':{l:5,h:3}, 'under:angled':{l:6,h:3}, 'under:bipod':{l:10,h:2}, 'under:launcher':{l:12,h:4}, 'under:light':{l:5,h:2}, 'under:laser':{l:4,h:2},
+  'under:bayonet':{l:7,h:2}, 'under:monoblade':{l:8,h:2}, 'under:runeblade':{l:8,h:2}, 'under:tank':{l:10,h:3}, 'under:gascan':{l:7,h:3},
+};
 
+/* ---------- presets ---------- */
 const C = { black:'#2a2c2e', gun:'#454f58', steel:'#7b838a', silver:'#b8bdc1', tan:'#b39467', od:'#5b6440', wood:'#8b5a2b', walnut:'#5a381d', rust:'#8a4a2a', red:'#a33a32', gold:'#c9a23a', bone:'#d8d0bb' };
-const SWATCHES = Object.values(C);
+const SWATCHES = [...Object.values(C), '#1b1d2a', '#e6e9f0', '#ff2bd6', '#00e5ff', '#b87333', '#3d2b4f', '#c63d2f', '#2c3e66'];
 const part = (style,l,h,color,x={}) => Object.assign({ on:true, style, l, h, w:4, r:0, c:0, dx:0, dy:0, color, guard:false }, x);
 const off = (style='none') => part(style,4,3,C.black,{ on:false });
-
+const gp = (style,l,color,x) => part(style,l,0,color,Object.assign({guard:true},x));
+function G(theme, label, look, parts, long=true){ return { theme, label, long, look, parts }; }
 const PRESETS = {
-  rifle:{ label:'Assault rifle', name:'Assault Rifle', canvas:'96x40', parts:{
-    body:part('railtop',22,6,C.black), barrel:part('plain',24,2,C.gun), handguard:part('rail',16,5,C.black),
-    muzzle:part('flash',3,3,C.black), stock:part('collapsible',16,9,C.black), grip:part('rifle',7,0,C.black,{w:4,r:.4,guard:true}),
-    mag:part('curved',10,0,C.gun,{w:4,r:.15,c:2}), sight:part('reddot',6,4,C.black), moving:part('charging',3,1,C.gun) } },
-  wood:{ label:'Wood rifle', name:'Wood Rifle', canvas:'96x40', parts:{
-    body:part('tapered',24,6,C.gun), barrel:part('plain',20,2,C.gun), handguard:part('wood',11,5,C.wood),
-    muzzle:part('brake',3,3,C.gun), stock:part('wood',17,9,C.wood), grip:part('wood',7,0,C.wood,{w:4,r:.35,guard:true}),
-    mag:part('curved',11,0,C.gun,{w:4,r:.25,c:3}), sight:part('iron',4,3,C.gun), moving:part('charging',3,1,C.steel) } },
-  smg:{ label:'SMG', name:'Compact SMG', canvas:'96x40', parts:{
-    body:part('receiver',16,6,C.black), barrel:part('plain',6,2,C.gun), handguard:part('smooth',6,5,C.black),
-    muzzle:part('suppressor',12,4,C.black), stock:part('folding',12,7,C.steel), grip:part('pistol',7,0,C.black,{w:4,r:.3,guard:true}),
-    mag:part('box',12,0,C.gun,{w:3,r:0}), sight:part('iron',4,3,C.black), moving:part('charging',2,1,C.steel) } },
-  pistol:{ label:'Pistol', name:'Sidearm', canvas:'48x32', parts:{
-    body:part('frame',13,4,C.black), barrel:part('plain',4,2,C.steel,{dy:-3}), handguard:off(),
-    muzzle:off(), stock:off(), grip:part('pistol',8,0,C.black,{w:5,r:.35,guard:true,dx:-2}),
-    mag:part('flush',2,0,C.gun,{w:5}), sight:part('iron',4,2,C.black), moving:part('slide',16,3,C.gun) } },
-  revolver:{ label:'Revolver', name:'Revolver', canvas:'48x32', parts:{
-    body:part('revolver',12,5,C.steel), barrel:part('plain',11,3,C.steel,{dy:-1}), handguard:off(),
-    muzzle:off(), stock:off(), grip:part('wood',8,0,C.walnut,{w:4,r:.5,guard:true,dx:-3}),
-    mag:off(), sight:part('iron',4,2,C.steel), moving:off() } },
-  shotgun:{ label:'Pump shotgun', name:'Pump Shotgun', canvas:'112x44', parts:{
-    body:part('receiver',18,6,C.black), barrel:part('plain',30,2,C.gun), handguard:off(),
-    muzzle:off(), stock:part('rifle',18,9,C.black), grip:part('rifle',6,0,C.black,{w:4,r:.45,guard:true}),
-    mag:part('tube',22,0,C.gun,{w:2}), sight:part('iron',4,3,C.gun), moving:part('pump',10,4,C.black,{dx:2}) } },
-  sniper:{ label:'Bolt sniper', name:'Bolt Sniper', canvas:'112x44', parts:{
-    body:part('receiver',20,5,C.od), barrel:part('fluted',34,3,C.black), handguard:part('smooth',14,5,C.od),
-    muzzle:part('brake',4,3,C.black), stock:part('skeleton',20,10,C.od), grip:part('rifle',7,0,C.black,{w:4,r:.35,guard:true}),
-    mag:part('box',5,0,C.black,{w:6}), sight:part('scope',18,5,C.black,{dx:-2}), moving:part('bolt',4,1,C.steel) } },
-  lmg:{ label:'Light machine gun', name:'Light Machine Gun', canvas:'112x44', parts:{
-    body:part('railtop',26,8,C.black), barrel:part('plain',26,3,C.gun), handguard:part('vented',12,6,C.black),
-    muzzle:part('flash',4,4,C.black), stock:part('rifle',16,10,C.black), grip:part('pistol',7,0,C.black,{w:4,r:.3,guard:true}),
-    mag:part('drum',12,0,C.gun,{w:6}), sight:part('iron',4,3,C.black), moving:part('charging',3,1,C.steel) } },
+  /* military / realistic */
+  rifle: G('mil','Assault rifle',{fx:'flash'},{ body:part('railtop',22,6,C.black), barrel:part('plain',24,2,C.gun), handguard:part('mlok',16,5,C.black), muzzle:part('birdcage',3,3,C.black),
+    stock:part('collapsible',16,9,C.black), grip:gp('ar',7,C.black,{w:4,r:.4}), mag:part('stanag',10,0,C.gun,{w:4,r:.15,c:1}), sight:part('reddot',6,4,C.black), moving:part('charging',3,1,C.gun), under:part('foregrip',5,3,C.black) }),
+  carbine: G('mil','Tactical carbine',{fx:'flash'},{ body:part('railtop',20,6,C.tan), barrel:part('plain',16,2,C.gun), handguard:part('quad',13,5,C.tan), muzzle:part('can',9,4,C.black),
+    stock:part('collapsible',15,9,C.tan), grip:gp('ar',7,C.tan,{w:4,r:.4}), mag:part('pmag',10,0,C.tan,{w:4,r:.12,c:1}), sight:part('acog',7,4,C.black), moving:part('charging',3,1,C.gun), under:part('angled',6,3,C.black) }),
+  wood: G('mil','Wood rifle',{fx:'flash'},{ body:part('tapered',24,6,C.gun), barrel:part('plain',20,2,C.gun), handguard:part('wood',11,5,C.wood), muzzle:part('brake',3,3,C.gun),
+    stock:part('wood',17,9,C.wood), grip:gp('wood',7,C.wood,{w:4,r:.35}), mag:part('curved',11,0,C.gun,{w:4,r:.25,c:3}), sight:part('iron',4,3,C.gun), moving:part('charging',3,1,C.steel), under:part('bayonet',7,2,C.steel) }),
+  battle: G('mil','Battle rifle',{fx:'flash'},{ body:part('stamped',26,6,'#3c3f35'), barrel:part('plain',22,2,C.gun), handguard:part('vented',12,6,'#3c3f35'), muzzle:part('flash',4,3,C.black),
+    stock:part('rifle',17,9,'#3c3f35'), grip:gp('pistol',7,C.black,{w:4,r:.35}), mag:part('box',9,0,C.black,{w:5}), sight:part('iron',4,3,C.black), moving:part('cocking',6,1,C.steel), under:off() }),
+  bullpup: G('mil','Bullpup rifle',{fx:'flash'},{ body:part('bullpup',30,7,C.od), barrel:part('plain',10,2,C.black), handguard:part('smooth',6,6,C.od), muzzle:part('flash',3,3,C.black),
+    stock:part('buttpad',2,10,C.black), grip:gp('rifle',7,C.od,{w:4,r:.25,dx:10}), mag:part('stanag',10,0,C.black,{w:4,r:.1,c:1,dx:-11}), sight:part('holo',6,4,C.black), moving:part('charging',3,1,C.black), under:off() }),
+  dmr: G('mil','Marksman rifle',{fx:'flash'},{ body:part('railtop',24,6,C.gun), barrel:part('fluted',28,3,C.black), handguard:part('mlok',16,5,C.gun), muzzle:part('comp',3,3,C.black),
+    stock:part('ar',17,9,C.gun), grip:gp('ar',7,C.black,{w:4,r:.4}), mag:part('box',7,0,C.black,{w:4}), sight:part('scope',14,5,C.black), moving:part('charging',3,1,C.black), under:part('bipod',10,2,C.black) }),
+  sniper: G('mil','Bolt sniper',{fx:'flash'},{ body:part('receiver',20,5,C.od), barrel:part('fluted',34,3,C.black), handguard:part('smooth',14,5,C.od), muzzle:part('brake',4,3,C.black),
+    stock:part('skeleton',20,10,C.od), grip:gp('rifle',7,C.black,{w:4,r:.35}), mag:part('box',5,0,C.black,{w:6}), sight:part('scope',18,5,C.black,{dx:-2}), moving:part('bolt',4,1,C.steel), under:part('bipod',11,2,C.black) }),
+  amr: G('mil','Anti-materiel rifle',{fx:'flash'},{ body:part('receiver',28,8,'#3a3d3f'), barrel:part('plain',36,4,C.black), handguard:off(), muzzle:part('brake',6,6,C.black),
+    stock:part('skeleton',20,12,'#3a3d3f'), grip:gp('pistol',8,C.black,{w:5,r:.3}), mag:part('box',7,0,C.black,{w:7}), sight:part('scope',20,6,C.black), moving:part('bolt',5,1,C.steel), under:part('bipod',14,2,C.black,{dx:8}) }),
+  smg: G('mil','Compact SMG',{fx:'flash'},{ body:part('receiver',16,6,C.black), barrel:part('plain',6,2,C.gun), handguard:part('smooth',6,5,C.black), muzzle:part('suppressor',12,4,C.black),
+    stock:part('folding',12,7,C.steel), grip:gp('pistol',7,C.black,{w:4,r:.3}), mag:part('extended',12,0,C.gun,{w:3}), sight:part('iron',4,3,C.black), moving:part('charging',2,1,C.steel), under:off() }),
+  classicsmg: G('mil','Classic SMG',{fx:'flash'},{ body:part('stamped',18,6,C.black), barrel:part('plain',5,2,C.gun), handguard:part('smooth',8,5,C.black), muzzle:part('flash',2,3,C.black),
+    stock:part('collapsible',12,8,C.black), grip:gp('pistol',7,C.black,{w:4,r:.3}), mag:part('curved',11,0,C.black,{w:3,r:.2,c:2}), sight:part('iron',4,3,C.black), moving:part('cocking',7,1,C.steel), under:off() }),
+  pdw: G('mil','PDW',{fx:'flash'},{ body:part('receiver',16,7,'#3b3f44'), barrel:part('plain',5,2,C.black), handguard:part('rail',7,5,'#3b3f44'), muzzle:part('comp',2,3,C.black),
+    stock:part('collapsible',10,8,'#3b3f44'), grip:gp('ar',7,C.black,{w:4,r:.35}), mag:part('extended',14,0,C.black,{w:3}), sight:part('holo',5,4,C.black), moving:part('charging',3,1,C.black), under:part('foregrip',4,3,C.black) }),
+  shotgun: G('mil','Pump shotgun',{fx:'flash'},{ body:part('receiver',18,6,C.black), barrel:part('ventrib',30,2,C.gun), handguard:off(), muzzle:off(),
+    stock:part('rifle',18,9,C.black), grip:gp('rifle',6,C.black,{w:4,r:.45}), mag:part('tube',22,0,C.gun,{w:2}), sight:part('iron',4,2,C.gun), moving:part('pump',10,4,C.black,{dx:2}), under:off() }),
+  double: G('mil','Double barrel',{fx:'flash'},{ body:part('receiver',12,6,'#6e757b'), barrel:part('double',26,2,'#3a3c3e'), handguard:part('wood',9,3,C.walnut,{dy:6}), muzzle:off(),
+    stock:part('wood',18,9,C.walnut), grip:gp('none',0,C.walnut,{w:4}), mag:off(), sight:part('iron',4,2,C.steel), moving:off(), under:off() }),
+  leveraction: G('mil','Lever-action',{fx:'flash',trim:'#d4a84a'},{ body:part('lever',16,6,'#6e757b'), barrel:part('plain',24,2,'#3a3c3e'), handguard:part('wood',10,3,C.walnut,{dy:3}), muzzle:off(),
+    stock:part('wood',17,9,C.walnut), grip:off(), mag:part('tube',18,0,'#3a3c3e',{w:2}), sight:part('peep',3,3,C.steel), moving:part('lever',6,1,'#6e757b'), under:off() }),
+  hunting: G('mil','Hunting rifle',{fx:'flash'},{ body:part('receiver',20,5,'#3a3c3e'), barrel:part('plain',30,2,C.black), handguard:part('wood',14,5,C.walnut), muzzle:off(),
+    stock:part('thumbhole',19,10,C.walnut), grip:gp('none',0,C.walnut), mag:part('box',4,0,C.black,{w:5}), sight:part('scope',16,5,C.black), moving:part('bolt',4,1,C.steel), under:off() }),
+  lmg: G('mil','Light machine gun',{fx:'flash'},{ body:part('railtop',26,8,C.black), barrel:part('plain',26,3,C.gun), handguard:part('vented',12,6,C.black), muzzle:part('flash',4,4,C.black),
+    stock:part('rifle',16,10,C.black), grip:gp('pistol',7,C.black,{w:4,r:.3}), mag:part('beltbox',9,0,C.od,{w:8}), sight:part('carry',9,3,C.black), moving:part('charging',3,1,C.steel), under:part('bipod',12,2,C.black) }),
+  launcher: G('mil','Grenade launcher',{fx:'flash'},{ body:part('receiver',14,7,C.od), barrel:part('plain',14,5,'#3a3c3e'), handguard:off(), muzzle:off(),
+    stock:part('collapsible',14,9,C.od), grip:gp('pistol',7,C.black,{w:4,r:.35}), mag:off(), sight:part('iron',4,3,C.black), moving:off(), under:part('foregrip',5,3,C.black) }),
+  pistol: G('mil','Pistol',{fx:'flash'},{ body:part('frame',13,4,C.black), barrel:part('plain',4,2,C.steel,{dy:-3}), handguard:off(), muzzle:off(), stock:off(),
+    grip:gp('pistol',8,C.black,{w:5,r:.35,dx:-2}), mag:part('flush',2,0,C.gun,{w:5}), sight:part('iron',4,2,C.black), moving:part('slide',16,3,C.gun), under:off() }, false),
+  revolver: G('mil','Revolver',{fx:'flash'},{ body:part('revolver',12,5,C.steel), barrel:part('plain',11,3,C.steel,{dy:-1}), handguard:off(), muzzle:off(), stock:off(),
+    grip:gp('wood',8,C.walnut,{w:4,r:.5,dx:-3}), mag:off(), sight:part('iron',4,2,C.steel), moving:off(), under:off() }, false),
+  flare: G('mil','Flare pistol',{fx:'flash'},{ body:part('frame',10,5,'#e8662a'), barrel:part('plain',9,4,'#e8662a',{dy:-1}), handguard:off(), muzzle:off(), stock:off(),
+    grip:gp('pistol',7,C.black,{w:4,r:.45,dx:-1}), mag:off(), sight:off(), moving:off(), under:off() }, false),
+  /* cyberpunk */
+  neonsmg: G('cyber','Neon SMG',{glow:'#00f0ff',trim:'#ff2bd6',fx:'laser'},{ body:part('cyberframe',18,6,'#1b1d2a'), barrel:part('rail',10,1,'#c0c6d4'), handguard:part('neon',8,5,'#2b2f45'), muzzle:part('spike',5,3,'#e6e9f0'),
+    stock:part('cyberstock',12,8,'#1b1d2a'), grip:gp('cybergrip',7,'#2b2f45',{w:4,r:.3}), mag:part('battery',9,0,'#2b2f45',{w:3}), sight:part('hud',6,5,'#2b2f45'), moving:part('coolant',5,2,'#101418'), under:off() }),
+  smartrifle: G('cyber','Smart rifle',{glow:'#ff2bd6',trim:'#f5e663',fx:'laser'},{ body:part('cyberblock',24,7,'#e6e9f0'), barrel:part('plain',22,2,'#1b1d2a'), handguard:part('neon',14,6,'#e6e9f0'), muzzle:part('comp',3,3,'#1b1d2a'),
+    stock:part('cyberstock',16,9,'#e6e9f0'), grip:gp('cybergrip',7,'#1b1d2a',{w:4,r:.35}), mag:part('battery',10,0,'#1b1d2a',{w:4,r:.1}), sight:part('hud',7,5,'#1b1d2a'), moving:part('charging',3,1,'#ff2bd6'), under:part('laser',4,2,'#1b1d2a') }),
+  neonshotgun: G('cyber','Neon shotgun',{glow:'#ff2bd6',trim:'#00f0ff',fx:'flash'},{ body:part('cyberblock',18,7,'#101418'), barrel:part('rail',22,2,'#c0c6d4'), handguard:off(), muzzle:off(),
+    stock:part('cyberstock',15,9,'#101418'), grip:gp('cybergrip',6,'#101418',{w:4,r:.4}), mag:off(), sight:part('hud',6,5,'#2b2f45'), moving:part('pump',10,4,'#ff2bd6',{dx:2}), under:part('monoblade',8,2,'#c0c6d4') }),
+  chromepistol: G('cyber','Chrome pistol',{glow:'#39ff14',trim:'#c0c6d4',fx:'laser'},{ body:part('frame',13,4,'#101418'), barrel:part('plain',4,2,'#c0c6d4',{dy:-3}), handguard:off(), muzzle:off(), stock:off(),
+    grip:gp('cybergrip',8,'#101418',{w:5,r:.35,dx:-2}), mag:part('flush',2,0,'#2b2f45',{w:5}), sight:part('iron',4,2,'#101418'), moving:part('slide',16,3,'#d9dde6'), under:off() }, false),
+  /* steampunk */
+  blunderbuss: G('steam','Brass blunderbuss',{glow:'#ffb347',trim:'#d4a84a',fx:'steam'},{ body:part('boiler',16,6,'#7a4a22'), barrel:part('flared',22,3,'#b87333'), handguard:off(), muzzle:part('bell',4,3,'#b8892e'),
+    stock:part('brasswood',16,9,'#6b3f1f'), grip:gp('brassgrip',7,'#6b3f1f',{w:4,r:.45}), mag:part('canister',8,0,'#b8892e',{w:4}), sight:part('brassscope',12,5,'#b8892e'), moving:part('gear',5,1,'#c9a23a'), under:off() }),
+  aether: G('steam','Aether rifle',{glow:'#7cf7ff',trim:'#d4a84a',fx:'steam'},{ body:part('brassframe',24,6,'#3b2a1e'), barrel:part('pipes',26,2,'#b87333'), handguard:part('cage',12,5,'#3b2a1e'), muzzle:part('brake',3,3,'#b87333'),
+    stock:part('brasswood',17,9,'#8b5a2b'), grip:gp('brassgrip',7,'#8b5a2b',{w:4,r:.4}), mag:part('canister',10,0,'#b8892e',{w:4}), sight:part('brassscope',16,5,'#b8892e'), moving:part('crank',4,1,'#c9a23a'), under:off() }),
+  clockwork: G('steam','Clockwork pistol',{glow:'#ffb347',trim:'#d4a84a',fx:'steam'},{ body:part('boiler',12,5,'#b8892e'), barrel:part('pipes',9,2,'#b87333'), handguard:off(), muzzle:part('bell',3,3,'#b8892e'),
+    stock:off(), grip:gp('brassgrip',7,'#5a381d',{w:4,r:.45,dx:-2}), mag:off(), sight:off(), moving:part('gear',4,1,'#c9a23a'), under:off() }, false),
+  steamgatling: G('steam','Steam cannon',{glow:'#ff6a00',trim:'#b87333',fx:'steam'},{ body:part('boiler',22,9,'#3b2a1e'), barrel:part('pipes',24,3,'#b87333'), handguard:part('cage',10,7,'#3b2a1e'), muzzle:part('bell',5,4,'#b8892e'),
+    stock:part('brasswood',16,11,'#5a381d'), grip:gp('brassgrip',8,'#5a381d',{w:5,r:.35}), mag:part('canister',10,0,'#b8892e',{w:5}), sight:part('brassscope',12,5,'#b8892e'), moving:part('crank',5,1,'#c9a23a'), under:part('tank',12,4,'#b87333') }),
+  /* fantasy */
+  runecrossbow: G('fantasy','Rune crossbow',{glow:'#7cf7ff',trim:'#d4af37',fx:'bolt'},{ body:part('runic',18,5,'#5a381d'), barrel:part('crossbow',18,2,'#8b5a2b'), handguard:off(), muzzle:off(),
+    stock:part('ornate',15,8,'#5a381d'), grip:gp('hilt',6,'#3b2a1e',{w:3,r:.3}), mag:off(), sight:part('eye',5,4,'#d4af37'), moving:off(), under:off() }),
+  dragonmusket: G('fantasy','Dragon musket',{glow:'#ff5df0',trim:'#d4af37',fx:'magic'},{ body:part('runic',20,6,'#3d2b4f'), barrel:part('ornate',24,3,'#7d7f86'), handguard:part('carved',10,5,'#4b2a5a'), muzzle:part('dragon',7,5,'#2f5a3a'),
+    stock:part('ornate',17,9,'#4b2a5a'), grip:gp('hilt',7,'#3b2a1e',{w:4,r:.4}), mag:part('vial',7,0,'#7d7f86',{w:5}), sight:part('eye',6,4,'#d4af37'), moving:part('runecharm',4,1,'#d4af37'), under:off() }),
+  wandpistol: G('fantasy','Arcane wand pistol',{glow:'#b26bff',trim:'#d4af37',fx:'magic'},{ body:part('runic',12,5,'#e6dcc3'), barrel:part('ornate',8,2,'#d4af37'), handguard:off(), muzzle:part('crystal',5,4,'#ffffff'),
+    stock:off(), grip:gp('hilt',7,'#4b2a5a',{w:4,r:.45,dx:-2}), mag:off(), sight:off(), moving:off(), under:off() }, false),
+  holycannon: G('fantasy','Holy hand cannon',{glow:'#ffd23f',trim:'#d4af37',fx:'magic'},{ body:part('runic',18,7,'#e6dcc3'), barrel:part('ornate',14,4,'#d4af37'), handguard:part('carved',8,6,'#e6dcc3'), muzzle:part('crystal',6,6,'#ffffff'),
+    stock:part('ornate',14,9,'#e6dcc3'), grip:gp('hilt',7,'#7a2a2a',{w:4,r:.4}), mag:off(), sight:off(), moving:part('runecharm',4,1,'#d4af37'), under:part('runeblade',8,2,'#c0c0c8') }),
+  bonegun: G('fantasy','Necro bone gun',{glow:'#5dff8f',trim:'#7d7f86',fx:'magic'},{ body:part('runic',18,6,C.bone), barrel:part('ornate',18,2,'#a99f86'), handguard:off(), muzzle:part('dragon',6,5,C.bone),
+    stock:part('ornate',15,8,'#a99f86'), grip:gp('hilt',7,'#2f3b2a',{w:4,r:.4}), mag:part('vial',7,0,'#7d7f86',{w:5}), sight:part('eye',6,4,C.bone), moving:off(), under:off() }),
+  /* laser */
+  raygun: G('laser','Retro ray gun',{glow:'#39ff14',trim:'#f2c94c',fx:'laser'},{ body:part('raygun',12,6,'#c63d2f'), barrel:part('ringed',9,2,'#c0c6d4'), handguard:off(), muzzle:part('focus',2,3,'#c0c6d4'),
+    stock:off(), grip:gp('ergogrip',7,'#1e2230',{w:4,r:.45,dx:-1}), mag:off(), sight:part('antenna',3,4,'#c0c6d4'), moving:off(), under:off() }, false),
+  plasmarifle: G('laser','Plasma rifle',{glow:'#00d9ff',trim:'#f2c94c',fx:'laser'},{ body:part('pulse',24,7,'#e9edf2'), barrel:part('emitter',20,2,'#2c3e66'), handguard:part('capacitor',14,6,'#2c3e66'), muzzle:part('focus',3,4,'#e9edf2'),
+    stock:part('fin',15,9,'#e9edf2'), grip:gp('ergogrip',7,'#1e2230',{w:4,r:.35}), mag:part('cell',8,0,'#2c3e66',{w:4}), sight:part('holo',6,4,'#1e2230'), moving:part('coil',6,2,'#c0c6d4'), under:off() }),
+  tesla: G('laser','Tesla cannon',{glow:'#b26bff',trim:'#f2c94c',fx:'laser'},{ body:part('pulse',26,9,'#1e2230'), barrel:part('emitter',24,3,'#c0c6d4'), handguard:part('capacitor',14,7,'#1e2230'), muzzle:part('tesla',6,3,'#c0c6d4'),
+    stock:part('fin',16,11,'#1e2230'), grip:gp('ergogrip',8,'#2c3e66',{w:5,r:.3}), mag:part('cell',10,0,'#2c3e66',{w:6}), sight:part('antenna',4,5,'#c0c6d4'), moving:part('coil',8,2,'#c0c6d4'), under:off() }),
+  lasersniper: G('laser','Laser sniper',{glow:'#ff3b30',trim:'#c0c6d4',fx:'laser'},{ body:part('pulse',22,6,'#1e2230'), barrel:part('emitter',30,2,'#c0c6d4'), handguard:part('capacitor',12,5,'#1e2230'), muzzle:part('focus',3,3,'#c0c6d4'),
+    stock:part('fin',17,10,'#1e2230'), grip:gp('ergogrip',7,'#2c3e66',{w:4,r:.35}), mag:part('cell',6,0,'#2c3e66',{w:4}), sight:part('scope',16,5,'#1e2230'), moving:part('coil',5,2,'#c0c6d4'), under:part('bipod',10,2,'#1e2230') }),
+  /* space blaster (original designs) */
+  blasterpistol: G('space','Heavy blaster pistol',{glow:'#ff3b30',trim:'#9aa0a6',fx:'blaster'},{ body:part('blaster',13,6,C.black), barrel:part('finned',7,3,C.gun), handguard:off(), muzzle:part('cone',3,3,C.black),
+    stock:off(), grip:gp('blastergrip',7,'#5a381d',{w:4,r:.45,dx:-2}), mag:off(), sight:part('longscope',10,4,'#3a3c3e',{dx:1}), moving:part('coolinglever',3,1,C.steel), under:off() }, false),
+  blastercarbine: G('space','Blaster carbine',{glow:'#ff3b30',trim:'#9aa0a6',fx:'blaster'},{ body:part('heavyblaster',20,6,'#1c1d1f'), barrel:part('perforated',16,2,C.black), handguard:off(), muzzle:part('blastertip',2,3,C.black),
+    stock:part('blasterfold',13,8,C.black), grip:gp('blastergrip',7,C.black,{w:4,r:.35}), mag:part('gascan',8,0,C.steel,{w:3}), sight:part('longscope',12,4,'#3a3c3e'), moving:part('coolinglever',3,1,C.steel), under:off() }),
+  heavyblaster: G('space','Heavy blaster rifle',{glow:'#ff3b30',trim:'#c9a23a',fx:'blaster'},{ body:part('heavyblaster',26,8,'#3a3d3f'), barrel:part('finned',26,3,C.black), handguard:off(), muzzle:part('cone',4,4,C.black),
+    stock:part('blasterfold',16,10,C.black), grip:gp('blastergrip',8,C.black,{w:5,r:.3}), mag:part('powerpack',7,0,'#c9a23a',{w:5}), sight:part('longscope',16,5,'#3a3c3e'), moving:part('coolinglever',3,1,C.steel), under:part('bipod',12,2,C.black) }),
+  bountyrifle: G('space','Bounty hunter rifle',{glow:'#4da3ff',trim:'#9aa0a6',fx:'blaster'},{ body:part('blaster',24,6,'#4a3a2e'), barrel:part('perforated',30,2,C.steel), handguard:off(), muzzle:part('blastertip',3,3,C.black),
+    stock:part('blasterfold',15,9,'#4a3a2e'), grip:gp('blastergrip',7,'#2a2c2e',{w:4,r:.35}), mag:off(), sight:part('longscope',18,5,'#3a3c3e'), moving:part('coolinglever',3,1,C.steel), under:part('gascan',8,3,C.steel) }),
+};
+const PAL = {
+  mil:{ main:[C.black,C.gun,C.od,C.tan,C.steel,'#3c3f35'], furn:[C.wood,C.walnut,C.black,C.tan,C.od], acc:[C.gun,C.steel,C.black,C.silver], glow:['#ff3b30','#ffb000'], trim:['#c9a23a','#7b838a'], fx:['flash'] },
+  cyber:{ main:['#1b1d2a','#2b2f45','#e6e9f0','#3a1f4a','#101418'], furn:['#ff2bd6','#f5e663','#1b1d2a','#e6e9f0','#2b2f45'], acc:['#c0c6d4','#101418','#5a6172'], glow:['#00f0ff','#ff2bd6','#39ff14','#ffe600'], trim:['#ff2bd6','#f5e663','#c0c6d4'], fx:['laser','flash'] },
+  steam:{ main:['#b8892e','#7a4a22','#3b2a1e','#2e2a26','#b87333'], furn:['#8b5a2b','#5a381d','#6b2d1f'], acc:['#b87333','#c9a23a','#3b2a1e'], glow:['#ffb347','#7cf7ff','#ff6a00'], trim:['#d4a84a','#b87333','#e0b85a'], fx:['steam'] },
+  fantasy:{ main:['#5a381d','#3d2b4f','#2f3b2a','#7d7f86','#e6dcc3'], furn:['#8b5a2b','#4b2a5a','#2f5a3a','#5a381d'], acc:['#7d7f86','#d4af37','#3b2a1e'], glow:['#7cf7ff','#b26bff','#5dff8f','#ff5df0','#ffd23f'], trim:['#d4af37','#c0c0c8'], fx:['magic'] },
+  laser:{ main:['#e9edf2','#c63d2f','#2c3e66','#f2c94c','#1e2230','#5ec2b7'], furn:['#1e2230','#e9edf2','#c63d2f','#2c3e66'], acc:['#c0c6d4','#1e2230','#f2c94c'], glow:['#39ff14','#ff3b30','#00d9ff','#ff2bd6'], trim:['#c0c6d4','#f2c94c'], fx:['laser'] },
+  space:{ main:['#2a2c2e','#3a3d3f','#1c1d1f','#4a3a2e','#6e757b'], furn:['#5a381d','#2a2c2e','#4a3a2e'], acc:['#7b838a','#2a2c2e','#9aa0a6'], glow:['#ff3b30','#4da3ff','#39ff14'], trim:['#9aa0a6','#c9a23a'], fx:['blaster'] },
 };
 
 /* ---------- state ---------- */
 const STORE_KEY = 'gunforge.v1';
-function fromPreset(key, keepName){
-  const pr = PRESETS[key]; const [w,h] = pr.canvas.split('x').map(Number);
-  return { v:1, name: keepName || pr.name, canvas:{w,h}, look:{ outline:true, oc:'#16140f', shade:true },
+const CANVASES = [[48,32],[64,32],[96,40],[112,44],[128,56],[160,64],[192,80]];
+const DEFAULT_LOOK = { outline:true, oc:'#16140f', shade:true, halo:true, glow:'#ff3b30', trim:'#c9a23a', fx:'flash' };
+function fitCanvas(st){ const B = build(st)._bbox; if (!B) return {w:96,h:40}; const w = B.x1-B.x0+1+8, h = B.y1-B.y0+1+8;
+  const c = CANVASES.find(([W,H]) => W>=w && H>=h) || CANVASES[CANVASES.length-1]; return {w:c[0], h:c[1]}; }
+function fromPreset(key){
+  const pr = PRESETS[key];
+  const st = { v:2, name: pr.label, theme: pr.theme, canvas:{w:96,h:40}, look: Object.assign({}, DEFAULT_LOOK, pr.look),
     parts: JSON.parse(JSON.stringify(pr.parts)), paint: Object.fromEntries(ORDER.map(n => [n,{}])), sel:'body' };
+  normalize(st); st.canvas = fitCanvas(st); return st;
 }
-function valid(s){ return s && s.parts && ORDER.every(n => s.parts[n] && typeof s.parts[n].l === 'number') && s.canvas && s.look; }
-function normalize(s){ s.paint = s.paint || {}; for (const n of ORDER){ s.paint[n] = s.paint[n] || {}; const p = s.parts[n];
-  for (const [k,v] of Object.entries({on:true,w:4,r:0,c:0,dx:0,dy:0,guard:false,h:3,color:C.black})) if (p[k] === undefined) p[k] = v; }
-  if (!PARTS[s.sel]) s.sel = 'body'; s.name = String(s.name || 'My Gun').slice(0,40); return s; }
+function valid(s){ return s && typeof s === 'object' && s.parts && ['body','barrel','grip'].every(n => s.parts[n] && typeof s.parts[n].l === 'number'); }
+function normalize(s){
+  s.look = Object.assign({}, DEFAULT_LOOK, s.look || {}); s.paint = s.paint || {};
+  for (const n of ORDER){ s.paint[n] = s.paint[n] || {}; if (!s.parts[n]) s.parts[n] = off(); const p = s.parts[n];
+    for (const [k,v] of Object.entries({on:true,w:4,r:0,c:0,dx:0,dy:0,guard:false,h:3,l:4,color:C.black,style:'none'})) if (p[k] === undefined || p[k] === null) p[k] = v;
+    if (!PARTS[n].styles[p.style]) p.style = 'none';
+    for (const k of ['l','h','w','r','c','dx','dy']) p[k] = Number(p[k]) || 0;
+    if (!isHex(p.color)) p.color = C.black; }
+  for (const k of ['glow','trim','oc']) if (!isHex(s.look[k])) s.look[k] = DEFAULT_LOOK[k];
+  if (!s.canvas || !(s.canvas.w > 0)) s.canvas = {w:96,h:40}; s.canvas.w = clamp(s.canvas.w|0,16,256); s.canvas.h = clamp(s.canvas.h|0,16,128);
+  if (!PARTS[s.sel]) s.sel = 'body'; if (!THEMES[s.theme] && s.theme !== 'all') s.theme = 'mil';
+  s.name = String(s.name || 'My Gun').slice(0,40); return s; }
 let state;
-try { const raw = localStorage.getItem(STORE_KEY); const s = raw && JSON.parse(raw); state = valid(s) ? normalize(s) : fromPreset('rifle'); } catch { state = fromPreset('rifle'); }
-function persist(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch {} }
+try { const raw = localStorage.getItem(STORE_KEY); const s = raw && JSON.parse(raw); state = valid(s) ? normalize(s) : null; } catch { state = null; }
+if (!state) state = fromPreset('rifle');
+function persist(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch {} codeDirty = true; }
 
-let undoStack = [], redoStack = [], pending = null;
+let undoStack = [], redoStack = [], pending = null, codeDirty = true;
 function begin(){ if (!pending) pending = JSON.stringify(state); }
 function end(){ if (pending){ if (pending !== JSON.stringify(state)){ undoStack.push(pending); if (undoStack.length > 80) undoStack.shift(); redoStack = []; } pending = null; persist(); updateUndo(); } }
 function edit(fn, full){ begin(); fn(); end(); refresh(); if (full) syncUI(); }
@@ -464,47 +844,61 @@ function updateUndo(){ $('#undo').disabled = !undoStack.length; $('#redo').disab
 
 /* ---------- build ---------- */
 function shade(o,s,p,look){
-  const T = tones(p.color), M = new Set();
+  const T = tones(p.color), TR = tones(look.trim), GL = tones(look.glow);
+  const tone = t => T[t] || (t==='tr' ? TR.b : t==='trh' ? TR.hi : t==='trs' ? TR.sh : t==='gl' ? GL.b : t==='glc' ? GL.lt : t==='gsh' ? GL.sh : LIT[t] || T.b);
+  const M = new Set(), glowKeys = [];
   for (const k of s.m) if (!s.cut.has(k)) M.add(k);
   for (const k of M){ const [x,y] = PK(k); let t = 'b';
     if (look.shade){ const up = M.has(K(x,y-1)), dn = M.has(K(x,y+1)); t = !up ? 'hi' : (!dn ? 'sh' : 'b'); }
     const d = s.det.get(k); if (d) t = d;
-    const gk = K(x+o.ox, y+o.oy); o.pix.set(gk, T[t] || LIT[t] || T.b); o.mask.add(gk); }
+    const gk = K(x+o.ox, y+o.oy); o.pix.set(gk, tone(t)); o.mask.add(gk);
+    if (t==='gl' || t==='glc' || t==='gsh') glowKeys.push(gk); }
   if (look.outline){ for (const k of M){ if (s.no.has(k)) continue; const [x,y] = PK(k);
     for (const [dx,dy] of N4){ if (M.has(K(x+dx,y+dy))) continue; const gk = K(x+dx+o.ox, y+dy+o.oy); if (!o.pix.has(gk)) o.pix.set(gk, look.oc); } } }
+  if (look.halo && glowKeys.length){ const [r,g,b] = hexToRgb(look.glow), halo = new Map();
+    for (const gk of glowKeys){ const [x,y] = PK(gk);
+      for (let dy=-2;dy<=2;dy++) for (let dx=-2;dx<=2;dx++){ if (!dx && !dy) continue; const k = K(x+dx,y+dy); if (o.pix.has(k)) continue;
+        const a = Math.max(Math.abs(dx),Math.abs(dy)) === 1 ? .42 : .16; if ((halo.get(k)||0) < a) halo.set(k,a); } }
+    for (const [k,a] of halo) o.pix.set(k, `rgba(${r},${g},${b},${a})`); }
 }
 function bboxOf(maps){ let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
   for (const m of maps) for (const k of m.keys()){ const [x,y] = PK(k); if (x<x0) x0=x; if (y<y0) y0=y; if (x>x1) x1=x; if (y>y1) y1=y; }
   return x0===Infinity ? null : {x0,y0,x1,y1}; }
 function build(st){
-  const P = st.parts, out = {}, c = {}, look = st.look, b = P.body;
+  const P = st.parts, out = {}, c = { P }, look = st.look, b = P.body;
   c.bodyL = b.l; c.bodyH = b.h;
   const isOn = n => P[n].on && P[n].style !== 'none';
   const place = (n,ax,ay) => { const p = P[n]; const o = { name:n, ox:ax+p.dx, oy:ay+p.dy, pix:new Map(), mask:new Set() }; out[n] = o;
     if (p.on && (p.style !== 'none' || (n === 'grip' && p.guard))) shade(o, SHAPES[n](p,c), p, look); return o; };
   place('body',0,0);
-  const railTop = b.style === 'railtop';
-  const bar = P.barrel, barrel = place('barrel', b.l, Math.max(1, Math.round(b.h*.2)));
-  c.barrelY = barrel.oy; c.barrelH = bar.style === 'double' ? bar.h*2+1 : bar.h; c.barrelEnd = barrel.ox + (isOn('barrel') ? bar.l : 0);
-  const hg = place('handguard', b.l, 0);
+  const topOff = { railtop:-1, heavyblaster:-1, blaster:-1 }[b.style] || 0;
+  const bar = P.barrel, barrel = place('barrel', b.l, Math.max(1, R(b.h*.2)));
+  c.barrelY = barrel.oy; c.barrelH = bar.style === 'double' ? bar.h*2+1 : bar.style === 'rail' ? bar.h+2 : bar.h; c.barrelEnd = barrel.ox + (isOn('barrel') ? bar.l : 0);
+  const hgP = P.handguard, hg = place('handguard', b.l, 0);
   const mz = P.muzzle, muzzle = place('muzzle', c.barrelEnd, c.barrelY + Math.floor((c.barrelH-1)/2) - Math.floor((mz.h-1)/2));
   place('stock',0,0);
-  const gp = P.grip, grip = place('grip', Math.round(b.l*.22), b.h);
+  const gpP = P.grip, grip = place('grip', R(b.l*.22), b.h);
   const mg = P.mag; let ma;
-  if (mg.style === 'flush') ma = [grip.ox - Math.round(gp.r*(gp.l-1)), grip.oy + gp.l];
+  if (mg.style === 'flush') ma = [grip.ox - R(gpP.r*(gpP.l-1)), grip.oy + gpP.l];
   else if (mg.style === 'tube') ma = [b.l, c.barrelY + c.barrelH];
-  else ma = [Math.round(b.l*.55), b.h];
+  else ma = [R(b.l*.55), b.h];
   place('mag', ma[0], ma[1]);
-  const mv = P.moving; let mva;
-  if (mv.style === 'slide') mva = [0, -mv.h]; else if (mv.style === 'bolt') mva = [Math.round(b.l*.4), 1];
-  else if (mv.style === 'pump') mva = [b.l+2, c.barrelY + c.barrelH]; else mva = [1, railTop ? -2 : -1];
+  const un = P.under; let ua;
+  if (['bayonet','monoblade','runeblade'].includes(un.style)) ua = [c.barrelEnd-4, c.barrelY + c.barrelH];
+  else if (isOn('handguard')) ua = [hg.ox + R(hgP.l*.35), hg.oy + hgP.h];
+  else ua = [b.l+2, c.barrelY + c.barrelH];
+  place('under', ua[0], ua[1]);
+  const mv = P.moving, L = b.l, H = b.h;
+  const MA = { slide:[0,-mv.h], bolt:[R(L*.4),1], coolant:[R(L*.4),1], gear:[R(L*.7),R(H/2)], crank:[R(L*.75),R(H/2)], runecharm:[L-2,H],
+    coil:[R(L*.5),topOff-2], pump:[L+2,c.barrelY+c.barrelH], cocking:[R(L*.6),topOff-1], lever:[R(L*.25),H] };
+  const mva = MA[mv.style] || [1, topOff-1];
   const moving = place('moving', mva[0], mva[1]);
   const tops = ['body','barrel','handguard','moving'].map(n => out[n]);
   c.topAt = gx => { let m = Infinity; for (const o of tops) for (const k of o.mask){ const [x,y] = PK(k); if (x === gx && y < m) m = y; } return m === Infinity ? c.barrelY : m; };
-  let fx = b.l; if (isOn('barrel')) fx = Math.max(fx, c.barrelEnd); if (isOn('handguard')) fx = Math.max(fx, hg.ox + P.handguard.l);
+  let fx = b.l; if (isOn('barrel')) fx = Math.max(fx, c.barrelEnd); if (isOn('handguard')) fx = Math.max(fx, hg.ox + hgP.l);
   if (isOn('moving') && mv.style === 'slide') fx = Math.max(fx, moving.ox + mv.l); c.frontX = fx;
-  const sy = (isOn('moving') && mv.style === 'slide') ? moving.oy : (railTop ? -1 : 0);
-  const sa = [Math.round(b.l*.25), sy]; c.sightX = sa[0] + P.sight.dx; c.sightY = sa[1] + P.sight.dy;
+  const sy = (isOn('moving') && mv.style === 'slide') ? moving.oy : topOff;
+  const sa = [R(b.l*.25), sy]; c.sightX = sa[0] + P.sight.dx; c.sightY = sa[1] + P.sight.dy;
   const sight = place('sight', sa[0], sa[1]);
   out._bbox = bboxOf(Z.map(n => out[n].pix));
   out._pts = [
@@ -515,12 +909,15 @@ function build(st){
     for (const k in pm){ const [x,y] = PK(k); const gk = K(x+o.ox, y+o.oy); if (pm[k] === null) o.pix.delete(gk); else o.pix.set(gk, pm[k]); } }
   return out;
 }
-function composite(out, names = Z){ const m = new Map(); for (const n of Z) if (names.includes(n)) for (const [k,v] of out[n].pix) m.set(k,v); return m; }
+function composite(out, names = Z){ const m = new Map();
+  for (const n of Z) if (names.includes(n)) for (const [k,v] of out[n].pix){ if (v.charCodeAt(0) === 114 && m.has(k)) continue; m.set(k,v); }
+  return m; }
 
 /* ---------- drawing ---------- */
 const cv = $('#cv'), g = cv.getContext('2d');
-let cur = build(state), comp = composite(cur), offX = 0, offY = 0, cell = 8, frozen = false, hover = null, tool = 'move', drag = null;
+let cur, comp, offX = 0, offY = 0, cell = 8, frozen = false, hover = null, tool = 'move', drag = null;
 const BGS = { night:'#1c1f17', day:'#cbc4a8', grass:'#4b5832' };
+const PAD = 4, PADR = 26;
 function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
 function layoutCanvas(){
   const W = state.canvas.w, H = state.canvas.h, stage = $('#stage');
@@ -543,7 +940,7 @@ function draw(){
   if ($('#gridChk').checked && cell >= 7){ g.strokeStyle = 'rgba(128,128,128,.22)'; g.lineWidth = 1; g.beginPath();
     for (let x=1;x<W;x++){ g.moveTo(x*cell+.5,0); g.lineTo(x*cell+.5,H*cell); } for (let y=1;y<H;y++){ g.moveTo(0,y*cell+.5); g.lineTo(W*cell,y*cell+.5); } g.stroke(); }
   const so = cur[state.sel]; const sb = so && bboxOf([so.pix]);
-  if (sb){ const acc = cssVar('--accent'); g.save(); g.strokeStyle = acc; g.lineWidth = 2; g.setLineDash([5,3]);
+  if (sb){ g.save(); g.strokeStyle = cssVar('--accent'); g.lineWidth = 2; g.setLineDash([5,3]);
     g.strokeRect((sb.x0+offX)*cell-1, (sb.y0+offY)*cell-1, (sb.x1-sb.x0+1)*cell+2, (sb.y1-sb.y0+1)*cell+2); g.restore(); }
   if ($('#ptsChk').checked){ g.save(); g.strokeStyle = '#ff2fd0'; g.lineWidth = 2;
     for (const [, x, y] of cur._pts){ const px = (x+offX)*cell, py = (y+offY)*cell + cell/2; g.beginPath(); g.moveTo(px-cell,py); g.lineTo(px+cell,py); g.moveTo(px,py-cell); g.lineTo(px,py+cell); g.stroke(); }
@@ -551,11 +948,11 @@ function draw(){
   if (hover){ g.strokeStyle = cssVar('--fg'); g.lineWidth = 1; g.strokeRect(hover[0]*cell+.5, hover[1]*cell+.5, cell-1, cell-1); }
 }
 function drawPreviews(){
-  const B = bboxOf([comp]); const pad = 4;
+  const B = bboxOf([comp]);
   for (const [id,s] of [['#pv1',1],['#pv2',2],['#pv4',4]]){ const c2 = $(id), x2 = c2.getContext('2d');
-    const w = B ? B.x1-B.x0+1 : 8, h = B ? B.y1-B.y0+1 : 8; c2.width = (w+pad*2)*s; c2.height = (h+pad*2)*s;
+    const w = B ? B.x1-B.x0+1 : 8, h = B ? B.y1-B.y0+1 : 8; c2.width = (w+PAD+PADR)*s; c2.height = (h+PAD*2)*s;
     x2.fillStyle = '#1c1f17'; x2.fillRect(0,0,c2.width,c2.height);
-    if (B) for (const [k,v] of comp){ const [x,y] = PK(k); x2.fillStyle = v; x2.fillRect((x-B.x0+pad)*s,(y-B.y0+pad)*s,s,s); } }
+    if (B) for (const [k,v] of comp){ const [x,y] = PK(k); x2.fillStyle = v; x2.fillRect((x-B.x0+PAD)*s,(y-B.y0+PAD)*s,s,s); } }
 }
 function partAt(vx,vy){ const k = K(vx,vy); for (let i=Z.length-1;i>=0;i--) if (cur[Z[i]].pix.has(k)) return Z[i]; return null; }
 function status(){
@@ -568,11 +965,48 @@ function status(){
   $('#status').innerHTML = bits.map(b => `<span>${b}</span>`).join('');
 }
 
+/* ---------- test fire ---------- */
+let fxTimer = 0;
+function drawFx(x2, fx, ox, oy, t, W, s, glow){
+  const px = (x,y,c,a=1) => { x2.globalAlpha = clamp(a,0,1); x2.fillStyle = c; x2.fillRect(Math.round(x/s)*s, Math.round(y/s)*s, s, s); };
+  const core = shiftL(glow,.25,-.05), span = W-ox;
+  switch (fx){
+    case 'laser': { const len = Math.min(1,t*3)*span, a = t<.6 ? 1 : 1-(t-.6)/.4;
+      for (let x=0;x<len;x+=s){ px(ox+x,oy,core,a); px(ox+x,oy-s,glow,a*.55); px(ox+x,oy+s,glow,a*.55); }
+      if (t<.3) for (const [dx,dy] of [[0,-2],[0,2],[1,-1],[1,1],[-1,0]]) px(ox+dx*s,oy+dy*s,glow,.8); break; }
+    case 'blaster': { const x = ox + Math.min(1,t*1.6)*span; if (x < W) for (let i=0;i<5;i++){ px(x-i*s,oy,i<1?'#ffffff':core); px(x-i*s,oy-s,glow,.5); px(x-i*s,oy+s,glow,.5); }
+      if (t<.25){ px(ox,oy,core); px(ox+s,oy-s,glow,.7); px(ox+s,oy+s,glow,.7); px(ox+s,oy,glow); } break; }
+    case 'magic': { const x = ox + t*span; for (const [dx,dy] of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]) px(x+dx*s,oy+dy*s, dx||dy ? glow : core);
+      for (let i=1;i<8;i++){ const tx = x - i*s*2; if (tx<ox) break; px(tx + ((i*7)%3-1)*s, oy + ((i*5)%3-1)*s, glow, 1-i/8); } break; }
+    case 'steam': { const a = 1-t; for (let i=0;i<5;i++){ const rr = 1+t*4+i*.6, cx = ox+(i*2+t*10)*s, cy = oy-(i*.8+t*4)*s;
+        for (let dy=-Math.ceil(rr);dy<=rr;dy++) for (let dx=-Math.ceil(rr);dx<=rr;dx++) if (dx*dx+dy*dy<=rr*rr) px(cx+dx*s,cy+dy*s,'#d9d6cc',a*.5); }
+      if (t<.2){ px(ox,oy,'#ffd27a'); px(ox+s,oy,'#ff9a1f'); } break; }
+    case 'bolt': { const x = ox + t*span; for (let i=0;i<6;i++) px(x-i*s,oy,'#a07a4a'); px(x+s,oy,'#c9ced3'); px(x,oy-s,'#c9ced3',.9); px(x,oy+s,'#c9ced3',.9);
+      px(x-6*s,oy-s,'#b03030'); px(x-6*s,oy+s,'#b03030'); break; }
+    default: { if (t<.35){ const a = 1-t/.35; px(ox,oy,'#fff6c2',a); px(ox+s,oy,'#ffd23f',a); px(ox+2*s,oy,'#ff9a1f',a); px(ox+s,oy-s,'#ffb02e',a); px(ox+s,oy+s,'#ffb02e',a);
+        px(ox+3*s,oy,'#ff7a1a',a*.7); px(ox+2*s,oy-2*s,'#ff9a1f',a*.6); px(ox+2*s,oy+2*s,'#ff9a1f',a*.6); }
+      const bx = ox + t*span*1.4; if (bx < W) for (let i=0;i<3;i++) px(bx-i*s,oy,'#ffe08a',1-i*.3); }
+  }
+  x2.globalAlpha = 1;
+}
+function testFire(){
+  clearTimeout(fxTimer); drawPreviews();
+  const B = bboxOf([comp]); if (!B) return;
+  const [, mx, my] = cur._pts[0];
+  const targets = [['#pv4',4],['#pv2',2],['#pv1',1]].map(([id,s]) => { const c2 = $(id), x2 = c2.getContext('2d');
+    return { x2, s, W:c2.width, base:x2.getImageData(0,0,c2.width,c2.height), ox:(mx-B.x0+PAD)*s, oy:(my-B.y0+PAD)*s }; });
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches, T = 20; let f = 0;
+  const step = () => { const t = reduce ? .3 : f/T;
+    for (const tg of targets){ tg.x2.putImageData(tg.base,0,0); if (f <= T) drawFx(tg.x2, state.look.fx, tg.ox, tg.oy, t, tg.W, tg.s, state.look.glow); }
+    f++; if (reduce){ fxTimer = setTimeout(drawPreviews, 500); return; } if (f <= T+1) fxTimer = setTimeout(step, 33); };
+  step();
+}
+
 /* ---------- pointer ---------- */
 function cellOf(e){ const r = cv.getBoundingClientRect(); return [Math.floor((e.clientX-r.left)/(r.width/state.canvas.w)), Math.floor((e.clientY-r.top)/(r.height/state.canvas.h))]; }
 function paintAt(px,py){
   const vx = px-offX, vy = py-offY, gk = K(vx,vy);
-  if (tool === 'picker'){ const c = comp.get(gk); if (c) setPaintColor(c); return; }
+  if (tool === 'picker'){ const c = comp.get(gk); if (isHex(c)) setPaintColor(c); return; }
   let n = state.sel;
   if (tool === 'eraser' && !cur[n].pix.has(gk)){ n = partAt(vx,vy); if (!n) return; }
   const p = state.parts[n]; if (!p.on){ toast(`Turn on ${PARTS[n].label} to paint on it`); return; }
@@ -581,7 +1015,7 @@ function paintAt(px,py){
   else { if (state.paint[n][rk] === null && !o.pix.has(gk)) return; state.paint[n][rk] = null; }
   cur = build(state); comp = composite(cur); draw();
 }
-function strokeLine(a,b2){ const S = new Set(); line(S,a[0],a[1],b2[0],b2[1]); for (const k of S){ const [x,y] = PK(k); paintAt(x,y); } }
+function strokeLine(a,b2){ const S2 = new Set(); line(S2,a[0],a[1],b2[0],b2[1]); for (const k of S2){ const [x,y] = PK(k); paintAt(x,y); } }
 cv.addEventListener('pointerdown', e => {
   if (e.button !== 0) return; cv.setPointerCapture(e.pointerId); const pt = cellOf(e); frozen = true;
   if (tool === 'move'){ const n = partAt(pt[0]-offX, pt[1]-offY); if (n && n !== state.sel){ state.sel = n; syncEditor(); renderChips(); draw(); }
@@ -608,29 +1042,37 @@ $('#paintColor').addEventListener('input', e => setPaintColor(e.target.value));
 function setTool(t){ tool = t; document.querySelectorAll('[data-tool]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tool === t))); cv.classList.toggle('move', t === 'move'); }
 document.querySelectorAll('[data-tool]').forEach(b => b.addEventListener('click', () => setTool(b.dataset.tool)));
 
+function renderThemes(){ const el = $('#themes'); el.innerHTML = '';
+  for (const t of ['mil','cyber','steam','fantasy','laser','space','all']){ const b = document.createElement('button'); b.className = 'btn'; b.id = 'theme-'+t;
+    b.style.setProperty('--dot', THEME_DOT[t]); b.textContent = t === 'all' ? 'All + Chaos' : THEMES[t]; b.setAttribute('aria-pressed', String(state.theme === t));
+    b.addEventListener('click', () => { state.theme = t; persist(); renderThemes(); renderPresets(); }); el.appendChild(b); }
+  $('#randomBtn').textContent = state.theme === 'all' ? 'Chaos gun (mix every theme)' : `Random ${THEMES[state.theme].toLowerCase()} gun`; }
 function renderPresets(){ const el = $('#presets'); el.innerHTML = '';
-  for (const [k,pr] of Object.entries(PRESETS)){ const b = document.createElement('button'); b.className = 'btn'; b.id = 'preset-'+k; b.textContent = pr.label;
-    b.addEventListener('click', () => edit(() => { const name = state.name; state = fromPreset(k); if (name && !Object.values(PRESETS).some(p => p.name === name)) state.name = name; }, true));
+  for (const [k,pr] of Object.entries(PRESETS)){ if (state.theme !== 'all' && pr.theme !== state.theme) continue;
+    const b = document.createElement('button'); b.className = 'btn'; b.id = 'preset-'+k; b.textContent = pr.label;
+    b.addEventListener('click', () => edit(() => { const t = state.theme; state = fromPreset(k); state.theme = t; }, true));
     el.appendChild(b); } }
 function renderChips(){ const el = $('#parts'); if (!el.children.length){
     for (const n of ORDER){ const b = document.createElement('button'); b.className = 'pchip'; b.id = 'chip-'+n; b.innerHTML = `<b>${PARTS[n].label}</b><small></small>`;
       b.addEventListener('click', () => { state.sel = n; persist(); syncEditor(); renderChips(); draw(); }); el.appendChild(b); } }
   for (const n of ORDER){ const b = $('#chip-'+n), p = state.parts[n];
     b.setAttribute('aria-pressed', String(state.sel === n)); b.classList.toggle('off', !p.on);
-    b.querySelector('small').textContent = p.on ? PARTS[n].styles[p.style] || p.style : 'off'; }
+    b.querySelector('small').textContent = p.on ? (PARTS[n].styles[p.style] || [p.style])[0] : 'off'; }
   $('#selSlot').textContent = '→ ' + SLOT_LABEL[PARTS[state.sel].slot] + ' slot';
 }
 function syncNudge(){ const p = state.parts[state.sel], o = $('#nudgeOut'); if (o) o.textContent = `x ${p.dx>=0?'+':''}${p.dx}, y ${p.dy>=0?'+':''}${p.dy}`; }
+function styleOptions(meta, cur){
+  return [...Object.keys(THEMES)].map(t => { const opts = Object.entries(meta.styles).filter(([,v]) => v[1] === t); if (!opts.length) return '';
+    return `<optgroup label="${THEMES[t]}">${opts.map(([k,v]) => `<option value="${k}" ${cur===k?'selected':''}>${v[0]}</option>`).join('')}</optgroup>`; }).join(''); }
 function syncEditor(){
   const n = state.sel, p = state.parts[n], meta = PARTS[n], el = $('#editor');
   const paintCount = Object.keys(state.paint[n]).length;
   let h = `<label class="check"><input type="checkbox" id="ed-on" ${p.on?'checked':''}> Show ${meta.label.toLowerCase()}</label>`;
-  h += `<div class="row two"><label for="ed-style">Style</label><select id="ed-style">${Object.entries(meta.styles).map(([k,v]) => `<option value="${k}" ${p.style===k?'selected':''}>${v}</option>`).join('')}</select></div>`;
+  h += `<div class="row two"><label for="ed-style">Style</label><select id="ed-style">${styleOptions(meta, p.style)}</select></div>`;
   for (const [key,[lab,mn,mx,st]] of Object.entries(meta.sl)){
-    if (key === 'c' && p.style !== 'curved') continue;
-    if (n === 'mag' && key === 'r' && (p.style === 'drum' || p.style === 'flush' || p.style === 'tube')) continue;
-    const val = p[key];
-    h += `<div class="row"><label for="ed-${key}">${n==='mag'&&p.style==='tube'&&key==='w'?'Thickness':lab}</label><input type="range" id="ed-${key}" min="${mn}" max="${mx}" step="${st}" value="${val}"><output id="out-${key}">${val}</output></div>`; }
+    if (key === 'c' && !['curved','stanag','pmag'].includes(p.style)) continue;
+    if (n === 'mag' && key === 'r' && NO_RAKE.has(p.style)) continue;
+    h += `<div class="row"><label for="ed-${key}">${n==='mag'&&(p.style==='tube'||p.style==='gascan')&&key==='w'?'Thickness':lab}</label><input type="range" id="ed-${key}" min="${mn}" max="${mx}" step="${st}" value="${p[key]}"><output id="out-${key}">${p[key]}</output></div>`; }
   if (meta.guard) h += `<label class="check"><input type="checkbox" id="ed-guard" ${p.guard?'checked':''}> Trigger guard</label>`;
   if (n !== 'body') h += `<div class="row two"><span class="lbl">Position</span><div class="nudge">
       <button class="btn" data-nudge="-1,0" aria-label="Move left">←</button><button class="btn" data-nudge="1,0" aria-label="Move right">→</button>
@@ -641,7 +1083,7 @@ function syncEditor(){
   h += `<p class="slot">Exports into the <b>${SLOT_LABEL[meta.slot]}</b> slot.${p.style==='none' ? ' Style is None: use the Pencil to draw this part yourself.' : ''}</p>`;
   el.innerHTML = h;
   $('#ed-on').addEventListener('change', e => edit(() => { p.on = e.target.checked; }, true));
-  $('#ed-style').addEventListener('change', e => edit(() => { p.style = e.target.value; if (!p.on && p.style !== 'none') p.on = true; }, true));
+  $('#ed-style').addEventListener('change', e => edit(() => { p.style = e.target.value; Object.assign(p, SD[n+':'+p.style] || {}); if (!p.on && p.style !== 'none') p.on = true; }, true));
   for (const key of Object.keys(meta.sl)){ const r = $('#ed-'+key); if (!r) continue;
     r.addEventListener('input', () => { begin(); p[key] = +r.value; $('#out-'+key).textContent = r.value; refresh(); });
     r.addEventListener('change', () => end()); }
@@ -656,16 +1098,20 @@ function syncEditor(){
   syncNudge();
 }
 function syncUI(){
-  renderChips(); syncEditor();
+  renderThemes(); renderPresets(); renderChips(); syncEditor();
   $('#outlineChk').checked = state.look.outline; $('#outlineColor').value = state.look.oc; $('#shadeChk').checked = state.look.shade;
+  $('#haloChk').checked = state.look.halo; $('#glowColor').value = state.look.glow; $('#trimColor').value = state.look.trim; $('#fxSel').value = state.look.fx;
   const cs = state.canvas.w+'x'+state.canvas.h, sel = $('#canvasSel');
   if (![...sel.options].some(o => o.value === cs)){ const o = document.createElement('option'); o.value = cs; o.textContent = cs.replace('x',' × '); sel.appendChild(o); }
   sel.value = cs; $('#gunName').value = state.name; updateUndo(); layoutCanvas(); drawPreviews(); status();
 }
+const lookColor = (id, key) => { $(id).addEventListener('input', e => { begin(); state.look[key] = e.target.value; refresh(); }); $(id).addEventListener('change', () => end()); };
+lookColor('#outlineColor','oc'); lookColor('#glowColor','glow'); lookColor('#trimColor','trim');
 $('#outlineChk').addEventListener('change', e => edit(() => { state.look.outline = e.target.checked; }));
-$('#outlineColor').addEventListener('input', e => { begin(); state.look.oc = e.target.value; refresh(); });
-$('#outlineColor').addEventListener('change', () => end());
 $('#shadeChk').addEventListener('change', e => edit(() => { state.look.shade = e.target.checked; }));
+$('#haloChk').addEventListener('change', e => edit(() => { state.look.halo = e.target.checked; }));
+$('#fxSel').addEventListener('change', e => { edit(() => { state.look.fx = e.target.value; }); testFire(); });
+$('#fireBtn').addEventListener('click', testFire);
 $('#canvasSel').addEventListener('change', e => { const [w,h] = e.target.value.split('x').map(Number); edit(() => { state.canvas = {w,h}; }); layoutCanvas(); status(); });
 $('#gunName').addEventListener('input', e => { state.name = e.target.value; persist(); });
 $('#bgSel').addEventListener('change', draw); $('#gridChk').addEventListener('change', draw); $('#ptsChk').addEventListener('change', draw);
@@ -673,21 +1119,28 @@ $('#undo').addEventListener('click', undo); $('#redo').addEventListener('click',
 
 /* random */
 const pick = a => a[Math.floor(Math.random()*a.length)];
-const jig = (v,mn,mx,f=.25) => clamp(Math.round(v*(1 + (Math.random()*2-1)*f)), mn, mx);
-$('#randomBtn').addEventListener('click', () => edit(() => {
-  const base = pick(['rifle','wood','smg','shotgun','sniper','lmg']); const name = state.name; state = fromPreset(base); state.name = name;
-  const P = state.parts; const main = pick([C.black,C.gun,C.od,C.tan,C.steel,C.black]); const furn = pick([C.wood,C.walnut,C.black,C.tan,C.od,main]); const acc = pick([C.gun,C.steel,C.black,C.silver]);
-  P.body.style = pick(['receiver','railtop','tapered']); P.body.l = jig(P.body.l,14,32); P.body.h = jig(P.body.h,5,9,.15); P.body.color = main;
-  P.barrel.style = pick(['plain','plain','fluted','ventrib']); P.barrel.l = jig(P.barrel.l,8,40,.3); P.barrel.color = acc;
-  P.handguard.on = Math.random() > .15; P.handguard.style = pick(['rail','smooth','wood','vented']); P.handguard.l = clamp(Math.round(P.barrel.l*(.35+Math.random()*.4)),4,30); P.handguard.h = clamp(P.body.h-1,3,9); P.handguard.color = P.handguard.style==='wood' ? furn : main;
-  P.muzzle.on = Math.random() > .2; P.muzzle.style = pick(['flash','brake','comp','suppressor']); P.muzzle.l = P.muzzle.style==='suppressor' ? jig(10,6,16) : jig(3,2,5); P.muzzle.h = P.muzzle.style==='suppressor' ? 4 : 3; P.muzzle.color = C.black;
-  P.stock.on = Math.random() > .08; P.stock.style = pick(['rifle','wood','skeleton','collapsible','folding']); P.stock.l = jig(16,10,22); P.stock.h = jig(9,7,12,.15); P.stock.color = P.stock.style==='folding' ? acc : (P.stock.style==='wood' ? furn : main);
-  P.grip.style = pick(['rifle','pistol','wood']); P.grip.r = pick([.25,.3,.35,.4,.45]); P.grip.color = P.grip.style==='wood' ? furn : main; P.grip.guard = true;
-  P.mag.style = pick(['box','curved','curved','drum']); P.mag.l = P.mag.style==='drum' ? jig(11,8,14) : jig(10,5,14); P.mag.w = P.mag.style==='drum' ? 6 : pick([3,4,4,5]); P.mag.r = P.mag.style==='drum' ? 0 : pick([0,.1,.2]); P.mag.c = pick([1,2,3]); P.mag.color = pick([acc,main,C.tan]);
-  P.sight.style = pick(['iron','reddot','holo','scope']); P.sight.l = P.sight.style==='scope' ? jig(16,12,22) : jig(6,4,8); P.sight.h = P.sight.style==='scope' ? 5 : 4; P.sight.color = C.black; P.sight.dx = 0;
-  P.moving.style = pick(['charging','charging','bolt']); P.moving.l = P.moving.style==='bolt' ? 4 : 3; P.moving.h = 1; P.moving.color = acc;
-  const tot = P.stock.l + P.body.l + P.barrel.l + (P.muzzle.on ? P.muzzle.l : 0); state.canvas = tot > 100 ? {w:128,h:56} : tot > 84 ? {w:112,h:44} : {w:96,h:40};
-}, true));
+const jig = (v,mn,mx,f=.2) => clamp(Math.round(v*(1 + (Math.random()*2-1)*f)), mn, mx);
+const SKIP = new Set(['body:frame','body:revolver','body:raygun','body:bullpup','moving:slide','mag:flush','mag:tube','moving:pump','moving:lever','stock:buttpad','barrel:double']);
+function randomGun(theme){
+  const th = theme === 'all' ? null : theme;
+  const longs = Object.keys(PRESETS).filter(k => PRESETS[k].long && (!th || PRESETS[k].theme === th));
+  const ns = fromPreset(pick(longs)); ns.theme = theme; const P = ns.parts;
+  const pal = PAL[th || pick(Object.keys(PAL))], main = pick(pal.main), furn = pick(pal.furn), acc = pick(pal.acc);
+  ns.look.glow = pick(pal.glow); ns.look.trim = pick(pal.trim); ns.look.fx = pick(pal.fx);
+  for (const n of ORDER){ const p = P[n];
+    const opts = Object.entries(PARTS[n].styles).filter(([k,[,t]]) => k !== 'none' && !SKIP.has(n+':'+k) && (!th || t === th)).map(([k]) => k);
+    if (opts.length && (n === 'body' || Math.random() < .85)){ p.style = pick(opts); p.on = true; p.dx = 0; p.dy = 0; Object.assign(p, SD[n+':'+p.style] || {}); }
+    if (n === 'under') p.on = opts.length > 0 && Math.random() < .45;
+    else if (!['body','barrel','grip'].includes(n) && Math.random() < .08) p.on = false;
+    if (th) p.color = ['stock','grip','handguard'].includes(n) ? (Math.random() < .5 ? furn : main) : ['barrel','muzzle','moving','under'].includes(n) ? acc : main;
+    else { const pp = PAL[pick(Object.keys(PAL))]; p.color = pick(pp.main.concat(pp.furn, pp.acc)); }
+    for (const k of ['l','h']){ const sl = PARTS[n].sl[k]; if (sl) p[k] = jig(p[k], sl[1], sl[2]); } }
+  P.grip.guard = true; P.grip.dx = 0; P.mag.dx = 0;
+  if (P.barrel.style === 'crossbow'){ P.mag.on = false; P.muzzle.on = false; P.handguard.on = false; ns.look.fx = 'bolt'; }
+  ns.name = th ? `Random ${THEMES[th]} gun` : 'Chaos gun';
+  ns.canvas = fitCanvas(ns); return ns;
+}
+$('#randomBtn').addEventListener('click', () => edit(() => { state = randomGun(state.theme); }, true));
 
 /* keyboard */
 document.addEventListener('keydown', e => {
@@ -697,9 +1150,43 @@ document.addEventListener('keydown', e => {
   if (e.ctrlKey || e.metaKey || e.altKey) return;
   const map = { v:'move', b:'pencil', e:'eraser', i:'picker' }; if (map[e.key.toLowerCase()]){ setTool(map[e.key.toLowerCase()]); return; }
   if (e.key.toLowerCase() === 'g'){ $('#gridChk').checked = !$('#gridChk').checked; draw(); return; }
+  if (e.key.toLowerCase() === 'f'){ testFire(); return; }
   const arrows = { ArrowLeft:[-1,0], ArrowRight:[1,0], ArrowUp:[0,-1], ArrowDown:[0,1] };
   if (arrows[e.key] && state.sel !== 'body' && e.target === document.body){ e.preventDefault(); const p = state.parts[state.sel]; edit(() => { p.dx += arrows[e.key][0]; p.dy += arrows[e.key][1]; }); syncNudge(); }
 });
+
+/* ---------- gun codes ---------- */
+const b64u = bytes => { let s = ''; for (let i=0;i<bytes.length;i+=0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
+const unb64u = str => { str = str.replace(/-/g,'+').replace(/_/g,'/'); while (str.length % 4) str += '='; const s = atob(str); return Uint8Array.from(s, c => c.charCodeAt(0)); };
+const pipeBytes = async (bytes, stream) => new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
+function codePayload(st){ const { name, theme, canvas, look, parts, paint } = st; const pt = {}; for (const n of ORDER) if (Object.keys(paint[n]||{}).length) pt[n] = paint[n];
+  return { v:2, name, theme, canvas, look, parts, paint:pt }; }
+async function encodeGun(st){ const bytes = new TextEncoder().encode(JSON.stringify(codePayload(st)));
+  if (typeof CompressionStream === 'function'){ try { return 'GF1.' + b64u(await pipeBytes(bytes, new CompressionStream('deflate-raw'))); } catch {} }
+  return 'GF0.' + b64u(bytes); }
+async function decodeGun(text){
+  let t = String(text || '').trim(); const hashAt = t.indexOf('#g='); if (hashAt >= 0) t = t.slice(hashAt+3);
+  t = t.replace(/\s+/g,''); if (!t) throw new Error('empty');
+  let obj;
+  if (t[0] === '{' || String(text).trim()[0] === '{') obj = JSON.parse(String(text).trim());
+  else if (t.startsWith('GF1.')){ if (typeof DecompressionStream !== 'function') throw new Error('old browser'); obj = JSON.parse(new TextDecoder().decode(await pipeBytes(unb64u(t.slice(4)), new DecompressionStream('deflate-raw')))); }
+  else if (t.startsWith('GF0.')) obj = JSON.parse(new TextDecoder().decode(unb64u(t.slice(4))));
+  else throw new Error('not a code');
+  if (!valid(obj)) throw new Error('bad gun'); return normalize(obj);
+}
+let latestCode = '';
+async function currentCode(){ if (codeDirty || !latestCode){ latestCode = await encodeGun(state); codeDirty = false; } return latestCode; }
+const shareBase = () => (/^https?:$/.test(location.protocol) && location.hostname.endsWith('github.io')) ? location.origin + location.pathname : SITE;
+async function copyText(txt, what){
+  const ta = $('#codeIn'); ta.value = txt;
+  try { await navigator.clipboard.writeText(txt); toast(what + ' copied'); }
+  catch { ta.focus(); ta.select(); toast('Press Ctrl+C to copy the ' + what.toLowerCase()); } }
+$('#copyCode').addEventListener('click', async () => copyText(await currentCode(), 'Gun code'));
+$('#copyLink').addEventListener('click', async () => copyText(shareBase() + '#g=' + await currentCode(), 'Share link'));
+async function loadFromText(text, label){
+  try { const s = await decodeGun(text); edit(() => { const t = state.theme; state = s; if (!state.theme) state.theme = t; }, true); toast('Loaded ' + (label || state.name)); return true; }
+  catch (e){ toast(e.message === 'old browser' ? 'This browser can’t read compressed codes. Try Chrome, Edge or Firefox.' : 'That isn’t a Gun Forge code. Copy the whole code and try again.'); return false; } }
+$('#loadCode').addEventListener('click', () => loadFromText($('#codeIn').value));
 
 /* ---------- export ---------- */
 const slug = () => (state.name || 'gun').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'') || 'gun';
@@ -713,7 +1200,7 @@ function exportSet(){
   for (const sl of SLOTS){ const m = composite(cur, sl.parts); const bb = bboxOf([m]); if (!bb) continue; items.push({ id:sl.id, label:sl.label, map:m, bb: mode === 'aligned' ? FB : bb }); }
   return { s, FB, items };
 }
-function layoutText(set){
+function layoutText(set, code){
   const { s, FB } = set, w = FB.x1-FB.x0+1, h = FB.y1-FB.y0+1, cx = (FB.x0+FB.x1+1)/2, cy = (FB.y0+FB.y1+1)/2;
   const f = v => (v>=0?'+':'') + v.toFixed(1), m = v => (v>=0?'+':'') + (v/64).toFixed(3);
   const L = [];
@@ -728,9 +1215,10 @@ function layoutText(set){
   L.push('', 'Slot images:');
   for (const it of set.items){ const b = bboxOf([it.map]); if (!b) continue; const bx = (b.x0+b.x1+1)/2, by = (b.y0+b.y1+1)/2;
     L.push(`  ${(slug()+'_'+it.id+'.png').padEnd(32)} ${it.label.padEnd(12)} part center x ${f(bx-cx).padStart(6)} px, y ${f(cy-by).padStart(6)} px, size ${b.x1-b.x0+1} x ${b.y1-b.y0+1} px`); }
+  if (code) L.push('', 'Gun code (paste into Gun Forge to edit this gun again):', code, '', 'Open in Gun Forge:', shareBase() + '#g=' + code);
   return L.join('\n');
 }
-let dlReady = (window.claude && typeof window.claude.use === 'function') ? window.claude.use('downloads').catch(() => null) : null;
+const dlReady = (window.claude && typeof window.claude.use === 'function') ? window.claude.use('downloads').catch(() => null) : null;
 async function saveFile(name, data){
   if (dlReady){ const ns = await dlReady;
     if (ns){ try { await ns.save({ filename:name, data }); toast('Saved ' + name); }
@@ -747,24 +1235,24 @@ $('#slotBtn').addEventListener('click', async () => { const set = exportSet(); i
 $('#zipBtn').addEventListener('click', async () => {
   const set = exportSet(); if (!set) return toast('Nothing to export yet');
   if (typeof JSZip === 'undefined'){ toast('ZIP tool didn’t load (offline?). Saving the full image instead.'); const it = set.items[0]; return saveFile(`${slug()}_full.png`, await toBlob(rasterize(it.map, it.bb, set.s))); }
-  const zip = new JSZip(), dir = zip.folder(slug());
+  const zip = new JSZip(), dir = zip.folder(slug()), code = await currentCode();
   for (const it of set.items) dir.file(`${slug()}_${it.id}.png`, await toBlob(rasterize(it.map, it.bb, set.s)));
-  dir.file('layout.txt', layoutText(set)); dir.file(`${slug()}.gunforge.json`, JSON.stringify(state, null, 1));
+  dir.file('layout.txt', layoutText(set, code)); dir.file(`${slug()}.gunforge.json`, JSON.stringify(codePayload(state), null, 1));
   await saveFile(`${slug()}_sprites.zip`, await zip.generateAsync({ type:'blob' }));
 });
-$('#saveDesign').addEventListener('click', () => saveFile(`${slug()}.gunforge.json`, new Blob([JSON.stringify(state, null, 1)], { type:'application/json' })));
+$('#saveDesign').addEventListener('click', () => saveFile(`${slug()}.gunforge.json`, new Blob([JSON.stringify(codePayload(state), null, 1)], { type:'application/json' })));
 $('#openDesign').addEventListener('click', () => $('#fileIn').click());
-$('#fileIn').addEventListener('change', async e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return;
-  try { const s = JSON.parse(await f.text()); if (!valid(s)) throw new Error('bad'); edit(() => { state = normalize(s); }, true); toast('Opened ' + f.name); }
-  catch { toast('That file isn’t a Gun Forge design (.gunforge.json).'); } });
+$('#fileIn').addEventListener('change', async e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; loadFromText(await f.text(), f.name); });
 
-let tt; function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2600); }
+let tt; function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2800); }
 
 /* ---------- boot ---------- */
-renderPresets(); setTool('move'); syncUI(); refresh();
+cur = build(state); comp = composite(cur);
+setTool('move'); syncUI(); refresh();
 new ResizeObserver(() => layoutCanvas()).observe($('#stage'));
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
 new MutationObserver(draw).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+if (location.hash.startsWith('#g=')){ const h = location.hash; history.replaceState(null, '', location.pathname + location.search); loadFromText(decodeURIComponent(h), 'shared gun'); }
 })();
 </script>
 
