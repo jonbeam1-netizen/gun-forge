@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Make pixel gun sprites for the ZED ZONE MOD Editor and export PNGs for every slot.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}*,*::before,*::after{box-sizing:border-box}</style>
+</head>
+<body>
+<title>Gun Forge</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Saira+Stencil+One&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+/* Layout: armory workbench — pixel stage + tools on the left, parts/spec panel on the right; stacks to one column on narrow screens */
+:root{
+  --bg:#d7dacd; --panel:#e9ebe1; --raised:#f5f6f0; --fg:#1a1d15; --muted:#555c4c; --line:#b3b8a3;
+  --accent:#b84f13; --accent-ink:#fff7ef; --chk1:#c9cdbd; --chk2:#bfc3b1; --stage:#cdd1c1; --danger:#a3322a;
+  --f-display:'Saira Stencil One', Impact, 'Arial Narrow', sans-serif;
+  --f-body:'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-label:'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --f-mono:'JetBrains Mono', ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12140e; --panel:#1b1e16; --raised:#24281e; --fg:#e2e5d6; --muted:#9aa18b; --line:#363c2d;
+    --accent:#ee8a3a; --accent-ink:#1b1006; --chk1:#62675a; --chk2:#575c4f; --stage:#181b13; --danger:#e3685d;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12140e; --panel:#1b1e16; --raised:#24281e; --fg:#e2e5d6; --muted:#9aa18b; --line:#363c2d;
+  --accent:#ee8a3a; --accent-ink:#1b1006; --chk1:#62675a; --chk2:#575c4f; --stage:#181b13; --danger:#e3685d;
+  color-scheme:dark;
+}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.wrap{max-width:1320px;margin:0 auto;padding-block:18px 48px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:grid;gap:16px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px;border-bottom:3px solid var(--fg);padding-bottom:10px}
+.mark{font-family:var(--f-display);font-weight:400;font-size:clamp(36px,6vw,58px);line-height:.88;letter-spacing:.01em;margin:0;text-wrap:balance}
+.mark span{color:var(--accent)}
+.tag{font-family:var(--f-label);text-transform:uppercase;letter-spacing:.09em;font-size:14px;color:var(--muted);margin:4px 0 0}
+.specs{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);padding:2px 8px;border-radius:2px;background:var(--panel);font-variant-numeric:tabular-nums}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:18px;align-items:start}
+@media (max-width:940px){.layout{grid-template-columns:minmax(0,1fr)}}
+.bench{min-width:0;display:grid;gap:10px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.group{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center}
+button{font:inherit;color:inherit}
+.btn{font-family:var(--f-label);font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:14px;line-height:1.2;padding:6px 11px;border:1px solid var(--line);background:var(--panel);cursor:pointer;border-radius:2px}
+.btn:hover{border-color:var(--fg)}
+.btn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn kbd{margin-left:4px;opacity:.7}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.colorpick{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);padding:3px 6px;border-radius:2px}
+.colorpick input[type=color]{width:30px;height:26px;border:0;padding:0;background:none;cursor:pointer}
+.colorpick span{font-family:var(--f-mono);font-size:12px}
+.stage{background:var(--stage);border:1px solid var(--line);padding:10px;display:flex;justify-content:center;min-width:0;overflow:hidden}
+#cv{display:block;image-rendering:pixelated;touch-action:none;cursor:crosshair;max-width:100%}
+#cv.move{cursor:grab}
+.status{font-family:var(--f-mono);font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 18px;font-variant-numeric:tabular-nums}
+.status .warn{color:var(--danger)}
+.preview{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;background:var(--panel);border:1px solid var(--line);padding:10px 12px}
+.preview figure{margin:0;display:grid;gap:4px}
+.preview figcaption{font-family:var(--f-label);font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+canvas.pv{image-rendering:pixelated;background:#1c1f17;max-width:100%;display:block}
+.panel{display:grid;gap:14px;min-width:0}
+.sec{background:var(--panel);border:1px solid var(--line);padding:12px 14px;display:grid;gap:10px;min-width:0}
+.sec h2{font-family:var(--f-label);font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin:0;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sec h2 small{font-family:var(--f-mono);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted)}
+.presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.presets .btn{text-align:left}
+.parts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.pchip{text-align:left;padding:5px 8px;border:1px solid var(--line);background:var(--raised);cursor:pointer;display:grid;border-radius:2px;min-width:0}
+.pchip b{font-family:var(--f-label);font-weight:600;font-size:15px;line-height:1.2}
+.pchip small{font-size:11px;color:var(--muted);font-family:var(--f-mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pchip[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.pchip.off b{text-decoration:line-through;color:var(--muted)}
+.editor{display:grid;gap:9px;border-top:1px dashed var(--line);padding-top:10px}
+.row{display:grid;grid-template-columns:92px minmax(0,1fr) 46px;gap:8px;align-items:center}
+.row.two{grid-template-columns:92px minmax(0,1fr)}
+.row > label,.row > .lbl{font-family:var(--f-label);font-size:14px;color:var(--muted)}
+.row output{font-family:var(--f-mono);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select,input[type=text]{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);background:var(--raised);color:var(--fg);border-radius:2px;width:100%;min-width:0}
+.check{display:flex;align-items:center;gap:8px;font-size:14px}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+.swatches{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.sw{width:22px;height:22px;border:1px solid var(--line);cursor:pointer;padding:0;border-radius:2px}
+.sw[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:1px}
+.nudge{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.nudge .btn{padding:4px 9px;min-width:34px}
+.nudge output{font-family:var(--f-mono);font-size:12px;margin-left:6px;color:var(--muted)}
+.slot{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.slot b{color:var(--fg);font-weight:500}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px}
+.note{font-size:13px;color:var(--muted);margin:0}
+ol.steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
+ol.steps code,.note code{font-family:var(--f-mono);font-size:12px;background:var(--raised);padding:0 4px;border:1px solid var(--line);border-radius:2px;overflow-wrap:anywhere}
+kbd{font-family:var(--f-mono);font-size:11px;border:1px solid currentColor;padding:0 3px;border-radius:2px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;font-family:var(--f-label);letter-spacing:.04em;font-size:15px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:calc(100% - 32px);z-index:20}
+.toast.show{opacity:1}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion: reduce){.toast{transition:none}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1 class="mark">GUN <span>FORGE</span></h1>
+      <p class="tag">Pixel gun sprites for the ZED ZONE MOD Editor</p>
+    </div>
+    <div class="specs" aria-label="Sprite rules">
+      <span class="chip">faces right →</span>
+      <span class="chip">64 px = 1 m (PPU 64)</span>
+      <span class="chip">PNG ≤ 2 MB</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <section class="bench" aria-label="Workbench">
+      <div class="toolbar">
+        <div class="group" role="group" aria-label="Tools">
+          <button class="btn" id="t-move" data-tool="move" aria-pressed="true" title="Click a part to select it, drag to move it">Move<kbd>V</kbd></button>
+          <button class="btn" id="t-pencil" data-tool="pencil" aria-pressed="false" title="Paint pixels on the selected part">Pencil<kbd>B</kbd></button>
+          <button class="btn" id="t-eraser" data-tool="eraser" aria-pressed="false" title="Erase pixels">Eraser<kbd>E</kbd></button>
+          <button class="btn" id="t-picker" data-tool="picker" aria-pressed="false" title="Pick a color from the gun">Picker<kbd>I</kbd></button>
+        </div>
+        <label class="colorpick" for="paintColor"><input type="color" id="paintColor" value="#d0d4d8"><span id="paintHex">#d0d4d8</span></label>
+        <div class="group">
+          <button class="btn" id="undo" title="Undo (Ctrl+Z)">Undo</button>
+          <button class="btn" id="redo" title="Redo (Ctrl+Y)">Redo</button>
+        </div>
+        <div class="group">
+          <label class="sr" for="bgSel">Background</label>
+          <select id="bgSel" style="width:auto">
+            <option value="checker">Checker</option>
+            <option value="night">Night</option>
+            <option value="day">Sand</option>
+            <option value="grass">Grass</option>
+          </select>
+          <label class="check"><input type="checkbox" id="gridChk" checked> Grid</label>
+          <label class="check"><input type="checkbox" id="ptsChk"> Mount points</label>
+        </div>
+      </div>
+
+      <div class="stage" id="stage"><canvas id="cv" aria-label="Gun sprite canvas"></canvas></div>
+      <div class="status" id="status"></div>
+
+      <div class="preview" aria-label="Actual size previews">
+        <figure><canvas class="pv" id="pv1"></canvas><figcaption>Actual pixels (1×)</figcaption></figure>
+        <figure><canvas class="pv" id="pv2"></canvas><figcaption>2×</figcaption></figure>
+        <figure><canvas class="pv" id="pv4"></canvas><figcaption>4×</figcaption></figure>
+      </div>
+    </section>
+
+    <aside class="panel" aria-label="Gun settings">
+      <section class="sec">
+        <h2>Start from <small>replaces current gun</small></h2>
+        <div class="presets" id="presets"></div>
+        <button class="btn primary" id="randomBtn">Random gun</button>
+      </section>
+
+      <section class="sec">
+        <h2>Parts <small id="selSlot"></small></h2>
+        <div class="parts" id="parts"></div>
+        <div class="editor" id="editor"></div>
+      </section>
+
+      <section class="sec">
+        <h2>Look</h2>
+        <label class="check"><input type="checkbox" id="outlineChk"> Dark outline</label>
+        <div class="row two"><label for="outlineColor">Outline color</label><input type="color" id="outlineColor" value="#16140f"></div>
+        <label class="check"><input type="checkbox" id="shadeChk"> Auto shading (light top, dark bottom)</label>
+        <div class="row two"><label for="canvasSel">Canvas</label>
+          <select id="canvasSel">
+            <option value="48x32">48 × 32 (pistols)</option>
+            <option value="64x32">64 × 32</option>
+            <option value="96x40">96 × 40 (rifles)</option>
+            <option value="112x44">112 × 44</option>
+            <option value="128x56">128 × 56</option>
+            <option value="160x64">160 × 64</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="sec">
+        <h2>Export</h2>
+        <div class="row two"><label for="gunName">Gun name</label><input type="text" id="gunName" maxlength="40" autocomplete="off"></div>
+        <div class="row two"><label for="scaleSel">Scale</label>
+          <select id="scaleSel">
+            <option value="1">1× — keep PPU 64</option>
+            <option value="2">2× — set PPU 128</option>
+            <option value="4">4× — set PPU 256</option>
+          </select>
+        </div>
+        <div class="row two"><label for="partsMode">Part images</label>
+          <select id="partsMode">
+            <option value="aligned">Same size as full image (lined up)</option>
+            <option value="cropped">Cropped to each part</option>
+          </select>
+        </div>
+        <div class="btnrow">
+          <button class="btn primary" id="zipBtn">Download ZIP</button>
+          <button class="btn" id="fullBtn">Full image PNG</button>
+          <button class="btn" id="slotBtn">Selected slot PNG</button>
+        </div>
+        <p class="note">The ZIP has the full image, one PNG for each MOD Editor slot, a <code>layout.txt</code> with sizes and mount offsets, and your design file.</p>
+        <div class="btnrow">
+          <button class="btn" id="saveDesign">Save design</button>
+          <button class="btn" id="openDesign">Open design</button>
+          <input type="file" id="fileIn" accept=".json,application/json" hidden>
+        </div>
+      </section>
+
+      <section class="sec">
+        <h2>Using it in ZED ZONE</h2>
+        <ol class="steps">
+          <li>Download the ZIP and unzip it somewhere easy, like your Desktop.</li>
+          <li>In the game open <b>MOD Hub → MOD Editor → NEW</b>, then <b>Import Template</b> and pick a gun close to yours so the stats start sensible.</li>
+          <li>In <b>[ TEXTURE ]</b> choose <b>IMPORT PNG</b>. The editor asks for a file path: in File Explorer, Shift + right-click the PNG and pick <b>Copy as path</b>, then paste it (remove the quotes if it complains).</li>
+          <li>Import <code>_full.png</code> as the Full Image. Import the other slot PNGs (main_body, barrel, aimer, gunstock, magazine, moving_part) into their matching slots if your gun uses them.</li>
+          <li>Keep <b>PPU</b> at 64 for 1× exports. Use <code>layout.txt</code> for the Gun Point and mount offsets, then tweak them while watching <b>Generate Preview</b>.</li>
+          <li>Set damage and ammo in <b>[ PARAMS ]</b>, then <b>SAVE</b>. Share it from <b>Workshop → Publish Center</b>.</li>
+        </ol>
+      </section>
+    </aside>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const K = (x, y) => x + ',' + y;
+const PK = k => { const i = k.indexOf(','); return [+k.slice(0, i), +k.slice(i + 1)]; };
+const N4 = [[1,0],[-1,0],[0,1],[0,-1]];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+/* ---------- color ---------- */
+function hexToRgb(h){ h = h.replace('#',''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h, 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+function rgbToHex(r,g,b){ return '#' + [r,g,b].map(v => clamp(Math.round(v),0,255).toString(16).padStart(2,'0')).join(''); }
+function rgbToHsl(r,g,b){ r/=255; g/=255; b/=255; const mx=Math.max(r,g,b), mn=Math.min(r,g,b); let h=0, s=0; const l=(mx+mn)/2;
+  if (mx !== mn){ const d = mx-mn; s = l > .5 ? d/(2-mx-mn) : d/(mx+mn);
+    if (mx === r) h = (g-b)/d + (g<b?6:0); else if (mx === g) h = (b-r)/d + 2; else h = (r-g)/d + 4; h /= 6; }
+  return [h,s,l]; }
+function hslToRgb(h,s,l){ if (s === 0) return [l*255,l*255,l*255]; const q = l < .5 ? l*(1+s) : l+s-l*s, p = 2*l-q;
+  const f = t => { if (t<0) t+=1; if (t>1) t-=1; if (t<1/6) return p+(q-p)*6*t; if (t<1/2) return q; if (t<2/3) return p+(q-p)*(2/3-t)*6; return p; };
+  return [f(h+1/3)*255, f(h)*255, f(h-1/3)*255]; }
+function shiftL(hex, dl, ds = 0){ const [h,s,l] = rgbToHsl(...hexToRgb(hex)); return rgbToHex(...hslToRgb(h, clamp(s+ds,0,1), clamp(l+dl,0,1))); }
+const toneCache = new Map();
+function tones(hex){ let t = toneCache.get(hex); if (!t){ t = { hi: shiftL(hex,.13,-.02), b: hex, sh: shiftL(hex,-.1), dk: shiftL(hex,-.2,.02) }; toneCache.set(hex,t); } return t; }
+const LIT = { glass:'#86cfee', glint:'#e8f8ff', red:'#ff3b30' };
+
+/* ---------- raster helpers ---------- */
+function rect(S,x,y,w,h){ for (let j=0;j<h;j++) for (let i=0;i<w;i++) S.add(K(x+i,y+j)); }
+function poly(S,pts){ let minY=Infinity, maxY=-Infinity; for (const p of pts){ minY=Math.min(minY,p[1]); maxY=Math.max(maxY,p[1]); }
+  for (let y=Math.floor(minY); y<Math.ceil(maxY); y++){ const cy=y+.5, xs=[];
+    for (let i=0;i<pts.length;i++){ const [x1,y1]=pts[i], [x2,y2]=pts[(i+1)%pts.length];
+      if ((y1<=cy && y2>cy) || (y2<=cy && y1>cy)) xs.push(x1 + (cy-y1)/(y2-y1)*(x2-x1)); }
+    xs.sort((a,b)=>a-b);
+    for (let i=0;i+1<xs.length;i+=2) for (let x=Math.ceil(xs[i]-.5); x+.5<=xs[i+1]; x++) S.add(K(x,y)); } }
+function line(S,x0,y0,x1,y1){ x0=Math.round(x0); y0=Math.round(y0); x1=Math.round(x1); y1=Math.round(y1);
+  const dx=Math.abs(x1-x0), sx=x0<x1?1:-1, dy=-Math.abs(y1-y0), sy=y0<y1?1:-1; let e=dx+dy;
+  for(;;){ S.add(K(x0,y0)); if (x0===x1 && y0===y1) break; const e2=2*e; if (e2>=dy){ e+=dy; x0+=sx; } if (e2<=dx){ e+=dx; y0+=sy; } } }
+function circ(S,cx,cy,r){ for (let y=Math.floor(cy-r); y<=Math.ceil(cy+r); y++) for (let x=Math.floor(cx-r); x<=Math.ceil(cx+r); x++) if (Math.hypot(x-cx,y-cy) <= r+.15) S.add(K(x,y)); }
+const mk = () => ({ m:new Set(), cut:new Set(), det:new Map(), no:new Set() });
+function port(o,L,H){ if (H<5) return; const x0=Math.round(L*.42), n=Math.max(3,Math.round(L*.18)); for (let x=x0; x<x0+n && x<L-1; x++) o.det.set(K(x,2),'dk'); }
+
+/* ---------- part shapes (local coords, origin = attach point) ---------- */
+const SHAPES = {
+  body(p){ const o=mk(), L=p.l, H=p.h;
+    switch (p.style){
+      case 'receiver': case 'railtop':
+        rect(o.m,0,0,L,H); o.cut.add(K(0,H-1));
+        if (p.style==='railtop') for (let x=1;x<L-1;x++){ o.m.add(K(x,-1)); o.det.set(K(x,-1), x%2 ? 'sh' : 'hi'); }
+        port(o,L,H); break;
+      case 'tapered': poly(o.m,[[0,1],[L,0],[L,H],[Math.round(L*.35),H],[0,H-2]]); port(o,L,H); break;
+      case 'frame': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1));
+        if (H>=3) for (let x=L-6;x<L-2;x+=2) if (x>0) o.det.set(K(x,H-2),'sh');
+        o.det.set(K(Math.round(L*.45),1),'dk'); break;
+      case 'revolver': { rect(o.m,0,0,L,H); const cx=Math.round(L*.3), cl=Math.max(5,Math.round(L*.45));
+        rect(o.m,cx,-1,cl,H+2); for (let x=cx+1;x<cx+cl-1;x++){ o.det.set(K(x,1),'sh'); o.det.set(K(x,H-2),'sh'); }
+        o.m.add(K(0,-1)); o.m.add(K(-1,-1)); o.m.add(K(-1,-2)); break; }
+    } return o; },
+  barrel(p){ const o=mk(), L=p.l, H=p.h;
+    switch (p.style){
+      case 'plain': rect(o.m,0,0,L,H); break;
+      case 'fluted': rect(o.m,0,0,L,H); if (H>=3) for (let x=1;x<L-1;x+=2) o.det.set(K(x,1),'sh'); else for (let x=2;x<L-1;x+=3) o.det.set(K(x,0),'b'); break;
+      case 'double': rect(o.m,0,0,L,H*2+1); for (let x=0;x<L;x++) o.det.set(K(x,H),'dk'); break;
+      case 'ventrib': rect(o.m,0,0,L,H); for (let x=0;x<L;x++) if (x%3!==2) o.m.add(K(x,-1)); break;
+    } return o; },
+  handguard(p){ const o=mk(), L=p.l, H=p.h, mid=Math.floor(H/2);
+    switch (p.style){
+      case 'rail': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1)); for (let x=0;x<L;x++) o.det.set(K(x,0), x%2 ? 'sh' : 'hi');
+        if (H>=4) for (let x=2;x<L-2;x+=4){ o.det.set(K(x,mid),'dk'); o.det.set(K(x+1,mid),'dk'); } break;
+      case 'smooth': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(L-1,H-1)); break;
+      case 'wood': poly(o.m,[[0,0],[L,.5],[L,H-1.5],[0,H]]); o.cut.add(K(L-1,0));
+        for (let x=2;x<L-2;x+=4){ o.det.set(K(x,mid),'sh'); o.det.set(K(x+1,mid),'sh'); } break;
+      case 'vented': rect(o.m,0,0,L,H); o.cut.add(K(L-1,H-1));
+        if (H>=4) for (let x=2;x<L-3;x+=3){ o.cut.add(K(x,mid)); o.cut.add(K(x+1,mid)); } break;
+    } return o; },
+  muzzle(p){ const o=mk(), L=p.l, H=p.h, mid=Math.floor(H/2);
+    switch (p.style){
+      case 'brake': rect(o.m,0,0,L,H); for (let x=1;x<L;x+=2){ o.det.set(K(x,0),'dk'); o.det.set(K(x,H-1),'dk'); } break;
+      case 'flash': rect(o.m,0,0,L,H); if (H>=3){ o.cut.add(K(L-1,mid)); o.det.set(K(L-2,mid),'dk'); } break;
+      case 'suppressor': rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); o.cut.add(K(L-1,H-1));
+        for (let y=0;y<H;y++) o.det.set(K(0,y),'sh'); if (L>6) for (let y=1;y<H-1;y++) o.det.set(K(L-3,y),'sh'); break;
+      case 'comp': rect(o.m,0,0,L,H); for (let x=1;x<L-1;x+=2) o.det.set(K(x,0),'dk'); break;
+    } return o; },
+  stock(p,c){ const o=mk(), L=p.l, H=p.h, bh=c.bodyH;
+    switch (p.style){
+      case 'rifle': case 'skeleton': poly(o.m,[[0,0],[-L,1],[-L,H],[0,bh]]);
+        if (p.style==='skeleton' && L>9 && H>7) poly(o.cut,[[-3,2.5],[-L+3,3.5],[-L+3,H-2.5],[-3,bh-1.5]]); break;
+      case 'wood': poly(o.m,[[0,0],[-L*.4,1.5],[-L,2],[-L,H],[-L*.45,H*.72],[0,bh]]);
+        { const row=Math.round(H*.5); for (let x=-L+3;x<-3;x+=5){ o.det.set(K(x,row),'sh'); o.det.set(K(x+1,row),'sh'); o.det.set(K(x+2,row+1),'sh'); } } break;
+      case 'collapsible': { const tl=Math.round(L*.6); rect(o.m,-tl,1,tl,2); const bw=Math.max(3,Math.round(L*.45));
+        poly(o.m,[[-L,0],[-L+bw,0],[-L+bw,H*.55],[-L+2,H],[-L,H]]); break; }
+      case 'folding': line(o.m,-1,1,-L,1); line(o.m,-1,bh-1,-L,H-1); line(o.m,-L,1,-L,H-1); break;
+    }
+    for (const k of o.m) if (PK(k)[0] === -L) o.det.set(k,'dk');
+    return o; },
+  grip(p){ const o=mk(), L=p.l, W=p.w, r=p.r;
+    if (p.style!=='none'){
+      for (let y=0;y<L;y++){ const x0=-Math.round(r*y); let w=W; if (p.style==='wood' && y>L*.3 && y<L*.75) w=W+1;
+        rect(o.m,x0,y,w,1); if (y===L-1 && w>2){ o.cut.add(K(x0,y)); o.cut.add(K(x0+w-1,y)); } }
+      if (p.style==='pistol') for (let y=2;y<L-1;y++){ const x0=-Math.round(r*y); for (let x=x0+1;x<x0+W-1;x++) if ((x+y)%2===0) o.det.set(K(x,y),'sh'); }
+    }
+    if (p.guard){ const gl=Math.max(5,Math.round(W*1.3)), gd=3; const back = p.style==='none' ? W-1 : W-1-Math.round(r*gd);
+      const g=new Set(); line(g,back,gd,W+gl-1,gd); line(g,W+gl-1,0,W+gl-1,gd); g.add(K(W+1,0)); g.add(K(W+1,1));
+      for (const k of g){ o.m.add(k); o.no.add(k); o.det.set(k,'sh'); } o.det.set(K(W+1,1),'dk'); }
+    return o; },
+  mag(p){ const o=mk(), L=p.l, W=p.w, r=p.r;
+    const sx = y => r*y + (p.style==='curved' ? p.c*Math.pow(y/Math.max(1,L-1),2)*2 : 0);
+    switch (p.style){
+      case 'box': case 'curved':
+        for (let y=0;y<L;y++){ const x0=Math.round(sx(y)); rect(o.m,x0,y,W,1); if (y===L-1) for (let x=x0;x<x0+W;x++) o.det.set(K(x,y),'dk'); }
+        if (W>=4) for (let y=3;y<L-2;y+=3) o.det.set(K(Math.round(sx(y))+1,y),'sh'); break;
+      case 'drum': { rect(o.m,0,0,W,2); const R=Math.max(2,Math.floor(L/2)), cx=(W-1)/2, cy=1+R; circ(o.m,cx,cy,R);
+        for (const k of o.m){ const [x,y]=PK(k); if (y>1 && Math.abs(Math.hypot(x-cx,y-cy)-(R-2.2))<.55) o.det.set(k,'sh'); }
+        o.det.set(K(Math.round(cx),Math.round(cy)),'dk'); break; }
+      case 'flush': { const h=Math.max(1,L); rect(o.m,0,0,W,h); for (let x=0;x<W;x++) o.det.set(K(x,h-1),'dk'); break; }
+      case 'tube': rect(o.m,0,0,L,W); for (let y=0;y<W;y++) o.det.set(K(L-1,y),'sh'); break;
+    } return o; },
+  sight(p,c){ const o=mk(), L=p.l, H=p.h;
+    switch (p.style){
+      case 'iron': { const small = H <= 2;
+        (small ? [[0,-1],[2,-1]] : [[0,-1],[0,-2],[1,-1],[2,-1],[2,-2]]).forEach(([x,y]) => o.m.add(K(x,y)));
+        const gx=c.frontX-2, fx=gx-c.sightX, t=c.topAt(gx)-c.sightY;
+        if (fx>4){ if (small) o.m.add(K(fx,t-1)); else { o.m.add(K(fx-1,t-1)); o.m.add(K(fx,t-1)); o.m.add(K(fx+1,t-1)); o.m.add(K(fx,t-2)); } } break; }
+      case 'reddot': rect(o.m,1,-1,Math.max(1,L-2),1); rect(o.m,0,-H,L,H-1); o.cut.add(K(0,-H)); o.cut.add(K(L-1,-H));
+        for (let y=-H+1;y<-1;y++) o.det.set(K(L-1,y),'glass'); o.det.set(K(L-1,-H+Math.floor((H-1)/2)),'red'); break;
+      case 'holo': rect(o.m,0,-1,L,1); rect(o.m,0,-H,L,H-1);
+        for (let y=-H+1;y<-2;y++) for (let x=1;x<L-1;x++) o.det.set(K(x,y),'glass'); break;
+      case 'scope': { const y0=-H; rect(o.m,0,y0,L,3); rect(o.m,L-4,y0-1,4,5); rect(o.m,0,y0-1,3,5);
+        o.cut.add(K(L-4,y0-1)); o.cut.add(K(L-4,y0+3)); rect(o.m,Math.round(L/2)-1,y0-2,3,2);
+        const rh=H-3; if (rh>0){ rect(o.m,Math.round(L*.28),y0+3,2,rh); rect(o.m,Math.round(L*.66),y0+3,2,rh); }
+        for (let y=y0;y<y0+3;y++) o.det.set(K(L-1,y),'glass'); o.det.set(K(L-1,y0),'glint'); break; }
+    } return o; },
+  moving(p){ const o=mk(), L=p.l, H=p.h;
+    switch (p.style){
+      case 'charging': rect(o.m,0,0,L,H); break;
+      case 'bolt': line(o.m,0,0,-(L-1),L-1); rect(o.m,-L,L-1,2,2); break;
+      case 'slide': { rect(o.m,0,0,L,H); o.cut.add(K(L-1,0)); const y0=H>=3?1:0, y1=H>=3?H-1:H;
+        for (let x=1;x<Math.min(9,L*.4);x+=2) for (let y=y0;y<y1;y++) o.det.set(K(x,y),'dk');
+        for (let x=Math.round(L*.45);x<Math.round(L*.62);x++) o.det.set(K(x,0),'dk'); break; }
+      case 'pump': rect(o.m,0,0,L,H); o.cut.add(K(0,H-1)); o.cut.add(K(L-1,H-1));
+        for (let x=1;x<L-1;x+=2) for (let y=1;y<H;y++) o.det.set(K(x,y),'sh'); break;
+    } return o; },
+};
+
+/* ---------- part metadata ---------- */
+const ORDER = ['body','barrel','handguard','muzzle','stock','grip','mag','sight','moving'];
+const Z = ['stock','barrel','muzzle','mag','grip','handguard','body','moving','sight'];
+const PARTS = {
+  body:{ label:'Body', slot:'main_body', styles:{receiver:'Receiver', railtop:'Receiver + top rail', tapered:'Tapered receiver', frame:'Pistol frame', revolver:'Revolver frame'}, sl:{ l:['Length',6,48,1], h:['Height',3,14,1] } },
+  barrel:{ label:'Barrel', slot:'barrel', styles:{plain:'Plain', fluted:'Fluted', double:'Double', ventrib:'Vent rib', none:'None (draw your own)'}, sl:{ l:['Length',1,64,1], h:['Thickness',1,5,1] } },
+  handguard:{ label:'Handguard', slot:'main_body', styles:{rail:'Rail', smooth:'Smooth', wood:'Wood', vented:'Vented', none:'None (draw your own)'}, sl:{ l:['Length',2,44,1], h:['Height',2,12,1] } },
+  muzzle:{ label:'Muzzle', slot:'barrel', styles:{flash:'Flash hider', brake:'Muzzle brake', comp:'Compensator', suppressor:'Suppressor', none:'None (draw your own)'}, sl:{ l:['Length',1,22,1], h:['Height',2,8,1] } },
+  stock:{ label:'Stock', slot:'gunstock', styles:{rifle:'Rifle', wood:'Wood', skeleton:'Skeleton', collapsible:'Collapsible', folding:'Wire folding', none:'None (draw your own)'}, sl:{ l:['Length',4,36,1], h:['Butt height',4,18,1] } },
+  grip:{ label:'Grip', slot:'main_body', styles:{rifle:'Rifle grip', pistol:'Textured grip', wood:'Wood grip', none:'None (draw your own)'}, sl:{ l:['Length',3,16,1], w:['Width',2,9,1], r:['Angle',0,1,.05] }, guard:true },
+  mag:{ label:'Magazine', slot:'magazine', styles:{box:'Box', curved:'Curved', drum:'Drum', flush:'Pistol (flush)', tube:'Tube (under barrel)', none:'None (draw your own)'}, sl:{ l:['Length',1,28,1], w:['Width',1,16,1], r:['Angle',-.5,1,.05], c:['Curve',0,8,.5] } },
+  sight:{ label:'Sight', slot:'aimer', styles:{iron:'Iron sights', reddot:'Red dot', holo:'Holographic', scope:'Scope', none:'None (draw your own)'}, sl:{ l:['Length',3,32,1], h:['Height',2,9,1] } },
+  moving:{ label:'Moving part', slot:'moving_part', styles:{charging:'Charging handle', bolt:'Bolt handle', slide:'Pistol slide', pump:'Pump', none:'None (draw your own)'}, sl:{ l:['Length',1,40,1], h:['Height',1,7,1] } },
+};
+const SLOTS = [
+  { id:'main_body', label:'Main Body', parts:['grip','handguard','body'] },
+  { id:'moving_part', label:'Moving Part', parts:['moving'] },
+  { id:'barrel', label:'Barrel', parts:['barrel','muzzle'] },
+  { id:'aimer', label:'Aimer', parts:['sight'] },
+  { id:'gunstock', label:'Gunstock', parts:['stock'] },
+  { id:'magazine', label:'Magazine', parts:['mag'] },
+];
+const SLOT_LABEL = Object.fromEntries(SLOTS.map(s => [s.id, s.label]));
+
+const C = { black:'#2a2c2e', gun:'#454f58', steel:'#7b838a', silver:'#b8bdc1', tan:'#b39467', od:'#5b6440', wood:'#8b5a2b', walnut:'#5a381d', rust:'#8a4a2a', red:'#a33a32', gold:'#c9a23a', bone:'#d8d0bb' };
+const SWATCHES = Object.values(C);
+const part = (style,l,h,color,x={}) => Object.assign({ on:true, style, l, h, w:4, r:0, c:0, dx:0, dy:0, color, guard:false }, x);
+const off = (style='none') => part(style,4,3,C.black,{ on:false });
+
+const PRESETS = {
+  rifle:{ label:'Assault rifle', name:'Assault Rifle', canvas:'96x40', parts:{
+    body:part('railtop',22,6,C.black), barrel:part('plain',24,2,C.gun), handguard:part('rail',16,5,C.black),
+    muzzle:part('flash',3,3,C.black), stock:part('collapsible',16,9,C.black), grip:part('rifle',7,0,C.black,{w:4,r:.4,guard:true}),
+    mag:part('curved',10,0,C.gun,{w:4,r:.15,c:2}), sight:part('reddot',6,4,C.black), moving:part('charging',3,1,C.gun) } },
+  wood:{ label:'Wood rifle', name:'Wood Rifle', canvas:'96x40', parts:{
+    body:part('tapered',24,6,C.gun), barrel:part('plain',20,2,C.gun), handguard:part('wood',11,5,C.wood),
+    muzzle:part('brake',3,3,C.gun), stock:part('wood',17,9,C.wood), grip:part('wood',7,0,C.wood,{w:4,r:.35,guard:true}),
+    mag:part('curved',11,0,C.gun,{w:4,r:.25,c:3}), sight:part('iron',4,3,C.gun), moving:part('charging',3,1,C.steel) } },
+  smg:{ label:'SMG', name:'Compact SMG', canvas:'96x40', parts:{
+    body:part('receiver',16,6,C.black), barrel:part('plain',6,2,C.gun), handguard:part('smooth',6,5,C.black),
+    muzzle:part('suppressor',12,4,C.black), stock:part('folding',12,7,C.steel), grip:part('pistol',7,0,C.black,{w:4,r:.3,guard:true}),
+    mag:part('box',12,0,C.gun,{w:3,r:0}), sight:part('iron',4,3,C.black), moving:part('charging',2,1,C.steel) } },
+  pistol:{ label:'Pistol', name:'Sidearm', canvas:'48x32', parts:{
+    body:part('frame',13,4,C.black), barrel:part('plain',4,2,C.steel,{dy:-3}), handguard:off(),
+    muzzle:off(), stock:off(), grip:part('pistol',8,0,C.black,{w:5,r:.35,guard:true,dx:-2}),
+    mag:part('flush',2,0,C.gun,{w:5}), sight:part('iron',4,2,C.black), moving:part('slide',16,3,C.gun) } },
+  revolver:{ label:'Revolver', name:'Revolver', canvas:'48x32', parts:{
+    body:part('revolver',12,5,C.steel), barrel:part('plain',11,3,C.steel,{dy:-1}), handguard:off(),
+    muzzle:off(), stock:off(), grip:part('wood',8,0,C.walnut,{w:4,r:.5,guard:true,dx:-3}),
+    mag:off(), sight:part('iron',4,2,C.steel), moving:off() } },
+  shotgun:{ label:'Pump shotgun', name:'Pump Shotgun', canvas:'112x44', parts:{
+    body:part('receiver',18,6,C.black), barrel:part('plain',30,2,C.gun), handguard:off(),
+    muzzle:off(), stock:part('rifle',18,9,C.black), grip:part('rifle',6,0,C.black,{w:4,r:.45,guard:true}),
+    mag:part('tube',22,0,C.gun,{w:2}), sight:part('iron',4,3,C.gun), moving:part('pump',10,4,C.black,{dx:2}) } },
+  sniper:{ label:'Bolt sniper', name:'Bolt Sniper', canvas:'112x44', parts:{
+    body:part('receiver',20,5,C.od), barrel:part('fluted',34,3,C.black), handguard:part('smooth',14,5,C.od),
+    muzzle:part('brake',4,3,C.black), stock:part('skeleton',20,10,C.od), grip:part('rifle',7,0,C.black,{w:4,r:.35,guard:true}),
+    mag:part('box',5,0,C.black,{w:6}), sight:part('scope',18,5,C.black,{dx:-2}), moving:part('bolt',4,1,C.steel) } },
+  lmg:{ label:'Light machine gun', name:'Light Machine Gun', canvas:'112x44', parts:{
+    body:part('railtop',26,8,C.black), barrel:part('plain',26,3,C.gun), handguard:part('vented',12,6,C.black),
+    muzzle:part('flash',4,4,C.black), stock:part('rifle',16,10,C.black), grip:part('pistol',7,0,C.black,{w:4,r:.3,guard:true}),
+    mag:part('drum',12,0,C.gun,{w:6}), sight:part('iron',4,3,C.black), moving:part('charging',3,1,C.steel) } },
+};
+
+/* ---------- state ---------- */
+const STORE_KEY = 'gunforge.v1';
+function fromPreset(key, keepName){
+  const pr = PRESETS[key]; const [w,h] = pr.canvas.split('x').map(Number);
+  return { v:1, name: keepName || pr.name, canvas:{w,h}, look:{ outline:true, oc:'#16140f', shade:true },
+    parts: JSON.parse(JSON.stringify(pr.parts)), paint: Object.fromEntries(ORDER.map(n => [n,{}])), sel:'body' };
+}
+function valid(s){ return s && s.parts && ORDER.every(n => s.parts[n] && typeof s.parts[n].l === 'number') && s.canvas && s.look; }
+function normalize(s){ s.paint = s.paint || {}; for (const n of ORDER){ s.paint[n] = s.paint[n] || {}; const p = s.parts[n];
+  for (const [k,v] of Object.entries({on:true,w:4,r:0,c:0,dx:0,dy:0,guard:false,h:3,color:C.black})) if (p[k] === undefined) p[k] = v; }
+  if (!PARTS[s.sel]) s.sel = 'body'; s.name = String(s.name || 'My Gun').slice(0,40); return s; }
+let state;
+try { const raw = localStorage.getItem(STORE_KEY); const s = raw && JSON.parse(raw); state = valid(s) ? normalize(s) : fromPreset('rifle'); } catch { state = fromPreset('rifle'); }
+function persist(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch {} }
+
+let undoStack = [], redoStack = [], pending = null;
+function begin(){ if (!pending) pending = JSON.stringify(state); }
+function end(){ if (pending){ if (pending !== JSON.stringify(state)){ undoStack.push(pending); if (undoStack.length > 80) undoStack.shift(); redoStack = []; } pending = null; persist(); updateUndo(); } }
+function edit(fn, full){ begin(); fn(); end(); refresh(); if (full) syncUI(); }
+function undo(){ if (!undoStack.length) return; redoStack.push(JSON.stringify(state)); state = normalize(JSON.parse(undoStack.pop())); persist(); refresh(); syncUI(); }
+function redo(){ if (!redoStack.length) return; undoStack.push(JSON.stringify(state)); state = normalize(JSON.parse(redoStack.pop())); persist(); refresh(); syncUI(); }
+function updateUndo(){ $('#undo').disabled = !undoStack.length; $('#redo').disabled = !redoStack.length; }
+
+/* ---------- build ---------- */
+function shade(o,s,p,look){
+  const T = tones(p.color), M = new Set();
+  for (const k of s.m) if (!s.cut.has(k)) M.add(k);
+  for (const k of M){ const [x,y] = PK(k); let t = 'b';
+    if (look.shade){ const up = M.has(K(x,y-1)), dn = M.has(K(x,y+1)); t = !up ? 'hi' : (!dn ? 'sh' : 'b'); }
+    const d = s.det.get(k); if (d) t = d;
+    const gk = K(x+o.ox, y+o.oy); o.pix.set(gk, T[t] || LIT[t] || T.b); o.mask.add(gk); }
+  if (look.outline){ for (const k of M){ if (s.no.has(k)) continue; const [x,y] = PK(k);
+    for (const [dx,dy] of N4){ if (M.has(K(x+dx,y+dy))) continue; const gk = K(x+dx+o.ox, y+dy+o.oy); if (!o.pix.has(gk)) o.pix.set(gk, look.oc); } } }
+}
+function bboxOf(maps){ let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+  for (const m of maps) for (const k of m.keys()){ const [x,y] = PK(k); if (x<x0) x0=x; if (y<y0) y0=y; if (x>x1) x1=x; if (y>y1) y1=y; }
+  return x0===Infinity ? null : {x0,y0,x1,y1}; }
+function build(st){
+  const P = st.parts, out = {}, c = {}, look = st.look, b = P.body;
+  c.bodyL = b.l; c.bodyH = b.h;
+  const isOn = n => P[n].on && P[n].style !== 'none';
+  const place = (n,ax,ay) => { const p = P[n]; const o = { name:n, ox:ax+p.dx, oy:ay+p.dy, pix:new Map(), mask:new Set() }; out[n] = o;
+    if (p.on && (p.style !== 'none' || (n === 'grip' && p.guard))) shade(o, SHAPES[n](p,c), p, look); return o; };
+  place('body',0,0);
+  const railTop = b.style === 'railtop';
+  const bar = P.barrel, barrel = place('barrel', b.l, Math.max(1, Math.round(b.h*.2)));
+  c.barrelY = barrel.oy; c.barrelH = bar.style === 'double' ? bar.h*2+1 : bar.h; c.barrelEnd = barrel.ox + (isOn('barrel') ? bar.l : 0);
+  const hg = place('handguard', b.l, 0);
+  const mz = P.muzzle, muzzle = place('muzzle', c.barrelEnd, c.barrelY + Math.floor((c.barrelH-1)/2) - Math.floor((mz.h-1)/2));
+  place('stock',0,0);
+  const gp = P.grip, grip = place('grip', Math.round(b.l*.22), b.h);
+  const mg = P.mag; let ma;
+  if (mg.style === 'flush') ma = [grip.ox - Math.round(gp.r*(gp.l-1)), grip.oy + gp.l];
+  else if (mg.style === 'tube') ma = [b.l, c.barrelY + c.barrelH];
+  else ma = [Math.round(b.l*.55), b.h];
+  place('mag', ma[0], ma[1]);
+  const mv = P.moving; let mva;
+  if (mv.style === 'slide') mva = [0, -mv.h]; else if (mv.style === 'bolt') mva = [Math.round(b.l*.4), 1];
+  else if (mv.style === 'pump') mva = [b.l+2, c.barrelY + c.barrelH]; else mva = [1, railTop ? -2 : -1];
+  const moving = place('moving', mva[0], mva[1]);
+  const tops = ['body','barrel','handguard','moving'].map(n => out[n]);
+  c.topAt = gx => { let m = Infinity; for (const o of tops) for (const k of o.mask){ const [x,y] = PK(k); if (x === gx && y < m) m = y; } return m === Infinity ? c.barrelY : m; };
+  let fx = b.l; if (isOn('barrel')) fx = Math.max(fx, c.barrelEnd); if (isOn('handguard')) fx = Math.max(fx, hg.ox + P.handguard.l);
+  if (isOn('moving') && mv.style === 'slide') fx = Math.max(fx, moving.ox + mv.l); c.frontX = fx;
+  const sy = (isOn('moving') && mv.style === 'slide') ? moving.oy : (railTop ? -1 : 0);
+  const sa = [Math.round(b.l*.25), sy]; c.sightX = sa[0] + P.sight.dx; c.sightY = sa[1] + P.sight.dy;
+  const sight = place('sight', sa[0], sa[1]);
+  out._bbox = bboxOf(Z.map(n => out[n].pix));
+  out._pts = [
+    ['Gun point (muzzle)', isOn('muzzle') ? muzzle.ox + mz.l : c.barrelEnd, c.barrelY + Math.floor((c.barrelH-1)/2)],
+    ['Magazine point', out.mag.ox, out.mag.oy], ['Barrel mount', barrel.ox, barrel.oy],
+    ['Sight mount', sight.ox, sight.oy], ['Stock mount', out.stock.ox, out.stock.oy] ];
+  for (const n of Z){ const pm = st.paint[n]; if (!P[n].on || !pm) continue; const o = out[n];
+    for (const k in pm){ const [x,y] = PK(k); const gk = K(x+o.ox, y+o.oy); if (pm[k] === null) o.pix.delete(gk); else o.pix.set(gk, pm[k]); } }
+  return out;
+}
+function composite(out, names = Z){ const m = new Map(); for (const n of Z) if (names.includes(n)) for (const [k,v] of out[n].pix) m.set(k,v); return m; }
+
+/* ---------- drawing ---------- */
+const cv = $('#cv'), g = cv.getContext('2d');
+let cur = build(state), comp = composite(cur), offX = 0, offY = 0, cell = 8, frozen = false, hover = null, tool = 'move', drag = null;
+const BGS = { night:'#1c1f17', day:'#cbc4a8', grass:'#4b5832' };
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function layoutCanvas(){
+  const W = state.canvas.w, H = state.canvas.h, stage = $('#stage');
+  const avail = stage.clientWidth - 22, maxH = Math.max(200, window.innerHeight * .58);
+  cell = Math.max(2, Math.min(Math.floor(avail / W), Math.floor(maxH / H), 18));
+  const dpr = window.devicePixelRatio || 1;
+  cv.width = W*cell*dpr; cv.height = H*cell*dpr; cv.style.width = (W*cell)+'px'; cv.style.height = (H*cell)+'px';
+  g.setTransform(dpr,0,0,dpr,0,0); draw();
+}
+function refresh(){ cur = build(state); comp = composite(cur); draw(); drawPreviews(); status(); renderChips(); }
+function draw(){
+  const W = state.canvas.w, H = state.canvas.h;
+  if (!frozen){ const B = cur._bbox;
+    if (B){ offX = Math.floor((W-(B.x1-B.x0+1))/2) - B.x0; offY = Math.floor((H-(B.y1-B.y0+1))/2) - B.y0; } else { offX = W>>1; offY = H>>1; } }
+  const bg = $('#bgSel').value;
+  if (bg === 'checker'){ const a = cssVar('--chk1'), b2 = cssVar('--chk2');
+    for (let y=0;y<H;y++) for (let x=0;x<W;x++){ g.fillStyle = ((x>>1)+(y>>1))%2 ? a : b2; g.fillRect(x*cell,y*cell,cell,cell); } }
+  else { g.fillStyle = BGS[bg]; g.fillRect(0,0,W*cell,H*cell); }
+  for (const [k,v] of comp){ const [x,y] = PK(k); const cx = x+offX, cy = y+offY; if (cx<0||cy<0||cx>=W||cy>=H) continue; g.fillStyle = v; g.fillRect(cx*cell,cy*cell,cell,cell); }
+  if ($('#gridChk').checked && cell >= 7){ g.strokeStyle = 'rgba(128,128,128,.22)'; g.lineWidth = 1; g.beginPath();
+    for (let x=1;x<W;x++){ g.moveTo(x*cell+.5,0); g.lineTo(x*cell+.5,H*cell); } for (let y=1;y<H;y++){ g.moveTo(0,y*cell+.5); g.lineTo(W*cell,y*cell+.5); } g.stroke(); }
+  const so = cur[state.sel]; const sb = so && bboxOf([so.pix]);
+  if (sb){ const acc = cssVar('--accent'); g.save(); g.strokeStyle = acc; g.lineWidth = 2; g.setLineDash([5,3]);
+    g.strokeRect((sb.x0+offX)*cell-1, (sb.y0+offY)*cell-1, (sb.x1-sb.x0+1)*cell+2, (sb.y1-sb.y0+1)*cell+2); g.restore(); }
+  if ($('#ptsChk').checked){ g.save(); g.strokeStyle = '#ff2fd0'; g.lineWidth = 2;
+    for (const [, x, y] of cur._pts){ const px = (x+offX)*cell, py = (y+offY)*cell + cell/2; g.beginPath(); g.moveTo(px-cell,py); g.lineTo(px+cell,py); g.moveTo(px,py-cell); g.lineTo(px,py+cell); g.stroke(); }
+    g.restore(); }
+  if (hover){ g.strokeStyle = cssVar('--fg'); g.lineWidth = 1; g.strokeRect(hover[0]*cell+.5, hover[1]*cell+.5, cell-1, cell-1); }
+}
+function drawPreviews(){
+  const B = bboxOf([comp]); const pad = 4;
+  for (const [id,s] of [['#pv1',1],['#pv2',2],['#pv4',4]]){ const c2 = $(id), x2 = c2.getContext('2d');
+    const w = B ? B.x1-B.x0+1 : 8, h = B ? B.y1-B.y0+1 : 8; c2.width = (w+pad*2)*s; c2.height = (h+pad*2)*s;
+    x2.fillStyle = '#1c1f17'; x2.fillRect(0,0,c2.width,c2.height);
+    if (B) for (const [k,v] of comp){ const [x,y] = PK(k); x2.fillStyle = v; x2.fillRect((x-B.x0+pad)*s,(y-B.y0+pad)*s,s,s); } }
+}
+function partAt(vx,vy){ const k = K(vx,vy); for (let i=Z.length-1;i>=0;i--) if (cur[Z[i]].pix.has(k)) return Z[i]; return null; }
+function status(){
+  const B = bboxOf([comp]); const W = state.canvas.w, H = state.canvas.h; const bits = [];
+  if (hover){ const n = partAt(hover[0]-offX, hover[1]-offY); bits.push(`pixel ${hover[0]}, ${hover[1]}${n ? ' · ' + PARTS[n].label : ''}`); }
+  if (B){ const w = B.x1-B.x0+1, h = B.y1-B.y0+1;
+    bits.push(`gun ${w} × ${h} px = ${(w/64).toFixed(2)} m × ${(h/64).toFixed(2)} m at PPU 64`);
+    if (B.x0+offX < 0 || B.y0+offY < 0 || B.x1+offX >= W || B.y1+offY >= H) bits.push('<span class="warn">Gun is bigger than the canvas. Pick a larger canvas in Look.</span>'); }
+  else bits.push('No parts are showing. Pick a preset or turn a part on.');
+  $('#status').innerHTML = bits.map(b => `<span>${b}</span>`).join('');
+}
+
+/* ---------- pointer ---------- */
+function cellOf(e){ const r = cv.getBoundingClientRect(); return [Math.floor((e.clientX-r.left)/(r.width/state.canvas.w)), Math.floor((e.clientY-r.top)/(r.height/state.canvas.h))]; }
+function paintAt(px,py){
+  const vx = px-offX, vy = py-offY, gk = K(vx,vy);
+  if (tool === 'picker'){ const c = comp.get(gk); if (c) setPaintColor(c); return; }
+  let n = state.sel;
+  if (tool === 'eraser' && !cur[n].pix.has(gk)){ n = partAt(vx,vy); if (!n) return; }
+  const p = state.parts[n]; if (!p.on){ toast(`Turn on ${PARTS[n].label} to paint on it`); return; }
+  const o = cur[n]; const rk = K(vx-o.ox, vy-o.oy);
+  if (tool === 'pencil'){ if (state.paint[n][rk] === paintColor) return; state.paint[n][rk] = paintColor; }
+  else { if (state.paint[n][rk] === null && !o.pix.has(gk)) return; state.paint[n][rk] = null; }
+  cur = build(state); comp = composite(cur); draw();
+}
+function strokeLine(a,b2){ const S = new Set(); line(S,a[0],a[1],b2[0],b2[1]); for (const k of S){ const [x,y] = PK(k); paintAt(x,y); } }
+cv.addEventListener('pointerdown', e => {
+  if (e.button !== 0) return; cv.setPointerCapture(e.pointerId); const pt = cellOf(e); frozen = true;
+  if (tool === 'move'){ const n = partAt(pt[0]-offX, pt[1]-offY); if (n && n !== state.sel){ state.sel = n; syncEditor(); renderChips(); draw(); }
+    if (n === 'body'){ drag = null; toast('The body is the anchor. Move the other parts around it.'); frozen = false; return; }
+    if (!n){ drag = null; frozen = false; return; } }
+  begin(); drag = { last: pt };
+  if (tool !== 'move') paintAt(pt[0],pt[1]);
+});
+cv.addEventListener('pointermove', e => {
+  const pt = cellOf(e); const changed = !hover || hover[0] !== pt[0] || hover[1] !== pt[1]; hover = pt;
+  if (drag){ if (tool === 'move'){ const dx = pt[0]-drag.last[0], dy = pt[1]-drag.last[1];
+      if (dx || dy){ const p = state.parts[state.sel]; p.dx += dx; p.dy += dy; drag.last = pt; cur = build(state); comp = composite(cur); draw(); syncNudge(); } }
+    else if (changed){ strokeLine(drag.last, pt); drag.last = pt; } }
+  if (changed && !drag){ draw(); status(); }
+});
+function endDrag(){ if (drag){ drag = null; frozen = false; end(); refresh(); syncEditor(); } else frozen = false; }
+cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+cv.addEventListener('pointerleave', () => { if (!drag){ hover = null; draw(); status(); } });
+
+/* ---------- UI ---------- */
+let paintColor = '#d0d4d8';
+function setPaintColor(c){ paintColor = c; $('#paintColor').value = c; $('#paintHex').textContent = c; }
+$('#paintColor').addEventListener('input', e => setPaintColor(e.target.value));
+function setTool(t){ tool = t; document.querySelectorAll('[data-tool]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tool === t))); cv.classList.toggle('move', t === 'move'); }
+document.querySelectorAll('[data-tool]').forEach(b => b.addEventListener('click', () => setTool(b.dataset.tool)));
+
+function renderPresets(){ const el = $('#presets'); el.innerHTML = '';
+  for (const [k,pr] of Object.entries(PRESETS)){ const b = document.createElement('button'); b.className = 'btn'; b.id = 'preset-'+k; b.textContent = pr.label;
+    b.addEventListener('click', () => edit(() => { const name = state.name; state = fromPreset(k); if (name && !Object.values(PRESETS).some(p => p.name === name)) state.name = name; }, true));
+    el.appendChild(b); } }
+function renderChips(){ const el = $('#parts'); if (!el.children.length){
+    for (const n of ORDER){ const b = document.createElement('button'); b.className = 'pchip'; b.id = 'chip-'+n; b.innerHTML = `<b>${PARTS[n].label}</b><small></small>`;
+      b.addEventListener('click', () => { state.sel = n; persist(); syncEditor(); renderChips(); draw(); }); el.appendChild(b); } }
+  for (const n of ORDER){ const b = $('#chip-'+n), p = state.parts[n];
+    b.setAttribute('aria-pressed', String(state.sel === n)); b.classList.toggle('off', !p.on);
+    b.querySelector('small').textContent = p.on ? PARTS[n].styles[p.style] || p.style : 'off'; }
+  $('#selSlot').textContent = '→ ' + SLOT_LABEL[PARTS[state.sel].slot] + ' slot';
+}
+function syncNudge(){ const p = state.parts[state.sel], o = $('#nudgeOut'); if (o) o.textContent = `x ${p.dx>=0?'+':''}${p.dx}, y ${p.dy>=0?'+':''}${p.dy}`; }
+function syncEditor(){
+  const n = state.sel, p = state.parts[n], meta = PARTS[n], el = $('#editor');
+  const paintCount = Object.keys(state.paint[n]).length;
+  let h = `<label class="check"><input type="checkbox" id="ed-on" ${p.on?'checked':''}> Show ${meta.label.toLowerCase()}</label>`;
+  h += `<div class="row two"><label for="ed-style">Style</label><select id="ed-style">${Object.entries(meta.styles).map(([k,v]) => `<option value="${k}" ${p.style===k?'selected':''}>${v}</option>`).join('')}</select></div>`;
+  for (const [key,[lab,mn,mx,st]] of Object.entries(meta.sl)){
+    if (key === 'c' && p.style !== 'curved') continue;
+    if (n === 'mag' && key === 'r' && (p.style === 'drum' || p.style === 'flush' || p.style === 'tube')) continue;
+    const val = p[key];
+    h += `<div class="row"><label for="ed-${key}">${n==='mag'&&p.style==='tube'&&key==='w'?'Thickness':lab}</label><input type="range" id="ed-${key}" min="${mn}" max="${mx}" step="${st}" value="${val}"><output id="out-${key}">${val}</output></div>`; }
+  if (meta.guard) h += `<label class="check"><input type="checkbox" id="ed-guard" ${p.guard?'checked':''}> Trigger guard</label>`;
+  if (n !== 'body') h += `<div class="row two"><span class="lbl">Position</span><div class="nudge">
+      <button class="btn" data-nudge="-1,0" aria-label="Move left">←</button><button class="btn" data-nudge="1,0" aria-label="Move right">→</button>
+      <button class="btn" data-nudge="0,-1" aria-label="Move up">↑</button><button class="btn" data-nudge="0,1" aria-label="Move down">↓</button>
+      <button class="btn" data-nudge="reset">Reset</button><output id="nudgeOut"></output></div></div>`;
+  h += `<div class="row two"><span class="lbl">Color</span><div class="swatches">${SWATCHES.map(c => `<button class="sw" data-sw="${c}" style="background:${c}" aria-label="Color ${c}" aria-pressed="${p.color===c}"></button>`).join('')}<input type="color" id="ed-color" value="${p.color}" aria-label="Custom color" style="width:30px;height:24px;border:0;padding:0;background:none"></div></div>`;
+  h += `<div class="btnrow"><button class="btn" id="ed-clear" ${paintCount?'':'disabled'}>Clear paint (${paintCount} px)</button><button class="btn" id="ed-all">Apply color to whole gun</button></div>`;
+  h += `<p class="slot">Exports into the <b>${SLOT_LABEL[meta.slot]}</b> slot.${p.style==='none' ? ' Style is None: use the Pencil to draw this part yourself.' : ''}</p>`;
+  el.innerHTML = h;
+  $('#ed-on').addEventListener('change', e => edit(() => { p.on = e.target.checked; }, true));
+  $('#ed-style').addEventListener('change', e => edit(() => { p.style = e.target.value; if (!p.on && p.style !== 'none') p.on = true; }, true));
+  for (const key of Object.keys(meta.sl)){ const r = $('#ed-'+key); if (!r) continue;
+    r.addEventListener('input', () => { begin(); p[key] = +r.value; $('#out-'+key).textContent = r.value; refresh(); });
+    r.addEventListener('change', () => end()); }
+  const gchk = $('#ed-guard'); if (gchk) gchk.addEventListener('change', e => edit(() => { p.guard = e.target.checked; }));
+  el.querySelectorAll('[data-nudge]').forEach(b => b.addEventListener('click', () => edit(() => {
+    if (b.dataset.nudge === 'reset'){ p.dx = 0; p.dy = 0; } else { const [dx,dy] = b.dataset.nudge.split(',').map(Number); p.dx += dx; p.dy += dy; } syncNudge(); })));
+  el.querySelectorAll('[data-sw]').forEach(b => b.addEventListener('click', () => edit(() => { p.color = b.dataset.sw; }, true)));
+  $('#ed-color').addEventListener('input', e => { begin(); p.color = e.target.value; refresh(); });
+  $('#ed-color').addEventListener('change', () => { end(); syncEditor(); });
+  $('#ed-clear').addEventListener('click', () => edit(() => { state.paint[n] = {}; }, true));
+  $('#ed-all').addEventListener('click', () => edit(() => { for (const k of ORDER) state.parts[k].color = p.color; }, true));
+  syncNudge();
+}
+function syncUI(){
+  renderChips(); syncEditor();
+  $('#outlineChk').checked = state.look.outline; $('#outlineColor').value = state.look.oc; $('#shadeChk').checked = state.look.shade;
+  const cs = state.canvas.w+'x'+state.canvas.h, sel = $('#canvasSel');
+  if (![...sel.options].some(o => o.value === cs)){ const o = document.createElement('option'); o.value = cs; o.textContent = cs.replace('x',' × '); sel.appendChild(o); }
+  sel.value = cs; $('#gunName').value = state.name; updateUndo(); layoutCanvas(); drawPreviews(); status();
+}
+$('#outlineChk').addEventListener('change', e => edit(() => { state.look.outline = e.target.checked; }));
+$('#outlineColor').addEventListener('input', e => { begin(); state.look.oc = e.target.value; refresh(); });
+$('#outlineColor').addEventListener('change', () => end());
+$('#shadeChk').addEventListener('change', e => edit(() => { state.look.shade = e.target.checked; }));
+$('#canvasSel').addEventListener('change', e => { const [w,h] = e.target.value.split('x').map(Number); edit(() => { state.canvas = {w,h}; }); layoutCanvas(); status(); });
+$('#gunName').addEventListener('input', e => { state.name = e.target.value; persist(); });
+$('#bgSel').addEventListener('change', draw); $('#gridChk').addEventListener('change', draw); $('#ptsChk').addEventListener('change', draw);
+$('#undo').addEventListener('click', undo); $('#redo').addEventListener('click', redo);
+
+/* random */
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const jig = (v,mn,mx,f=.25) => clamp(Math.round(v*(1 + (Math.random()*2-1)*f)), mn, mx);
+$('#randomBtn').addEventListener('click', () => edit(() => {
+  const base = pick(['rifle','wood','smg','shotgun','sniper','lmg']); const name = state.name; state = fromPreset(base); state.name = name;
+  const P = state.parts; const main = pick([C.black,C.gun,C.od,C.tan,C.steel,C.black]); const furn = pick([C.wood,C.walnut,C.black,C.tan,C.od,main]); const acc = pick([C.gun,C.steel,C.black,C.silver]);
+  P.body.style = pick(['receiver','railtop','tapered']); P.body.l = jig(P.body.l,14,32); P.body.h = jig(P.body.h,5,9,.15); P.body.color = main;
+  P.barrel.style = pick(['plain','plain','fluted','ventrib']); P.barrel.l = jig(P.barrel.l,8,40,.3); P.barrel.color = acc;
+  P.handguard.on = Math.random() > .15; P.handguard.style = pick(['rail','smooth','wood','vented']); P.handguard.l = clamp(Math.round(P.barrel.l*(.35+Math.random()*.4)),4,30); P.handguard.h = clamp(P.body.h-1,3,9); P.handguard.color = P.handguard.style==='wood' ? furn : main;
+  P.muzzle.on = Math.random() > .2; P.muzzle.style = pick(['flash','brake','comp','suppressor']); P.muzzle.l = P.muzzle.style==='suppressor' ? jig(10,6,16) : jig(3,2,5); P.muzzle.h = P.muzzle.style==='suppressor' ? 4 : 3; P.muzzle.color = C.black;
+  P.stock.on = Math.random() > .08; P.stock.style = pick(['rifle','wood','skeleton','collapsible','folding']); P.stock.l = jig(16,10,22); P.stock.h = jig(9,7,12,.15); P.stock.color = P.stock.style==='folding' ? acc : (P.stock.style==='wood' ? furn : main);
+  P.grip.style = pick(['rifle','pistol','wood']); P.grip.r = pick([.25,.3,.35,.4,.45]); P.grip.color = P.grip.style==='wood' ? furn : main; P.grip.guard = true;
+  P.mag.style = pick(['box','curved','curved','drum']); P.mag.l = P.mag.style==='drum' ? jig(11,8,14) : jig(10,5,14); P.mag.w = P.mag.style==='drum' ? 6 : pick([3,4,4,5]); P.mag.r = P.mag.style==='drum' ? 0 : pick([0,.1,.2]); P.mag.c = pick([1,2,3]); P.mag.color = pick([acc,main,C.tan]);
+  P.sight.style = pick(['iron','reddot','holo','scope']); P.sight.l = P.sight.style==='scope' ? jig(16,12,22) : jig(6,4,8); P.sight.h = P.sight.style==='scope' ? 5 : 4; P.sight.color = C.black; P.sight.dx = 0;
+  P.moving.style = pick(['charging','charging','bolt']); P.moving.l = P.moving.style==='bolt' ? 4 : 3; P.moving.h = 1; P.moving.color = acc;
+  const tot = P.stock.l + P.body.l + P.barrel.l + (P.muzzle.on ? P.muzzle.l : 0); state.canvas = tot > 100 ? {w:128,h:56} : tot > 84 ? {w:112,h:44} : {w:96,h:40};
+}, true));
+
+/* keyboard */
+document.addEventListener('keydown', e => {
+  const tag = (e.target.tagName || '').toLowerCase(); if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z'){ e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y'){ e.preventDefault(); redo(); return; }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const map = { v:'move', b:'pencil', e:'eraser', i:'picker' }; if (map[e.key.toLowerCase()]){ setTool(map[e.key.toLowerCase()]); return; }
+  if (e.key.toLowerCase() === 'g'){ $('#gridChk').checked = !$('#gridChk').checked; draw(); return; }
+  const arrows = { ArrowLeft:[-1,0], ArrowRight:[1,0], ArrowUp:[0,-1], ArrowDown:[0,1] };
+  if (arrows[e.key] && state.sel !== 'body' && e.target === document.body){ e.preventDefault(); const p = state.parts[state.sel]; edit(() => { p.dx += arrows[e.key][0]; p.dy += arrows[e.key][1]; }); syncNudge(); }
+});
+
+/* ---------- export ---------- */
+const slug = () => (state.name || 'gun').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'') || 'gun';
+function rasterize(map, bb, s){ const c2 = document.createElement('canvas'); c2.width = (bb.x1-bb.x0+1)*s; c2.height = (bb.y1-bb.y0+1)*s; const x2 = c2.getContext('2d');
+  for (const [k,v] of map){ const [x,y] = PK(k); if (x<bb.x0||x>bb.x1||y<bb.y0||y>bb.y1) continue; x2.fillStyle = v; x2.fillRect((x-bb.x0)*s,(y-bb.y0)*s,s,s); } return c2; }
+const toBlob = c2 => new Promise((res, rej) => c2.toBlob(b => b ? res(b) : rej(new Error('PNG encode failed')), 'image/png'));
+function exportSet(){
+  const s = +$('#scaleSel').value, mode = $('#partsMode').value, full = composite(cur), FB = bboxOf([full]);
+  if (!FB) return null;
+  const items = [{ id:'full', label:'Full Image', map:full, bb:FB }];
+  for (const sl of SLOTS){ const m = composite(cur, sl.parts); const bb = bboxOf([m]); if (!bb) continue; items.push({ id:sl.id, label:sl.label, map:m, bb: mode === 'aligned' ? FB : bb }); }
+  return { s, FB, items };
+}
+function layoutText(set){
+  const { s, FB } = set, w = FB.x1-FB.x0+1, h = FB.y1-FB.y0+1, cx = (FB.x0+FB.x1+1)/2, cy = (FB.y0+FB.y1+1)/2;
+  const f = v => (v>=0?'+':'') + v.toFixed(1), m = v => (v>=0?'+':'') + (v/64).toFixed(3);
+  const L = [];
+  L.push(`Gun Forge export: ${state.name}`, '');
+  L.push(`Full image: ${w*s} x ${h*s} px (scale ${s}x). Set PPU to ${64*s} in the MOD Editor.`);
+  L.push(`Real size in game: ${(w/64).toFixed(2)} m x ${(h/64).toFixed(2)} m`, '');
+  L.push('Offsets are measured from the CENTER of the full image, X to the right, Y up.');
+  L.push('Pixel values are at 1x (multiply by the scale for your exported pixels). Meters assume 64 px = 1 m.');
+  L.push('The editor may use a different sign or origin. Check with Generate Preview and adjust.', '');
+  L.push('Mount points:');
+  for (const [name,x,y] of cur._pts) L.push(`  ${name.padEnd(20)} x ${f(x-cx).padStart(6)} px (${m(x-cx)} m)   y ${f(cy-y).padStart(6)} px (${m(cy-y)} m)`);
+  L.push('', 'Slot images:');
+  for (const it of set.items){ const b = bboxOf([it.map]); if (!b) continue; const bx = (b.x0+b.x1+1)/2, by = (b.y0+b.y1+1)/2;
+    L.push(`  ${(slug()+'_'+it.id+'.png').padEnd(32)} ${it.label.padEnd(12)} part center x ${f(bx-cx).padStart(6)} px, y ${f(cy-by).padStart(6)} px, size ${b.x1-b.x0+1} x ${b.y1-b.y0+1} px`); }
+  return L.join('\n');
+}
+let dlReady = (window.claude && typeof window.claude.use === 'function') ? window.claude.use('downloads').catch(() => null) : null;
+async function saveFile(name, data){
+  if (dlReady){ const ns = await dlReady;
+    if (ns){ try { await ns.save({ filename:name, data }); toast('Saved ' + name); }
+      catch (e){ const code = e && e.code; toast(code === 'declined' ? 'Download cancelled' : code === 'rate_limited' ? 'Another download is waiting for your OK. Try again in a moment.' : 'This view can’t save files. Open the page in a browser to download.'); }
+      return; }
+    toast('This view can’t save files. Open the page in a browser to download.'); return; }
+  const blob = data instanceof Blob ? data : new Blob([data], { type: name.endsWith('.json') ? 'application/json' : 'text/plain' });
+  const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000); toast('Saved ' + name);
+}
+$('#fullBtn').addEventListener('click', async () => { const set = exportSet(); if (!set) return toast('Nothing to export yet'); const it = set.items[0]; await saveFile(`${slug()}_full.png`, await toBlob(rasterize(it.map, it.bb, set.s))); });
+$('#slotBtn').addEventListener('click', async () => { const set = exportSet(); if (!set) return toast('Nothing to export yet'); const id = PARTS[state.sel].slot; const it = set.items.find(i => i.id === id);
+  if (!it) return toast(`The ${SLOT_LABEL[id]} slot is empty`); await saveFile(`${slug()}_${id}.png`, await toBlob(rasterize(it.map, it.bb, set.s))); });
+$('#zipBtn').addEventListener('click', async () => {
+  const set = exportSet(); if (!set) return toast('Nothing to export yet');
+  if (typeof JSZip === 'undefined'){ toast('ZIP tool didn’t load (offline?). Saving the full image instead.'); const it = set.items[0]; return saveFile(`${slug()}_full.png`, await toBlob(rasterize(it.map, it.bb, set.s))); }
+  const zip = new JSZip(), dir = zip.folder(slug());
+  for (const it of set.items) dir.file(`${slug()}_${it.id}.png`, await toBlob(rasterize(it.map, it.bb, set.s)));
+  dir.file('layout.txt', layoutText(set)); dir.file(`${slug()}.gunforge.json`, JSON.stringify(state, null, 1));
+  await saveFile(`${slug()}_sprites.zip`, await zip.generateAsync({ type:'blob' }));
+});
+$('#saveDesign').addEventListener('click', () => saveFile(`${slug()}.gunforge.json`, new Blob([JSON.stringify(state, null, 1)], { type:'application/json' })));
+$('#openDesign').addEventListener('click', () => $('#fileIn').click());
+$('#fileIn').addEventListener('change', async e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try { const s = JSON.parse(await f.text()); if (!valid(s)) throw new Error('bad'); edit(() => { state = normalize(s); }, true); toast('Opened ' + f.name); }
+  catch { toast('That file isn’t a Gun Forge design (.gunforge.json).'); } });
+
+let tt; function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 2600); }
+
+/* ---------- boot ---------- */
+renderPresets(); setTool('move'); syncUI(); refresh();
+new ResizeObserver(() => layoutCanvas()).observe($('#stage'));
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+new MutationObserver(draw).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+})();
+</script>
+
+</body>
+</html>
